@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ULC x LifeForce Mobile Prototype</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --ink: #171717;
+        --muted: #6d6a66;
+        --soft: #8a8782;
+        --line: #dedbd5;
+        --surface: #ffffff;
+        --wash: #f5f3ee;
+        --wash-2: #faf9f5;
+        --cta: #fff852;
+        --cta-soft: #fff6b8;
+        --green: #4d8f45;
+        --green-soft: #e9f4e7;
+        --gold: #c8941e;
+        --gold-soft: #fff7dc;
+        --red: #d76732;
+        --red-soft: #fff1e9;
+        --brown: #111111;
+        --shadow: 0 22px 60px rgba(0, 0, 0, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(255, 248, 82, 0.18), transparent 30rem),
+          linear-gradient(135deg, #f4f2ed 0%, #e9e6df 100%);
+        color: var(--ink);
+        font-family:
+          "Helvetica Neue",
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .page {
+        padding: 34px 28px 60px;
+      }
+
+      .hero {
+        max-width: 1440px;
+        margin: 0 auto 22px;
+      }
+
+      .board-header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 22px;
+        flex-wrap: wrap;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .board-title {
+        margin: 0;
+        font-size: clamp(40px, 5.4vw, 76px);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(34px, 4vw, 62px);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+      }
+
+      .hero-copy {
+        max-width: 820px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .canvas {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(315px, 1fr));
+        gap: 22px;
+        max-width: 1600px;
+        margin: 0 auto;
+        align-items: start;
+      }
+
+      .canvas.three-up {
+        grid-template-columns: repeat(3, minmax(315px, 1fr));
+        margin-top: 28px;
+      }
+
+      .interactive-preview {
+        display: grid;
+        grid-template-columns: minmax(315px, 390px) minmax(300px, 560px);
+        gap: 22px;
+        align-items: start;
+        max-width: 1000px;
+        margin: 0 auto 42px;
+      }
+
+      .toolbar {
+        display: grid;
+        gap: 11px;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        background: var(--brown);
+        color: #fff;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+      }
+
+      #livePreview {
+        padding-top: 0;
+      }
+
+      #livePreview .variant-label {
+        display: none;
+      }
+
+      .toolbar-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .toolbar h2 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .toolbar-note {
+        color: rgba(255, 255, 255, 0.62);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .control-group {
+        display: grid;
+        gap: 6px;
+        padding-top: 2px;
+      }
+
+      .control-label {
+        color: rgba(255, 255, 255, 0.62);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .segmented {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+        gap: 6px;
+      }
+
+      .segmented button {
+        min-height: 30px;
+        padding: 0 9px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.78);
+        cursor: pointer;
+        font-size: 10.5px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .segmented button[aria-pressed="true"] {
+        border-color: #fff;
+        background: #fff;
+        color: var(--brown);
+      }
+
+      .at-glance-label {
+        max-width: 1600px;
+        margin: 0 auto 14px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .view-toggle {
+        display: inline-flex;
+        gap: 4px;
+        padding: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: var(--brown);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+      }
+
+      .view-toggle button {
+        min-height: 34px;
+        padding: 0 14px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.64);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .view-toggle button[aria-pressed="true"] {
+        background: #fff;
+        color: var(--brown);
+      }
+
+      .view-panel[hidden] {
+        display: none;
+      }
+
+      .view-panel {
+        padding-top: 28px;
+      }
+
+      #allScreensView {
+        min-height: 900px;
+      }
+
+      .variant {
+        display: grid;
+        gap: 12px;
+      }
+
+      .variant-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 34px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .phone {
+        position: relative;
+        width: 100%;
+        max-width: 390px;
+        min-height: 844px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #d6d1ca;
+        border-radius: 34px;
+        background: var(--wash-2);
+        box-shadow: var(--shadow);
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.52);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 26px 28px 18px;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .status-icons {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .screen {
+        height: 750px;
+        overflow: auto;
+        padding: 0 22px 104px;
+        scrollbar-width: none;
+      }
+
+      .screen-titlebar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+
+      .screen::-webkit-scrollbar {
+        display: none;
+      }
+
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 27px;
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+      }
+
+      .subtitle {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.32;
+      }
+
+      .member-chip,
+      .power-chip,
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 0.04em;
+      }
+
+      .member-chip {
+        padding: 8px 11px;
+        background: var(--green-soft);
+        color: #477b40;
+      }
+
+      .power-chip {
+        margin-top: 8px;
+        padding: 6px 9px;
+        background: var(--brown);
+        color: #fff;
+        text-transform: uppercase;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: 0 1px 0 rgba(28, 25, 22, 0.03);
+      }
+
+      .module {
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+
+      .compact {
+        padding: 16px;
+      }
+
+      .module-title {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+      }
+
+      .module-copy {
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.43;
+      }
+
+      .context {
+        background: linear-gradient(180deg, #ffffff, #fffef8);
+      }
+
+      .process {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        align-items: center;
+        gap: 7px;
+        margin-top: 15px;
+      }
+
+      .step {
+        min-width: 0;
+        padding: 10px 7px;
+        border-radius: 13px;
+        background: #f4f2ed;
+        text-align: center;
+        color: var(--brown);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .step small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.1;
+      }
+
+      .compact .process {
+        margin-top: 12px;
+      }
+
+      .compact .step {
+        padding: 8px 4px;
+        font-size: 11px;
+      }
+
+      .arrow {
+        color: var(--soft);
+      }
+
+      .action {
+        background: var(--surface);
+      }
+
+      .early-context,
+      .early-action,
+      .early-unlocks,
+      .early-products,
+      .early-membership {
+        margin-bottom: 12px;
+      }
+
+      .early-context.module,
+      .early-action.module,
+      .early-membership.module {
+        padding: 16px;
+      }
+
+      .early-unlocks {
+        padding: 16px;
+      }
+
+      .unlock-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .unlock-item {
+        min-height: 78px;
+        padding: 11px;
+        border-radius: 14px;
+        background: #f5f3ee;
+      }
+
+      .unlock-item .icon-bubble {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 8px;
+        border-radius: 10px;
+      }
+
+      .unlock-caption {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
+      .cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        min-height: 52px;
+        margin-top: 16px;
+        border: 0;
+        border-radius: 16px;
+        background: var(--cta);
+        color: #050505;
+        font-size: 15px;
+        font-weight: 850;
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+      }
+
+      .cta.dark {
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .cta.ghost {
+        border: 1px solid #d3c6a1;
+        background: #fffdf0;
+        color: var(--brown);
+      }
+
+      .row-card {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 13px;
+        align-items: center;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .icon-bubble {
+        display: grid;
+        place-items: center;
+        width: 43px;
+        height: 43px;
+        border-radius: 14px;
+        background: var(--gold-soft);
+        color: var(--gold);
+        flex: none;
+      }
+
+      .icon-bubble.green {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      .row-title {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.15;
+        font-weight: 850;
+      }
+
+      .row-copy {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.25;
+      }
+
+      .product-card {
+        padding: 17px;
+        margin-bottom: 12px;
+      }
+
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .link {
+        flex: none;
+        color: #aa7b11;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .products {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .product {
+        min-width: 0;
+      }
+
+      .product-art {
+        display: grid;
+        place-items: center;
+        height: 74px;
+        border-radius: 12px;
+        background:
+          radial-gradient(circle at 70% 20%, rgba(255, 248, 82, 0.28), transparent 34px),
+          #f0eee9;
+        color: var(--gold);
+      }
+
+      .product-name {
+        margin: 9px 0 0;
+        font-size: 12px;
+        font-weight: 850;
+        line-height: 1.15;
+      }
+
+      .price {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .membership {
+        border-color: #eadb9c;
+        background: #fffdf0;
+      }
+
+      .membership.dark {
+        padding: 19px;
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .membership.dark .module-copy,
+      .membership.dark .eyebrow-small {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .membership-status {
+        border-color: #cfe8ca;
+        background: #f3fbf1;
+      }
+
+      .lab-card {
+        padding: 17px;
+        margin-bottom: 12px;
+      }
+
+      .lab-head {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 14px 0;
+      }
+
+      .metric {
+        padding: 12px 6px;
+        border-radius: 12px;
+        background: #f2f0eb;
+        text-align: center;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 23px;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #f1efea;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .chip.active {
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .chip.green {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      .chip.gold {
+        background: #fff0cf;
+        color: #b27d0c;
+      }
+
+      .chip.red {
+        background: #ffe8e2;
+        color: #c24c35;
+      }
+
+      .optimal strong {
+        color: var(--green);
+      }
+
+      .monitor strong {
+        color: var(--gold);
+      }
+
+      .attention strong {
+        color: #b84f36;
+      }
+
+      .note {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 13px;
+        margin-bottom: 14px;
+        border: 1px solid #ecd7a5;
+        border-radius: 13px;
+        background: #fff8ea;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.28;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 16px 0 9px;
+        font-size: 17px;
+        font-weight: 850;
+        letter-spacing: -0.02em;
+      }
+
+      .insight {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 13px;
+        margin-bottom: 9px;
+      }
+
+      .history {
+        padding: 17px;
+        margin-bottom: 14px;
+      }
+
+      .history-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 12px 0;
+        border-top: 1px solid #ece8e2;
+      }
+
+      .history-row:first-of-type {
+        border-top: 0;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--green);
+      }
+
+      .dot.gray {
+        background: #92908b;
+      }
+
+      .status-pill {
+        padding: 7px 9px;
+        background: var(--green-soft);
+        color: var(--green);
+        letter-spacing: 0;
+      }
+
+      .status-pill.gray {
+        background: #f1efea;
+        color: var(--muted);
+      }
+
+      .recommendation {
+        padding: 17px;
+        margin-bottom: 12px;
+      }
+
+      .rec-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 11px;
+        align-items: center;
+        padding: 12px 0;
+        border-top: 1px solid #ece8e2;
+      }
+
+      .rec-row:first-of-type {
+        border-top: 0;
+      }
+
+      .utility-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .utility-card {
+        padding: 14px;
+      }
+
+      .utility-card .icon-bubble {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 12px;
+      }
+
+      .report-list-card {
+        padding: 17px;
+        margin-bottom: 12px;
+      }
+
+      .report-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .review-status {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #ece8e2;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .empty-state {
+        display: grid;
+        place-items: center;
+        min-height: 420px;
+        padding: 24px 16px;
+        text-align: center;
+      }
+
+      .empty-state .icon-bubble {
+        width: 62px;
+        height: 62px;
+        margin-bottom: 16px;
+      }
+
+      .note-preview {
+        max-height: 118px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .note-preview::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 42px;
+        background: linear-gradient(transparent, #fff);
+      }
+
+      .filter-bar {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        margin: 0 -22px 14px;
+        padding: 0 22px 4px;
+        scrollbar-width: none;
+      }
+
+      .filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .bio-section {
+        margin-bottom: 16px;
+      }
+
+      .bio-row {
+        padding: 14px;
+        margin-bottom: 9px;
+      }
+
+      .bio-row-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .range {
+        position: relative;
+        display: grid;
+        grid-template-columns: 28% 42% 30%;
+        height: 8px;
+        margin-top: 12px;
+        overflow: visible;
+        border-radius: 999px;
+        background: #ebe8e2;
+      }
+
+      .range span {
+        display: block;
+        height: 8px;
+      }
+
+      .range .r-red {
+        background: #f4c2b7;
+      }
+
+      .range .r-green {
+        background: #63b36a;
+      }
+
+      .range .r-gold {
+        background: #e9b14b;
+      }
+
+      .marker {
+        position: absolute;
+        top: -4px;
+        left: var(--pos, 50%);
+        width: 16px;
+        height: 16px;
+        border: 3px solid #fff;
+        border-radius: 999px;
+        background: var(--marker, var(--green));
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.18);
+      }
+
+      .hero-value {
+        padding: 22px;
+        text-align: center;
+      }
+
+      .hero-value strong {
+        display: block;
+        font-size: 58px;
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+      }
+
+      .hero-value span {
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .product-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .shop-card {
+        overflow: hidden;
+      }
+
+      .shop-art {
+        display: grid;
+        place-items: center;
+        height: 118px;
+        background:
+          radial-gradient(circle at 35% 30%, rgba(255, 248, 82, 0.4), transparent 40px),
+          linear-gradient(145deg, #dfe6df, #f4f2ed);
+        color: var(--brown);
+      }
+
+      .shop-body {
+        padding: 12px;
+      }
+
+      .profile-banner {
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .banner-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .progress-track {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #d8ead8;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 42%;
+        border-radius: inherit;
+        background: var(--green);
+      }
+
+      .profile-banner.not_started {
+        background: #fff9ed;
+      }
+
+      .profile-banner.in_progress,
+      .profile-banner.complete {
+        background: #edf7f0;
+      }
+
+      .profile-banner.update_required {
+        background: var(--red-soft);
+      }
+
+      .profile-banner.update_recommended {
+        background: #fffae9;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.08);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .tag.green {
+        background: #d8ecdc;
+        color: #3f7f49;
+      }
+
+      .tag.orange {
+        background: #ffe0cf;
+        color: var(--red);
+      }
+
+      .tag.gold {
+        background: #fff0bd;
+        color: #9b7411;
+      }
+
+      .mini-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        margin-top: 12px;
+        padding: 0 18px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: var(--brown);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .mini-cta.outline {
+        border-color: #cfbd71;
+        background: transparent;
+        color: #9b7411;
+      }
+
+      .bottom-nav {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        padding: 11px 12px 20px;
+        border-top: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .nav-item {
+        display: grid;
+        place-items: center;
+        gap: 4px;
+        color: #777a7d;
+        font-size: 11px;
+        line-height: 1;
+      }
+
+      .nav-item.active {
+        color: #000;
+        font-weight: 850;
+      }
+
+      .nav-item.active::before {
+        content: "";
+        position: absolute;
+        bottom: 82px;
+        width: 62px;
+        height: 4px;
+        border-radius: 999px;
+        background: #000;
+      }
+
+      .code-note {
+        max-width: 1440px;
+        margin: 34px auto 0;
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.68);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .state-board {
+        max-width: 1440px;
+        margin: 28px auto 0;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.68);
+      }
+
+      .state-board h2 {
+        margin: 0 0 14px;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+      }
+
+      .state-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(210px, 1fr));
+        gap: 12px;
+      }
+
+      @media (max-width: 1440px) {
+        .canvas {
+          grid-template-columns: repeat(2, minmax(315px, 1fr));
+        }
+
+        .canvas.three-up {
+          grid-template-columns: repeat(2, minmax(315px, 1fr));
+        }
+
+        .state-grid {
+          grid-template-columns: repeat(2, minmax(240px, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          padding: 24px 14px 42px;
+        }
+
+        .canvas {
+          grid-template-columns: 1fr;
+        }
+
+        .interactive-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .board-header {
+          display: grid;
+        }
+
+        .canvas.three-up {
+          grid-template-columns: 1fr;
+        }
+
+        .state-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .phone {
+          max-width: 390px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="board-header">
+          <h1 class="board-title">ULC x LifeForce Experience</h1>
+          <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
+            <button type="button" data-view="interactive" aria-pressed="true">Interactive</button>
+            <button type="button" data-view="all" aria-pressed="false">All screens</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="interactive-preview view-panel" id="interactiveView" aria-label="Interactive prototype preview">
+        <div id="livePreview"></div>
+        <aside class="toolbar">
+          <div class="toolbar-head">
+            <h2>Interactive Preview Toggle</h2>
+            <span class="toolbar-note">Prototype only</span>
+          </div>
+          <div id="stateControls"></div>
+        </aside>
+      </section>
+
+      <section class="view-panel" id="allScreensView" hidden>
+        <div class="at-glance-label">All states at a glance</div>
+        <section class="canvas" id="canvas" aria-label="Four LifeForce home variants"></section>
+
+        <section class="hero" style="margin-top: 44px">
+          <p class="eyebrow">Labs Flow</p>
+          <h1>Reports + Results</h1>
+        </section>
+
+        <section class="canvas three-up" id="labsFlow" aria-label="LifeForce lab report flow"></section>
+
+        <section class="hero" style="margin-top: 44px">
+          <p class="eyebrow">Recommendations / Products Flow</p>
+          <h1>Recommendations + Products</h1>
+        </section>
+
+        <section class="canvas three-up" id="productFlow" aria-label="LifeForce recommendations and product flow"></section>
+
+        <section class="state-board" aria-label="Reusable LifeForce Health Profile states">
+          <h2>Reusable LifeForce Health Profile States</h2>
+          <div class="state-grid" id="profileStates"></div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const icons = {
+        home: "home",
+        book: "book-open",
+        schedule: "calendar-days",
+        labs: "badge-plus",
+        account: "circle-user-round",
+      };
+
+      const products = [
+        { icon: "sun", name: "Vitamin D3", price: "$32/mo" },
+        { icon: "fish", name: "Omega-3", price: "$38/mo" },
+        { icon: "sparkles", name: "Magnesium", price: "$28/mo" },
+      ];
+
+      const personalizedProducts = [
+        { icon: "pill", name: "Vitamin D3 · 4000 IU", detail: "Updated after clinician review" },
+        { icon: "heart-pulse", name: "Omega-3 Protocol", detail: "For cardiovascular optimization" },
+      ];
+
+      const variants = [
+        {
+          key: "non_member_no_labs",
+          label: "01 · Non-member · No labs",
+          title: "Your Longevity Plan",
+          subtitle: "Powered by LifeForce",
+          introTitle: "LifeForce powers the clinical side of ULC",
+          context: "Your health profile and bloodwork help LifeForce create clinician-reviewed recommendations for your plan.",
+          actionTitle: "First step: Health Profile",
+          actionCopy: "Answer a few questions before your first blood draw.",
+          cta: "Start Health Profile",
+          ctaIcon: "clipboard-list",
+          profileState: "not_started",
+          hasLabs: false,
+          profileTitle: "Complete your LifeForce Health Profile",
+          profileCopy: "Your answers help personalize your lab review and recommendations.",
+          productTitle: "Browse products",
+          productCopy: "Explore ULC wellness products before your labs.",
+          footerCard: "membership",
+          noLabsCta: "Start Your Plan",
+        },
+        {
+          key: "member_no_labs",
+          label: "02 · Member · No labs",
+          title: "Your Longevity Plan",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          compactContext: true,
+          context: "LifeForce helps turn your health profile and bloodwork into personalized recommendations for ULC services, products, and care.",
+          actionTitle: "Book your first blood draw",
+          actionCopy: "Your LifeForce plan begins with comprehensive bloodwork and clinical review.",
+          cta: "Book Blood Draw",
+          ctaIcon: "syringe",
+          profileState: "in_progress",
+          hasLabs: false,
+          profileTitle: "Finish your LifeForce Health Profile",
+          profileCopy: "A few questions to prepare for your consult.",
+          productTitle: "Browse Products While You Wait",
+          productCopy: "Your personalized recommendations will appear after your bloodwork is reviewed.",
+          footerCard: "membershipStatus",
+          noLabsCta: "Book Blood Draw",
+        },
+        {
+          key: "non_member_prior_labs",
+          label: "03 · Non-member · Prior labs",
+          title: "Pick up where you left off",
+          subtitle: "LifeForce can use your lab history, health profile, and updated biomarkers to help personalize your next ULC plan.",
+          compactContext: true,
+          context: "Review prior biomarkers, refresh bloodwork if needed, then unlock personalized ULC next steps.",
+          actionTitle: "Pick up where you left off",
+          actionCopy: "Your previous labs may help inform your next plan. Join or book a review to unlock updated recommendations.",
+          cta: "Explore Membership",
+          ctaIcon: "sparkles",
+          profileState: "update_required",
+          hasLabs: true,
+          priorLabs: true,
+          productTitle: "Browse Products",
+          productCopy: "Explore supplements and wellness products available through ULC. Personalized recommendations unlock after updated bloodwork is reviewed.",
+        },
+        {
+          key: "member_prior_labs",
+          label: "04 · Member · Prior labs",
+          title: "Your Longevity Plan",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          poweredChip: true,
+          compactContext: true,
+          context: "Complete profile, review biomarkers, and get personalized next steps.",
+          actionTitle: "Schedule your next draw",
+          actionCopy: "Keep your LifeForce plan current with updated biomarkers and clinician review.",
+          cta: "Book Blood Draw",
+          ctaIcon: "calendar-plus",
+          profileState: "complete",
+          hasLabs: true,
+          memberPriorLabs: true,
+          productTitle: "Your Product Recommendations",
+          productCopy: "Based on your latest bloodwork, LifeForce Health Profile, and clinician review.",
+        },
+      ];
+
+      const profileStates = {
+        not_started: {
+          tag: "Not Started",
+          copy: "Complete your LifeForce Health Profile to unlock personalized recommendations.",
+          button: "Start Health Profile",
+          tagClass: "",
+        },
+        in_progress: {
+          tag: "In Progress",
+          copy: "3 of 8 sections complete",
+          button: "Continue",
+          tagClass: "green",
+          progress: true,
+        },
+        complete: {
+          tag: "Complete",
+          copy: "Your profile is up to date. Recommendations are personalized to your health data.",
+          button: "View Answers",
+          tagClass: "green",
+          outline: true,
+        },
+        update_required: {
+          tag: "Update Required",
+          copy: "Your LifeForce Health Profile needs updating to keep recommendations accurate.",
+          button: "Update Now",
+          tagClass: "orange",
+          orange: true,
+        },
+        update_recommended: {
+          tag: "Update Recommended",
+          copy: "New questions are available. Update your profile for better recommendations.",
+          button: "Review Updates",
+          tagClass: "gold",
+          outline: true,
+        },
+      };
+
+      const previewControls = [
+        {
+          id: "userType",
+          label: "Preview as:",
+          options: [
+            ["non_member_no_labs", "Non-member · No prior labs"],
+            ["member_no_labs", "Member · No prior labs"],
+            ["non_member_prior_labs", "Non-member · Prior labs"],
+            ["member_prior_labs", "Member · Prior labs"],
+          ],
+        },
+        {
+          id: "profileStatus",
+          label: "LifeForce Health Profile Status:",
+          options: [
+            ["not_started", "Not started"],
+            ["in_progress", "In progress"],
+            ["complete", "Complete"],
+            ["update_required", "Update required"],
+            ["update_recommended", "Update recommended"],
+          ],
+        },
+        {
+          id: "resultsStatus",
+          label: "Results Status:",
+          options: [
+            ["no_labs", "No labs"],
+            ["labs_booked", "Labs booked"],
+            ["labs_processing", "Labs processing"],
+            ["labs_reviewed", "Labs reviewed"],
+            ["recommendations_ready", "Recommendations ready"],
+            ["recommendations_locked", "Recommendations locked"],
+          ],
+        },
+      ];
+
+      const previewState = {
+        userType: "non_member_no_labs",
+        profileStatus: "not_started",
+        resultsStatus: "no_labs",
+      };
+
+      function icon(name, size = 20) {
+        return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+      }
+
+      function statusBar() {
+        return `
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">${icon("signal", 14)}${icon("wifi", 14)}${icon("battery-full", 14)}</span>
+          </div>
+        `;
+      }
+
+      function bottomNav() {
+        const tabs = [
+          ["Home", icons.home],
+          ["Book", icons.book],
+          ["Schedule", icons.schedule],
+          ["Labs", icons.labs],
+          ["Account", icons.account],
+        ];
+        return `
+          <nav class="bottom-nav" aria-label="ULC bottom navigation">
+            ${tabs
+              .map(
+                ([label, glyph]) => `
+                  <div class="nav-item ${label === "Labs" ? "active" : ""}">
+                    ${icon(glyph, 21)}
+                    <span>${label}</span>
+                  </div>
+                `,
+              )
+              .join("")}
+          </nav>
+        `;
+      }
+
+      function header(v) {
+        return `
+          <header class="header">
+            <div class="header-row">
+              <div>
+                <h2 class="title">${v.title}</h2>
+                <p class="subtitle">${v.subtitle}</p>
+                ${v.poweredChip ? `<span class="power-chip">${icon("sparkles", 13)} LifeForce Powered</span>` : ""}
+              </div>
+              ${v.member ? `<span class="member-chip">${icon("check", 13)} Member</span>` : ""}
+            </div>
+          </header>
+        `;
+      }
+
+      function contextModule(v) {
+        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs");
+        return `
+          <section class="card module context ${v.compactContext ? "compact" : ""} ${early ? "early-context" : ""}">
+            <h3 class="module-title">${v.introTitle || "How LifeForce works inside ULC"}</h3>
+            <p class="module-copy">${v.context}</p>
+            <div class="process">
+              <div class="step">${icon("test-tube-2", 15)}<br />Measure${early ? "<small>Profile + bloodwork</small>" : ""}</div>
+              <span class="arrow">${icon("arrow-right", 15)}</span>
+              <div class="step">${icon("clipboard-check", 15)}<br />Review${early ? "<small>Clinician insight</small>" : ""}</div>
+              <span class="arrow">${icon("arrow-right", 15)}</span>
+              <div class="step">${icon("sparkles", 15)}<br />Personalize${early ? "<small>Products + services</small>" : ""}</div>
+            </div>
+          </section>
+        `;
+      }
+
+      function unlockCard() {
+        const items = [
+          ["activity", "Biomarker insights"],
+          ["clipboard-check", "Clinician review"],
+          ["sparkles", "Product + service picks"],
+          ["stethoscope", "Rx options"],
+        ];
+        return `
+          <section class="card early-unlocks">
+            <h3 class="module-title">What you’ll unlock</h3>
+            <div class="unlock-grid">
+              ${items
+                .map(
+                  ([glyph, label]) => `
+                    <div class="unlock-item">
+                      <span class="icon-bubble green">${icon(glyph, 18)}</span>
+                      <h4 class="row-title">${label}</h4>
+                    </div>
+                  `,
+                )
+                .join("")}
+            </div>
+            <p class="unlock-caption">Personalized after your bloodwork is reviewed.</p>
+          </section>
+        `;
+      }
+
+      function lightweightProductBrowse(v) {
+        const categories = ["Foundations", "Sleep", "Energy", "Metabolic"];
+        return `
+          <section class="card product-card early-products">
+            <h3 class="module-title">${v.productTitle}</h3>
+            <p class="module-copy">${v.productCopy}</p>
+            <div class="chip-row">
+              ${categories.map((category) => `<span class="chip">${category}</span>`).join("")}
+            </div>
+            <p class="unlock-caption">Personalized picks unlock after bloodwork.</p>
+            <button class="cta ghost">Browse Products ${icon("arrow-right", 17)}</button>
+          </section>
+        `;
+      }
+
+      function membershipConversionCard() {
+        return `
+          <section class="card module membership early-membership">
+            <h3 class="module-title">Unlock your full plan</h3>
+            <p class="module-copy">Membership includes clinical review, personalized recommendations, and ongoing tracking.</p>
+            <button class="cta">Explore Membership</button>
+          </section>
+        `;
+      }
+
+      function actionModule(v) {
+        if (!v.actionTitle) return "";
+        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs");
+        return `
+          <section class="card module action ${early ? "early-action" : ""}">
+            <h3 class="module-title">${v.actionTitle}</h3>
+            <p class="module-copy">${v.actionCopy}</p>
+            <button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>
+          </section>
+        `;
+      }
+
+      function profileBanner(state, customTitle, customCopy) {
+        const s = profileStates[state];
+        return `
+          <section class="card profile-banner ${state}">
+            <div class="banner-top">
+              <span class="tag ${s.tagClass}">${state === "complete" ? icon("check", 13) : ""}${s.tag}</span>
+            </div>
+            <h3 class="module-title">${customTitle || "LifeForce Health Profile"}</h3>
+            <p class="module-copy">${customCopy || s.copy}</p>
+            ${s.progress ? `<div class="progress-track" aria-label="${s.copy}"><div class="progress-fill"></div></div>` : ""}
+            <button class="mini-cta ${s.outline ? "outline" : ""}">${s.button}</button>
+          </section>
+        `;
+      }
+
+      function rowCard({ title, copy, iconName, tone = "", className = "" }) {
+        return `
+          <section class="card row-card ${className}">
+            <span class="icon-bubble ${tone}">${icon(iconName, 21)}</span>
+            <div>
+              <h3 class="row-title">${title}</h3>
+              <p class="row-copy">${copy}</p>
+            </div>
+            ${icon("chevron-right", 19)}
+          </section>
+        `;
+      }
+
+      function productCard(v, personalized = false) {
+        return `
+          <section class="card product-card">
+            <div class="card-head">
+              <h3 class="module-title">${v.productTitle}</h3>
+              ${personalized ? `<span class="status-pill">Updated</span>` : `<span class="link">Browse All</span>`}
+            </div>
+            <p class="module-copy">${v.productCopy}</p>
+            ${
+              personalized
+                ? `<div style="margin-top:12px">
+                    ${personalizedProducts
+                      .map(
+                        (p) => `
+                          <div class="rec-row">
+                            <span class="icon-bubble green">${icon(p.icon, 19)}</span>
+                            <div>
+                              <h4 class="row-title">${p.name}</h4>
+                              <p class="row-copy">${p.detail}</p>
+                            </div>
+                            ${icon("chevron-right", 18)}
+                          </div>
+                        `,
+                      )
+                      .join("")}
+                  </div>`
+                : `<div class="products" style="margin-top:14px">
+                    ${products
+                      .map(
+                        (p) => `
+                          <div class="product">
+                            <div class="product-art">${icon(p.icon, 28)}</div>
+                            <p class="product-name">${p.name}</p>
+                            <div class="price">${p.price}</div>
+                          </div>
+                        `,
+                      )
+                      .join("")}
+                  </div>`
+            }
+            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "View Recommendations" : "Browse Products"} ${icon("arrow-right", 17)}</button>
+          </section>
+        `;
+      }
+
+      function labReportsHub(v) {
+        if (v.resultsStatus === "labs_booked") {
+          return `
+            <section class="card lab-card">
+              <div class="lab-head">
+                <span class="icon-bubble">${icon("calendar-check", 22)}</span>
+                <div>
+                  <h3 class="module-title">Labs booked</h3>
+                  <p class="row-copy">Your LifeForce blood panel is scheduled. Results will appear here after your draw is processed.</p>
+                </div>
+              </div>
+              <button class="cta ghost">View Appointment ${icon("arrow-right", 17)}</button>
+            </section>
+          `;
+        }
+
+        if (v.resultsStatus === "labs_processing") {
+          return `
+            <section class="card lab-card">
+              <div class="lab-head">
+                <span class="icon-bubble">${icon("loader", 22)}</span>
+                <div>
+                  <h3 class="module-title">Bloodwork processing</h3>
+                  <p class="row-copy">Your LifeForce blood panel is being processed. Recommendations unlock after clinical review.</p>
+                </div>
+              </div>
+              <button class="cta ghost">View Lab Status ${icon("arrow-right", 17)}</button>
+            </section>
+          `;
+        }
+
+        if (!v.hasLabs) {
+          return `
+            <section class="card lab-card">
+              <div class="lab-head">
+                <span class="icon-bubble">${icon("file-clock", 22)}</span>
+                <div>
+                  <h3 class="module-title">No lab reports yet</h3>
+                  <p class="row-copy">Your results will appear here after your first blood draw is processed.</p>
+                </div>
+              </div>
+              <button class="cta ghost">${v.noLabsCta || "Book Blood Draw"} ${icon("arrow-right", 17)}</button>
+            </section>
+          `;
+        }
+
+        return `
+          <section class="card lab-card">
+            <div class="card-head">
+              <div>
+                <h3 class="module-title">Lab Reports</h3>
+                <p class="module-copy">Review your previous LifeForce blood panels and biomarker trends.</p>
+              </div>
+              ${icon("chevron-right", 20)}
+            </div>
+            <p class="row-copy"><strong>Latest:</strong> Mar 12, 2026 · LifeForce Blood Panel</p>
+            <div class="metrics">
+              <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
+              <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
+              <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+            </div>
+            <button class="cta ghost">View Reports ${icon("arrow-right", 17)}</button>
+          </section>
+        `;
+      }
+
+      function recommendationsLockedCard(v) {
+        const lockedCopy = v.member
+          ? "Your recommendations will appear after LifeForce completes clinical review of your bloodwork and LifeForce Health Profile."
+          : "Join LifeForce to unlock clinician-reviewed recommendations based on your lab results and LifeForce Health Profile.";
+        return `
+          <section class="card module membership">
+            <div class="card-head">
+              <h3 class="module-title">Recommendations locked</h3>
+              <span class="status-pill gray">${icon("lock", 13)} Locked</span>
+            </div>
+            <p class="module-copy">${lockedCopy}</p>
+            <button class="cta">${v.member ? "Check Review Status" : "Explore Membership"}</button>
+          </section>
+        `;
+      }
+
+      function documentCard() {
+        return rowCard({
+          title: "Documents",
+          copy: "View LifeForce forms, lab PDFs, and care documents.",
+          iconName: "folder-open",
+        });
+      }
+
+      function utilityCards(v) {
+        return `
+          <div class="utility-grid">
+            <section class="card utility-card">
+              <span class="icon-bubble green">${icon("clipboard-list", 19)}</span>
+              <h3 class="row-title">LifeForce Health Profile</h3>
+              <p class="row-copy">Complete or update your profile.</p>
+            </section>
+            <section class="card utility-card">
+              <span class="icon-bubble">${icon("folder-open", 19)}</span>
+              <h3 class="row-title">Documents</h3>
+              <p class="row-copy">Forms, lab PDFs, and care documents.</p>
+            </section>
+          </div>
+        `;
+      }
+
+      function latestLabs() {
+        return `
+          <section class="card lab-card">
+            <div class="lab-head">
+              <span class="icon-bubble green">${icon("flask-conical", 22)}</span>
+              <div>
+                <h3 class="module-title">Latest Lab Results</h3>
+                <p class="row-copy">Collected Mar 12, 2026</p>
+              </div>
+            </div>
+            <div class="metrics">
+              <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
+              <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
+              <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+            </div>
+            <button class="cta ghost">View Full Results ${icon("arrow-right", 17)}</button>
+          </section>
+          <div class="note">${icon("clock-3", 17)}<span>Your previous labs may need to be refreshed before new recommendations are finalized.</span></div>
+        `;
+      }
+
+      function membershipUpsell() {
+        return `
+          <section class="card membership dark">
+            <p class="eyebrow-small">${icon("sparkles", 15)} Recommended next step</p>
+            <h3 class="module-title">Unlock Personalized Longevity Plans</h3>
+            <p class="module-copy">Join LifeForce to get clinician-reviewed recommendations based on your lab results, ongoing monitoring, and access to member savings.</p>
+            <button class="cta">Explore Membership</button>
+          </section>
+        `;
+      }
+
+      function quickInsights() {
+        return `
+          <div class="section-title">
+            <span>Quick Insights</span>
+            <span class="link">Sign up to see all ${icon("arrow-right", 13)}</span>
+          </div>
+          <section class="card insight">
+            <span class="icon-bubble green">${icon("heart-pulse", 19)}</span>
+            <div>
+              <h4 class="row-title">Vitamin D — Attention</h4>
+              <p class="row-copy">Consider supplementation after refreshed labs and review.</p>
+            </div>
+          </section>
+          <section class="card insight">
+            <span class="icon-bubble">${icon("droplets", 19)}</span>
+            <div>
+              <h4 class="row-title">Cholesterol — Borderline</h4>
+              <p class="row-copy">Dietary changes may help. Full plan available with membership.</p>
+            </div>
+          </section>
+        `;
+      }
+
+      function drawHistory() {
+        return `
+          <section class="card history">
+            <div class="card-head">
+              <h3 class="module-title">Draw History</h3>
+              <span class="link">See all ${icon("arrow-right", 13)}</span>
+            </div>
+            <div class="history-row">
+              <span class="dot"></span>
+              <div>
+                <h4 class="row-title">Mar 12, 2026</h4>
+                <p class="row-copy">19 biomarkers · Results reviewed</p>
+              </div>
+              <span class="status-pill">Complete</span>
+            </div>
+            <div class="history-row">
+              <span class="dot gray"></span>
+              <div>
+                <h4 class="row-title">Sep 5, 2025</h4>
+                <p class="row-copy">15 biomarkers · Baseline draw</p>
+              </div>
+              <span class="status-pill gray">Archived</span>
+            </div>
+          </section>
+        `;
+      }
+
+      function recommendations() {
+        return `
+          <section class="card recommendation">
+            <div class="card-head">
+              <h3 class="module-title">Your Recommendations</h3>
+              <span class="status-pill">Updated</span>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble green">${icon("pill", 19)}</span>
+              <div>
+                <h4 class="row-title">Vitamin D3 · 4000 IU</h4>
+                <p class="row-copy">Clinician-approved · Take daily with food</p>
+              </div>
+              ${icon("chevron-right", 18)}
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("heart", 19)}</span>
+              <div>
+                <h4 class="row-title">Omega-3 Protocol</h4>
+                <p class="row-copy">For cardiovascular optimization</p>
+              </div>
+              ${icon("chevron-right", 18)}
+            </div>
+          </section>
+        `;
+      }
+
+      function liveHubContent(v) {
+        if (v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs") {
+          return `
+            ${unlockCard()}
+            ${membershipConversionCard()}
+            ${lightweightProductBrowse(v)}
+          `;
+        }
+
+        const hasReadyRecommendations = v.resultsStatus === "recommendations_ready";
+        const hasLockedRecommendations = v.resultsStatus === "recommendations_locked";
+        const showMemberStatus = v.member;
+        const showMembershipUpsell = !v.member && (v.hasLabs || hasLockedRecommendations);
+
+        return `
+          ${profileBanner(v.profileState, v.profileTitle, v.profileCopy)}
+          ${labReportsHub(v)}
+          ${
+            hasReadyRecommendations
+              ? `${recommendations()}${productCard(v, true)}`
+              : hasLockedRecommendations
+                ? `${recommendationsLockedCard(v)}${productCard(v, false)}`
+                : productCard(v, false)
+          }
+          ${utilityCards(v)}
+          ${
+            showMemberStatus
+              ? rowCard({
+                  title: "Your Membership",
+                  copy: "Active · LifeForce Diagnostic Plan",
+                  iconName: "badge-check",
+                  tone: "green",
+                  className: "membership-status",
+                })
+              : showMembershipUpsell
+                ? rowCard({
+                    title: "Unlock Personalized Longevity Plans",
+                    copy: "Become a member for clinical review, personalized recommendations, and member savings.",
+                    iconName: "crown",
+                    className: "membership",
+                  })
+                : rowCard({
+                    title: "Become a Member",
+                    copy: "Unlock clinical review, personalized recommendations, and member savings.",
+                    iconName: "crown",
+                    className: "membership",
+                  })
+          }
+          ${documentCard()}
+        `;
+      }
+
+      function lowerContent(v) {
+        if (v.livePreview) {
+          return liveHubContent(v);
+        }
+
+        if (v.key === "non_member_no_labs") {
+          return `
+            ${unlockCard()}
+            ${membershipConversionCard()}
+            ${lightweightProductBrowse(v)}
+          `;
+        }
+
+        if (v.priorLabs) {
+          return `
+            ${profileBanner(v.profileState)}
+            ${labReportsHub(v)}
+            ${membershipUpsell()}
+            ${quickInsights()}
+            ${productCard(v, false)}
+            ${documentCard()}
+          `;
+        }
+
+        if (v.memberPriorLabs) {
+          return `
+            ${profileBanner(v.profileState)}
+            ${labReportsHub(v)}
+            ${recommendations()}
+            ${productCard(v, true)}
+            ${drawHistory()}
+            ${documentCard()}
+          `;
+        }
+
+        return `
+          ${profileBanner(v.profileState, v.profileTitle, v.profileCopy)}
+          ${labReportsHub(v)}
+          ${productCard(v, false)}
+          ${utilityCards(v)}
+          ${
+            v.footerCard === "membership"
+              ? rowCard({
+                  title: "Become a Member",
+                  copy: "Unlock clinical review, personalized recommendations, and member savings.",
+                  iconName: "crown",
+                  className: "membership",
+                })
+              : rowCard({
+                  title: "Your Membership",
+                  copy: "Active · LifeForce Diagnostic Plan",
+                  iconName: "badge-check",
+                  tone: "green",
+                  className: "membership-status",
+                })
+          }
+        `;
+      }
+
+      function renderVariant(v) {
+        return `
+          <article class="variant">
+            <div class="variant-label"><span>${v.label}</span></div>
+            <div class="phone">
+              ${statusBar()}
+              <div class="screen">
+                ${header(v)}
+                ${contextModule(v)}
+                ${actionModule(v)}
+                ${lowerContent(v)}
+              </div>
+              ${bottomNav()}
+            </div>
+          </article>
+        `;
+      }
+
+      function phoneScreen(label, body) {
+        return `
+          <article class="variant">
+            <div class="variant-label"><span>${label}</span></div>
+            <div class="phone">
+              ${statusBar()}
+              <div class="screen">${body}</div>
+              ${bottomNav()}
+            </div>
+          </article>
+        `;
+      }
+
+      function titleBar(title, subtitle, rightIcon = "") {
+        return `
+          <header class="header">
+            <div class="header-row">
+              <div>
+                <h2 class="title">${title}</h2>
+                <p class="subtitle">${subtitle}</p>
+              </div>
+              ${rightIcon ? `<span class="icon-bubble">${icon(rightIcon, 22)}</span>` : ""}
+            </div>
+          </header>
+        `;
+      }
+
+      function reportCard({ date, latest, counts, status, muted }) {
+        return `
+          <section class="card report-list-card">
+            <div class="report-top">
+              <div>
+                <h3 class="module-title">${date}</h3>
+                <p class="module-copy">LifeForce Blood Panel</p>
+              </div>
+              ${latest ? `<span class="status-pill">Latest</span>` : icon("chevron-right", 20)}
+            </div>
+            <div class="chip-row">
+              <span class="chip green">${counts[0]} Optimal</span>
+              <span class="chip gold">${counts[1]} Monitor</span>
+              <span class="chip red">${counts[2]} Attention</span>
+            </div>
+            <div class="review-status">${muted ? icon("loader", 15) : icon("check-circle-2", 15)} ${status}</div>
+          </section>
+        `;
+      }
+
+      function labReportsListing() {
+        return phoneScreen(
+          "05 · Lab reports listing",
+          `
+            ${titleBar("Lab Reports", "LifeForce Blood Panels", "plus")}
+            <div class="filter-bar">
+              <span class="chip active">All</span>
+              <span class="chip">Needs Attention</span>
+              <span class="chip">Optimal</span>
+              <span class="chip">By Category</span>
+            </div>
+            ${reportCard({ date: "Mar 12, 2026", latest: true, counts: [12, 5, 2], status: "Reviewed" })}
+            ${reportCard({ date: "Sep 5, 2025", counts: [10, 4, 1], status: "Reviewed" })}
+            ${reportCard({ date: "May 10, 2025", counts: [0, 0, 0], status: "Processing", muted: true })}
+          `,
+        );
+      }
+
+      function labReportsEmpty() {
+        return phoneScreen(
+          "06 · Lab reports empty state",
+          `
+            ${titleBar("Lab Reports", "LifeForce Blood Panels")}
+            <section class="card empty-state">
+              <div>
+                <span class="icon-bubble">${icon("file-clock", 30)}</span>
+                <h3 class="module-title">No lab reports yet</h3>
+                <p class="module-copy">Your LifeForce blood panel results will appear here after your first blood draw is processed.</p>
+                <button class="cta">Book Blood Draw</button>
+                <button class="cta ghost">Back to Longevity Plan</button>
+              </div>
+            </section>
+          `,
+        );
+      }
+
+      const biomarkers = [
+        { group: "Hormone Balance", name: "DHEA-Sulfate", value: "142", unit: "µg/dL", status: "Monitor", tone: "gold", pos: "36%", marker: "#c8941e" },
+        { group: "Critical Nutrients", name: "Vitamin D, 25-Hydroxy", value: "45", unit: "ng/mL", status: "Optimal", tone: "green", pos: "54%", marker: "#4d8f45" },
+        { group: "Metabolic Health", name: "Fasting Glucose", value: "105", unit: "mg/dL", status: "Monitor", tone: "gold", pos: "66%", marker: "#c8941e" },
+        { group: "Key Risk Factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Attention · High", tone: "red", pos: "88%", marker: "#d94b35" },
+        { group: "Organ Health", name: "Creatinine", value: "0.82", unit: "mg/dL", status: "Optimal", tone: "green", pos: "48%", marker: "#4d8f45" },
+      ];
+
+      function rangeBar(b) {
+        return `
+          <div class="range" style="--pos:${b.pos};--marker:${b.marker}">
+            <span class="r-red"></span><span class="r-green"></span><span class="r-gold"></span><i class="marker"></i>
+          </div>
+        `;
+      }
+
+      function biomarkerRow(b) {
+        return `
+          <section class="card bio-row">
+            <div class="bio-row-head">
+              <div>
+                <h4 class="row-title">${b.name}</h4>
+                <p class="row-copy">${b.value} ${b.unit}</p>
+              </div>
+              <span class="chip ${b.tone}">${b.status}</span>
+            </div>
+            ${rangeBar(b)}
+          </section>
+        `;
+      }
+
+      function labReportDetail() {
+        const grouped = ["Hormone Balance", "Critical Nutrients", "Metabolic Health", "Key Risk Factors", "Organ Health"]
+          .map(
+            (group) => `
+              <div class="bio-section">
+                <div class="section-title"><span>${group}</span></div>
+                ${biomarkers.filter((b) => b.group === group).map(biomarkerRow).join("")}
+              </div>
+            `,
+          )
+          .join("");
+
+        return phoneScreen(
+          "07 · Lab report detail",
+          `
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LifeForce Blood Panel", "March 15, 2025").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <section class="card module">
+              <h3 class="module-title">Clinician Summary</h3>
+              <div class="note-preview">
+                <p class="module-copy">Most of your biomarkers are in an optimal range. Your recommendations focus on hormone balance, metabolic health, and nutrient optimization. Your clinician suggests a few targeted next steps based on the newest panel.</p>
+              </div>
+              <button class="mini-cta outline">Read full note</button>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Result Summary</h3>
+              <div class="metrics">
+                <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
+                <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
+                <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+              </div>
+              <button class="cta">View Recommendations</button>
+              <button class="cta ghost">See all biomarkers</button>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Recommendations from this report</h3>
+              <p class="module-copy">2 products and 2 next steps are ready based on this bloodwork.</p>
+              <button class="cta ghost">View Recommendations ${icon("arrow-right", 17)}</button>
+            </section>
+            <div class="filter-bar">
+              <span class="chip active">All</span><span class="chip">Needs Attention</span><span class="chip">Optimal</span><span class="chip">By Category</span>
+            </div>
+            ${grouped}
+          `,
+        );
+      }
+
+      function biomarkerDetail() {
+        const b = biomarkers.find((item) => item.name === "LDL Cholesterol");
+        return phoneScreen(
+          "08 · Biomarker detail",
+          `
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LDL Cholesterol", "Key Risk Factors · Cardiovascular").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <section class="card hero-value">
+              <strong style="color:#d94b35">168</strong>
+              <span>mg/dL</span>
+              <div class="chip-row" style="justify-content:center"><span class="chip red">Attention · High</span></div>
+              ${rangeBar(b)}
+              <p class="module-copy">Optimal range: &lt; 100 mg/dL</p>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">History over time</h3>
+              <div class="history-row"><span class="dot" style="background:#d94b35"></span><p class="row-copy">May 2, 2026</p><strong>168</strong></div>
+              <div class="history-row"><span class="dot" style="background:#c8941e"></span><p class="row-copy">Jan 15, 2026</p><strong>142</strong></div>
+              <div class="history-row"><span class="dot"></span><p class="row-copy">Sep 8, 2025</p><strong>128</strong></div>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">What this means</h3>
+              <p class="module-copy">LDL cholesterol is one marker used to evaluate cardiovascular risk. Your clinician may consider diet, activity, supplements, and follow-up testing in context with the rest of your panel.</p>
+            </section>
+            <section class="card recommendation">
+              <h3 class="module-title">Related recommendations</h3>
+              <div class="rec-row"><span class="icon-bubble">${icon("heart-pulse", 18)}</span><div><h4 class="row-title">Omega-3 Protocol</h4><p class="row-copy">Product recommendation</p></div>${icon("chevron-right", 18)}</div>
+              <div class="rec-row"><span class="icon-bubble green">${icon("calendar-plus", 18)}</span><div><h4 class="row-title">Follow-up consult</h4><p class="row-copy">ULC service</p></div>${icon("chevron-right", 18)}</div>
+              <div class="rec-row"><span class="icon-bubble">${icon("activity", 18)}</span><div><h4 class="row-title">Metabolic health plan</h4><p class="row-copy">Care next step</p></div>${icon("chevron-right", 18)}</div>
+            </section>
+          `,
+        );
+      }
+
+      function recommendationsPage() {
+        return phoneScreen(
+          "09 · Recommendations page",
+          `
+            ${titleBar("Your Recommendations", "Based on latest bloodwork, LifeForce Health Profile, and clinician review.", "sparkles")}
+            <section class="card module">
+              <h3 class="module-title">Plan summary</h3>
+              <p class="module-copy">2 product recommendations, 2 ULC service recommendations, and 1 follow-up action are ready from your latest report.</p>
+              <div class="chip-row">
+                <span class="chip green">Clinician reviewed</span>
+                <span class="chip">Mar 12, 2026 panel</span>
+              </div>
+            </section>
+            <section class="card recommendation">
+              <div class="card-head"><h3 class="module-title">Product recommendations</h3><span class="status-pill">Updated</span></div>
+              <div class="rec-row"><span class="icon-bubble green">${icon("pill", 18)}</span><div><h4 class="row-title">Vitamin D3 · 4000 IU</h4><p class="row-copy">Take daily with food · $32/mo</p></div><button class="mini-cta">Add</button></div>
+              <div class="rec-row"><span class="icon-bubble">${icon("heart-pulse", 18)}</span><div><h4 class="row-title">Omega-3 Protocol</h4><p class="row-copy">Cardiovascular optimization · $38/mo</p></div><button class="mini-cta">Add</button></div>
+            </section>
+            <section class="card recommendation">
+              <h3 class="module-title">ULC service recommendations</h3>
+              <div class="rec-row"><span class="icon-bubble">${icon("waves", 18)}</span><div><h4 class="row-title">Metabolic Health Consult</h4><p class="row-copy">Review LDL and glucose trends</p></div>${icon("chevron-right", 18)}</div>
+              <div class="rec-row"><span class="icon-bubble green">${icon("calendar-days", 18)}</span><div><h4 class="row-title">Next blood draw</h4><p class="row-copy">Schedule in 90 days</p></div>${icon("chevron-right", 18)}</div>
+            </section>
+            <section class="card module membership-status">
+              <h3 class="module-title">Membership Rx</h3>
+              <p class="module-copy">Member savings are applied to eligible supplements and follow-up services.</p>
+            </section>
+          `,
+        );
+      }
+
+      function productBrowsePage() {
+        return phoneScreen(
+          "10 · Product browse page",
+          `
+            ${titleBar("Products", "Browse supplements, lab tests, and bundles available through ULC.", "shopping-bag")}
+            <section class="card module">
+              <div class="row-card" style="margin:0;padding:0;border:0;box-shadow:none">
+                <span class="icon-bubble">${icon("search", 20)}</span>
+                <div><h3 class="row-title">Search products</h3><p class="row-copy">Supplements, tests, bundles...</p></div>
+              </div>
+            </section>
+            <div class="filter-bar">
+              <span class="chip active">All</span><span class="chip">Supplements</span><span class="chip">Lab Tests</span><span class="chip">Bundles</span>
+            </div>
+            <div class="section-title"><span>Popular Products</span></div>
+            <div class="product-grid-2">
+              ${[
+                ["Vitamin D3+K2", "Bone health & immunity", "$38/mo", "sun"],
+                ["Omega-3 Fish Oil", "Heart & brain support", "$45/mo", "fish"],
+                ["Magnesium Complex", "Sleep & recovery support", "$32/mo", "sparkles"],
+                ["NAD+ Boost", "Cellular energy & longevity", "$62/mo", "battery-charging"],
+              ]
+                .map(
+                  ([name, copy, price, glyph]) => `
+                    <section class="card shop-card">
+                      <div class="shop-art">${icon(glyph, 34)}</div>
+                      <div class="shop-body"><h3 class="row-title">${name}</h3><p class="row-copy">${copy}</p><p class="product-name">${price}</p></div>
+                    </section>
+                  `,
+                )
+                .join("")}
+            </div>
+          `,
+        );
+      }
+
+      function productDetailPage() {
+        return phoneScreen(
+          "11 · Product detail page",
+          `
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Supplement Details", "Vitamin D3 · 4000 IU").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <section class="card shop-card">
+              <div class="shop-art" style="height:190px">${icon("sun", 52)}</div>
+              <div class="shop-body" style="padding:18px">
+                <p class="eyebrow-small" style="color:#aa7b11;font-weight:850;letter-spacing:.1em;text-transform:uppercase">Critical nutrients</p>
+                <h3 class="title" style="font-size:25px">Vitamin D3 · 4000 IU</h3>
+                <p class="module-copy">Supports bone health, immunity, and nutrient optimization.</p>
+                <p class="title" style="font-size:26px;margin-top:14px">$32<span class="subtitle">/month</span></p>
+              </div>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Why this was recommended</h3>
+              <p class="module-copy">Your Vitamin D level was below the optimal range on your latest bloodwork. Your clinician reviewed this alongside your LifeForce Health Profile before recommending supplementation.</p>
+              <div class="chip-row"><span class="chip gold">Vitamin D</span><span class="chip green">Clinician reviewed</span></div>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Related ULC services</h3>
+              <p class="module-copy">Follow-up consult and next blood draw can help monitor response over time.</p>
+            </section>
+            <button class="cta">Add to Plan ${icon("plus", 18)}</button>
+          `,
+        );
+      }
+
+      function processingState() {
+        return phoneScreen(
+          "12 · Processing labs state",
+          `
+            ${titleBar("Lab Reports", "LifeForce Blood Panels")}
+            <section class="card empty-state">
+              <div>
+                <span class="icon-bubble">${icon("loader", 30)}</span>
+                <h3 class="module-title">Bloodwork processing</h3>
+                <p class="module-copy">Your LifeForce blood panel is being processed. Results and recommendations will appear after clinical review.</p>
+                <button class="cta ghost">Back to Longevity Plan</button>
+              </div>
+            </section>
+          `,
+        );
+      }
+
+      function recommendationsLocked() {
+        return phoneScreen(
+          "13 · Recommendations locked",
+          `
+            ${titleBar("Your Recommendations", "Pending clinical review", "lock")}
+            <section class="card empty-state membership">
+              <div>
+                <span class="icon-bubble">${icon("lock", 30)}</span>
+                <h3 class="module-title">Recommendations pending</h3>
+                <p class="module-copy">Your recommendations will appear after LifeForce completes clinical review of your bloodwork and LifeForce Health Profile.</p>
+                <button class="cta">Book Blood Draw</button>
+                <button class="cta ghost">Browse Products While You Wait</button>
+              </div>
+            </section>
+          `,
+        );
+      }
+
+      function renderControls() {
+        document.getElementById("stateControls").innerHTML = previewControls
+          .map(
+            (group) => `
+              <div class="control-group" data-control-group="${group.id}">
+                <div class="control-label">${group.label}</div>
+                <div class="segmented">
+                  ${group.options
+                    .map(
+                      ([value, label]) => `
+                        <button type="button" data-control="${group.id}" data-value="${value}" aria-pressed="${previewState[group.id] === value}">
+                          ${label}
+                        </button>
+                      `,
+                    )
+                    .join("")}
+                </div>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
+      function derivePreviewVariant() {
+        const base = variants.find((variant) => variant.key === previewState.userType) || variants[0];
+        const member = previewState.userType.startsWith("member");
+        const priorLabs = previewState.userType.includes("prior_labs");
+        const status = previewState.resultsStatus;
+        const earlyNoLabs = previewState.userType === "non_member_no_labs" && status === "no_labs";
+        const hasLabs = ["labs_reviewed", "recommendations_ready", "recommendations_locked"].includes(status) || (priorLabs && status !== "no_labs");
+        const recommendationsReady = status === "recommendations_ready";
+        const locked = status === "recommendations_locked";
+        const waiting = ["labs_booked", "labs_processing", "labs_reviewed"].includes(status);
+        const waitingProductCopy =
+          status === "labs_reviewed"
+            ? "Explore products available through ULC. Personalized recommendations appear once LifeForce completes clinical recommendation review."
+            : "Explore supplements and wellness products available through ULC. Personalized recommendations unlock after your bloodwork is reviewed.";
+
+        const stateCopy = {
+          no_labs: member
+            ? ["Book your first blood draw", "Your LifeForce plan begins with comprehensive bloodwork and clinical review.", "Book Blood Draw", "syringe"]
+            : ["First step: Health Profile", "Answer a few questions before your first blood draw.", "Start Health Profile", "clipboard-list"],
+          labs_booked: ["Labs booked", "Your blood draw is scheduled. Complete your LifeForce Health Profile so your review is ready.", "View Appointment", "calendar-check"],
+          labs_processing: ["Bloodwork processing", "Your results are being processed. Personalized recommendations unlock after clinical review.", "View Lab Status", "loader"],
+          labs_reviewed: ["Review your results", "Your LifeForce blood panel is ready. Recommendations may require clinical review before they unlock.", "View Reports", "file-text"],
+          recommendations_ready: ["Review your plan", "Your clinician-reviewed recommendations are ready based on your latest bloodwork and LifeForce Health Profile.", "View Recommendations", "sparkles"],
+          recommendations_locked: member
+            ? ["Recommendations pending", "Your recommendations will appear after LifeForce completes clinical review.", "Check Review Status", "lock"]
+            : ["Unlock recommendations", "Join LifeForce to unlock clinician-reviewed recommendations from your lab results.", "Explore Membership", "lock"],
+        };
+
+        const [actionTitle, actionCopy, cta, ctaIcon] = stateCopy[status];
+        return {
+          ...base,
+          label: "Live · Prototype preview",
+          livePreview: true,
+          userType: previewState.userType,
+          member,
+          priorLabs: false,
+          memberPriorLabs: false,
+          poweredChip: member,
+          profileState: previewState.profileStatus,
+          hasLabs,
+          resultsStatus: status,
+          actionTitle,
+          actionCopy,
+          cta,
+          ctaIcon,
+          noLabsCta: member ? "Book Blood Draw" : "Start Your Plan",
+          title: priorLabs && !member ? "Pick up where you left off" : "Your Longevity Plan",
+          subtitle: priorLabs && !member
+            ? "LifeForce can use your lab history, health profile, and updated biomarkers to help personalize your next ULC plan."
+            : "Powered by LifeForce",
+          context: base.context || "LifeForce helps turn your health profile and bloodwork into personalized recommendations for ULC services, products, and care.",
+          introTitle: base.introTitle,
+          compactContext: earlyNoLabs ? false : true,
+          productTitle: earlyNoLabs ? base.productTitle : recommendationsReady ? "Your Product Recommendations" : waiting ? "Browse Products While You Wait" : "Browse Products",
+          productCopy: recommendationsReady
+            ? "Based on your latest bloodwork, LifeForce Health Profile, and clinician review."
+            : earlyNoLabs
+              ? base.productCopy
+              : waitingProductCopy,
+          profileTitle: "LifeForce Health Profile",
+          profileCopy: profileStates[previewState.profileStatus].copy,
+          locked,
+        };
+      }
+
+      function renderInteractivePreview() {
+        renderControls();
+        document.getElementById("livePreview").innerHTML = renderVariant(derivePreviewVariant());
+        hydrateIcons();
+      }
+
+      function setViewMode(mode) {
+        const showAll = mode === "all";
+        document.getElementById("interactiveView").hidden = showAll;
+        document.getElementById("allScreensView").hidden = !showAll;
+        document.querySelectorAll("[data-view]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.view === mode));
+        });
+        hydrateIcons();
+      }
+
+      function hydrateIcons() {
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          window.lucide.createIcons({ strokeWidth: 2 });
+        }
+      }
+
+      function renderPrototype() {
+        renderInteractivePreview();
+        document.getElementById("canvas").innerHTML = variants.map(renderVariant).join("");
+        document.getElementById("labsFlow").innerHTML = [
+          labReportsListing(),
+          labReportsEmpty(),
+          labReportDetail(),
+          biomarkerDetail(),
+          processingState(),
+        ].join("");
+        document.getElementById("productFlow").innerHTML = [
+          recommendationsPage(),
+          recommendationsLocked(),
+          productBrowsePage(),
+          productDetailPage(),
+        ].join("");
+        document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
+          .map((state) => profileBanner(state))
+          .join("");
+        document.getElementById("stateControls").addEventListener("click", (event) => {
+          const button = event.target.closest("[data-control]");
+          if (!button) return;
+          previewState[button.dataset.control] = button.dataset.value;
+          renderInteractivePreview();
+        });
+
+        document.getElementById("viewToggle").addEventListener("click", (event) => {
+          const button = event.target.closest("[data-view]");
+          if (!button) return;
+          setViewMode(button.dataset.view);
+        });
+        hydrateIcons();
+      }
+
+      renderPrototype();
+    </script>
+  </body>
+</html>
