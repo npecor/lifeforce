@@ -826,6 +826,42 @@
         border-top: 0;
       }
 
+      .purchase-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .sticky-action {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        margin: 16px -6px 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.08);
+      }
+
+      .sticky-action .cta {
+        margin-top: 10px;
+      }
+
+      .order-line {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: start;
+        padding: 12px 0;
+        border-top: 1px solid #ece8e2;
+      }
+
+      .order-line:first-of-type {
+        border-top: 0;
+      }
+
       .utility-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1293,8 +1329,8 @@
       ];
 
       const personalizedProducts = [
-        { icon: "pill", name: "Vitamin D3 · 4000 IU", detail: "Updated after clinician review" },
-        { icon: "heart-pulse", name: "Omega-3 Protocol", detail: "For cardiovascular optimization" },
+        { icon: "pill", name: "Vitamin D3 · 4000 IU", detail: "Supports Vitamin D levels after your latest panel.", badge: "Based on Vitamin D", price: "$32/mo" },
+        { icon: "heart-pulse", name: "Omega-3 Protocol", detail: "Supports metabolic and cardiovascular goals.", badge: "Based on LDL", price: "$38/mo" },
       ];
 
       const variants = [
@@ -1558,7 +1594,7 @@
       }
 
       function lightweightProductBrowse(v) {
-        const categories = ["Foundations", "Sleep", "Energy", "Metabolic"];
+        const categories = ["Hormone Therapy", "Weight Loss", "Sleep", "Energy", "Metabolic"];
         return `
           <section class="card product-card early-products">
             <h3 class="module-title">${v.productTitle}</h3>
@@ -1629,6 +1665,26 @@
         `;
       }
 
+      function recommendedProductRows() {
+        return personalizedProducts
+          .map(
+            (p) => `
+              <div class="rec-row">
+                <span class="icon-bubble green">${icon(p.icon, 19)}</span>
+                <div>
+                  <h4 class="row-title">${p.name}</h4>
+                  <p class="row-copy">Why: ${p.detail}</p>
+                  <div class="chip-row"><span class="chip gold">${p.badge}</span><span class="chip green">Clinician-reviewed</span></div>
+                  <p class="product-name">${p.price}</p>
+                  <button class="mini-cta outline">View Details</button>
+                </div>
+                <button class="mini-cta">Add to Plan</button>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
       function productCard(v, personalized = false) {
         if (!personalized && v.compactProducts) {
           return lightweightProductBrowse(v);
@@ -1644,20 +1700,7 @@
             ${
               personalized
                 ? `<div style="margin-top:12px">
-                    ${personalizedProducts
-                      .map(
-                        (p) => `
-                          <div class="rec-row">
-                            <span class="icon-bubble green">${icon(p.icon, 19)}</span>
-                            <div>
-                              <h4 class="row-title">${p.name}</h4>
-                              <p class="row-copy">${p.detail}</p>
-                            </div>
-                            ${icon("chevron-right", 18)}
-                          </div>
-                        `,
-                      )
-                      .join("")}
+                    ${recommendedProductRows()}
                   </div>`
                 : `<div class="products" style="margin-top:14px">
                     ${products
@@ -1673,7 +1716,8 @@
                       .join("")}
                   </div>`
             }
-            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "View Recommendations" : "Browse Products"} ${icon("arrow-right", 17)}</button>
+            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "Add Products to Plan" : "Browse Products"} ${icon("arrow-right", 17)}</button>
+            ${personalized ? `<button class="cta ghost">Review Recommendations ${icon("arrow-right", 17)}</button>` : ""}
           </section>
         `;
       }
@@ -1872,25 +1916,30 @@
         return `
           <section class="card recommendation">
             <div class="card-head">
-              <h3 class="module-title">Your Recommendations</h3>
+              <div>
+                <h3 class="module-title">Ready to start your product plan?</h3>
+                <p class="module-copy">2 clinician-reviewed products are recommended from your latest panel.</p>
+              </div>
               <span class="status-pill">Updated</span>
             </div>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("pill", 19)}</span>
               <div>
                 <h4 class="row-title">Vitamin D3 · 4000 IU</h4>
-                <p class="row-copy">Clinician-approved · Take daily with food</p>
+                <p class="row-copy">Based on Vitamin D · $32/mo</p>
               </div>
-              ${icon("chevron-right", 18)}
+              <button class="mini-cta">Add to Plan</button>
             </div>
             <div class="rec-row">
               <span class="icon-bubble">${icon("heart", 19)}</span>
               <div>
                 <h4 class="row-title">Omega-3 Protocol</h4>
-                <p class="row-copy">For cardiovascular optimization</p>
+                <p class="row-copy">Based on LDL · $38/mo</p>
               </div>
-              ${icon("chevron-right", 18)}
+              <button class="mini-cta">Add to Plan</button>
             </div>
+            <button class="cta">Order Recommended Products ${icon("arrow-right", 17)}</button>
+            <button class="cta ghost">View Recommendations</button>
           </section>
         `;
       }
@@ -1928,6 +1977,7 @@
         if (v.userType === "member_prior_labs" && v.resultsStatus === "recommendations_ready") {
           return `
             ${recommendations()}
+            ${actionModule(v)}
             ${profileBanner(v.profileState)}
             ${labReportsHub(v)}
             ${productCard(v, true)}
@@ -2006,6 +2056,7 @@
         if (v.memberPriorLabs) {
           return `
             ${recommendations()}
+            ${actionModule(v)}
             ${profileBanner(v.profileState)}
             ${labReportsHub(v)}
             ${productCard(v, true)}
@@ -2045,6 +2096,9 @@
           v.key === "member_no_labs" ||
           v.key === "member_prior_labs" ||
           (v.livePreview && v.userType !== "non_member_no_labs" && v.userType !== "non_member_prior_labs");
+        const actionAfterRecommendations =
+          v.key === "member_prior_labs" ||
+          (v.livePreview && v.userType === "member_prior_labs" && v.resultsStatus === "recommendations_ready");
         return `
           <article class="variant">
             <div class="variant-label"><span>${v.label}</span></div>
@@ -2053,7 +2107,7 @@
               <div class="screen">
                 ${header(v)}
                 ${introMovedLower ? "" : contextModule(v)}
-                ${actionModule(v)}
+                ${actionAfterRecommendations ? "" : actionModule(v)}
                 ${lowerContent(v)}
               </div>
               ${bottomNav()}
@@ -2284,54 +2338,42 @@
           `
             ${titleBar("Your Recommendations", "Based on latest bloodwork, LifeForce Health Profile, and clinician review.", "sparkles")}
             <section class="card module">
-              <h3 class="module-title">Plan summary</h3>
-              <p class="module-copy">2 product recommendations, 2 ULC service recommendations, and 1 follow-up action are ready from your latest report.</p>
+              <h3 class="module-title">Your recommended plan is ready</h3>
+              <p class="module-copy">LifeForce reviewed your latest bloodwork and prepared 2 products, 2 services, and 1 follow-up action.</p>
               <div class="chip-row">
                 <span class="chip green">Clinician reviewed</span>
                 <span class="chip">Mar 12, 2026 panel</span>
               </div>
+              <button class="cta">Start Recommended Plan ${icon("arrow-right", 17)}</button>
+              <button class="cta ghost">Review Recommendations</button>
             </section>
             <section class="card recommendation">
-              <div class="card-head"><div><h3 class="module-title">Recommended products for your plan</h3><p class="module-copy">Based on your latest bloodwork and LifeForce clinician review.</p></div><span class="status-pill">Updated</span></div>
-              <div class="rec-row">
-                <span class="icon-bubble green">${icon("pill", 18)}</span>
-                <div>
-                  <h4 class="row-title">Vitamin D3 · 4000 IU</h4>
-                  <p class="row-copy">Why: Supports Vitamin D levels after your latest panel.</p>
-                  <div class="chip-row"><span class="chip gold">Based on Vitamin D</span><span class="chip green">Clinician-reviewed</span></div>
-                  <p class="product-name">$32/mo</p>
-                </div>
-                <button class="mini-cta">Add to Plan</button>
-              </div>
-              <div class="rec-row">
-                <span class="icon-bubble">${icon("heart-pulse", 18)}</span>
-                <div>
-                  <h4 class="row-title">Omega-3 Protocol</h4>
-                  <p class="row-copy">Why: Supports metabolic and cardiovascular goals.</p>
-                  <div class="chip-row"><span class="chip gold">Based on LDL</span><span class="chip green">Clinician-reviewed</span></div>
-                  <p class="product-name">$38/mo</p>
-                </div>
-                <button class="mini-cta">Add to Plan</button>
-              </div>
-              <div class="card module" style="margin-top:12px;background:#fffdf1">
-                <div class="card-head">
-                  <div>
-                    <h3 class="row-title">Your recommended plan</h3>
-                    <p class="row-copy">Vitamin D3 + Omega-3 Protocol</p>
-                  </div>
-                  <button class="mini-cta">Add both</button>
-                </div>
+              <div class="card-head"><div><h3 class="module-title">Recommended products</h3><p class="module-copy">2 products recommended based on your latest review.</p></div><span class="status-pill">Updated</span></div>
+              ${recommendedProductRows()}
+              <div class="purchase-actions">
+                <button class="cta">Add All to Plan</button>
+                <button class="cta ghost">Review Products Individually</button>
               </div>
             </section>
             <section class="card recommendation">
               <h3 class="module-title">ULC service recommendations</h3>
-              <div class="rec-row"><span class="icon-bubble">${icon("waves", 18)}</span><div><h4 class="row-title">Metabolic Health Consult</h4><p class="row-copy">Review LDL and glucose trends</p></div>${icon("chevron-right", 18)}</div>
-              <div class="rec-row"><span class="icon-bubble green">${icon("calendar-days", 18)}</span><div><h4 class="row-title">Next blood draw</h4><p class="row-copy">Schedule in 90 days</p></div>${icon("chevron-right", 18)}</div>
+              <div class="rec-row"><span class="icon-bubble">${icon("waves", 18)}</span><div><h4 class="row-title">Metabolic Health Consult</h4><p class="row-copy">Review LDL and glucose trends with a clinician.</p><div class="chip-row"><span class="chip gold">LDL Cholesterol</span><span class="chip">Hemoglobin A1c</span></div></div><button class="mini-cta">Book</button></div>
+              <div class="rec-row"><span class="icon-bubble green">${icon("calendar-days", 18)}</span><div><h4 class="row-title">Next blood draw</h4><p class="row-copy">Retest in 90 days to track response.</p></div><button class="mini-cta">Schedule</button></div>
             </section>
             <section class="card module membership-status">
               <h3 class="module-title">Membership Rx</h3>
               <p class="module-copy">Prescription options are available only when clinically appropriate after clinician review.</p>
               <button class="mini-cta outline">View Rx Options</button>
+            </section>
+            <section class="sticky-action">
+              <div class="card-head">
+                <div>
+                  <h3 class="row-title">2 products recommended</h3>
+                  <p class="row-copy">$70/mo estimated</p>
+                </div>
+                <span class="status-pill">Plan ready</span>
+              </div>
+              <button class="cta">Add All to Plan</button>
             </section>
           `,
         );
@@ -2349,7 +2391,7 @@
               </div>
             </section>
             <div class="filter-bar">
-              <span class="chip active">Foundations</span><span class="chip">Sleep</span><span class="chip">Energy</span><span class="chip">Metabolic</span><span class="chip">Bundles</span>
+              <span class="chip active">Hormone Therapy</span><span class="chip">Weight Loss</span><span class="chip">Sleep</span><span class="chip">Energy</span><span class="chip">Metabolic</span><span class="chip">Bundles</span>
             </div>
             <section class="card module" style="background:#fffdf1">
               <div class="card-head">
@@ -2403,17 +2445,70 @@
               <div class="chip-row"><span class="chip gold">Based on Vitamin D</span><span class="chip green">Clinician-reviewed</span></div>
             </section>
             <section class="card module">
+              <h3 class="module-title">Suggested use</h3>
+              <p class="module-copy">Take daily with food. Your next blood draw can help track response over time.</p>
+              <button class="mini-cta outline">View Vitamin D result</button>
+            </section>
+            <section class="card module">
               <h3 class="module-title">Related ULC services</h3>
               <p class="module-copy">Follow-up consult and next blood draw can help monitor response over time.</p>
             </section>
-            <button class="cta">Add to Plan ${icon("plus", 18)}</button>
+            <section class="sticky-action">
+              <div class="card-head">
+                <div>
+                  <h3 class="row-title">Add to My Plan</h3>
+                  <p class="row-copy">Vitamin D3 · 4000 IU · $32/mo</p>
+                </div>
+                <span class="status-pill">Recommended</span>
+              </div>
+              <button class="cta">Add to Plan · $32/mo</button>
+            </section>
+          `,
+        );
+      }
+
+      function orderReviewPage() {
+        return phoneScreen(
+          "12 · Review order",
+          `
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Product Plan", "2 recommended products selected").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <section class="card module">
+              <h3 class="module-title">Products selected</h3>
+              <div class="order-line">
+                <div><h4 class="row-title">Vitamin D3 · 4000 IU</h4><p class="row-copy">Monthly subscription · Based on Vitamin D</p></div>
+                <strong>$32/mo</strong>
+              </div>
+              <div class="order-line">
+                <div><h4 class="row-title">Omega-3 Protocol</h4><p class="row-copy">Monthly subscription · Based on LDL</p></div>
+                <strong>$38/mo</strong>
+              </div>
+              <div class="order-line">
+                <div><h4 class="row-title">Member savings</h4><p class="row-copy">Applied at checkout when eligible.</p></div>
+                <strong>-</strong>
+              </div>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Shipping + payment</h3>
+              <p class="module-copy">Use saved shipping address and payment method. Details can be confirmed before placing the order.</p>
+            </section>
+            <section class="sticky-action">
+              <div class="card-head">
+                <div>
+                  <h3 class="row-title">Estimated total</h3>
+                  <p class="row-copy">$70/mo · cancel anytime</p>
+                </div>
+                <span class="status-pill">Ready</span>
+              </div>
+              <button class="cta">Place Order</button>
+              <button class="cta ghost">Keep Browsing</button>
+            </section>
           `,
         );
       }
 
       function processingState() {
         return phoneScreen(
-          "12 · Processing labs state",
+          "13 · Processing labs state",
           `
             ${titleBar("Lab Reports", "LifeForce Blood Panels")}
             <section class="card empty-state">
@@ -2431,7 +2526,7 @@
 
       function recommendationsLocked() {
         return phoneScreen(
-          "13 · Recommendations locked",
+          "14 · Recommendations locked",
           `
             ${titleBar("Your Recommendations", "Pending clinical review", "lock")}
             <section class="card empty-state membership">
@@ -2566,9 +2661,10 @@
         ].join("");
         document.getElementById("productFlow").innerHTML = [
           recommendationsPage(),
-          recommendationsLocked(),
           productBrowsePage(),
           productDetailPage(),
+          orderReviewPage(),
+          recommendationsLocked(),
         ].join("");
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
           .map((state) => profileBanner(state))
