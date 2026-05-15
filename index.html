@@ -111,19 +111,19 @@
 
       .interactive-preview {
         display: grid;
-        grid-template-columns: minmax(315px, 390px) minmax(300px, 560px);
-        gap: 38px;
+        grid-template-columns: minmax(315px, 390px) minmax(420px, 660px);
+        gap: 48px;
         align-items: start;
-        max-width: 1040px;
+        max-width: 1160px;
         margin: 0 auto 42px;
       }
 
       .toolbar {
         display: grid;
-        gap: 16px;
-        padding: 22px;
+        gap: 22px;
+        padding: 28px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 22px;
+        border-radius: 26px;
         background: var(--brown);
         color: #fff;
         box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
@@ -142,12 +142,12 @@
         align-items: baseline;
         justify-content: space-between;
         gap: 18px;
-        margin-bottom: 2px;
+        margin-bottom: 0;
       }
 
       .toolbar h2 {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px;
         letter-spacing: -0.02em;
       }
 
@@ -159,12 +159,12 @@
 
       .control-group {
         display: grid;
-        gap: 9px;
+        gap: 11px;
         padding-top: 0;
       }
 
       .control-group + .control-group {
-        margin-top: 2px;
+        margin-top: 4px;
       }
 
       .control-label {
@@ -177,20 +177,21 @@
 
       .segmented {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-        gap: 9px;
+        grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+        gap: 11px;
       }
 
       .segmented button {
-        min-height: 34px;
-        padding: 0 11px;
+        min-height: 42px;
+        padding: 8px 13px;
         border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 11px;
+        border-radius: 13px;
         background: rgba(255, 255, 255, 0.08);
         color: rgba(255, 255, 255, 0.78);
         cursor: pointer;
-        font-size: 10.5px;
+        font-size: 11px;
         font-weight: 800;
+        line-height: 1.18;
         text-align: center;
       }
 
