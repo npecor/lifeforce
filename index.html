@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ULC x Lifeforce Mobile Prototype</title>
+    <title>ULC x LifeForce Mobile Prototype</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
       :root {
@@ -1269,7 +1269,7 @@
     <main class="page">
       <section class="hero">
         <div class="board-header">
-          <h1 class="board-title">ULC x Lifeforce Experience</h1>
+          <h1 class="board-title">ULC x LifeForce Experience</h1>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1290,24 +1290,24 @@
 
       <section class="view-panel" id="allScreensView">
         <div class="at-glance-label">All states at a glance</div>
-        <section class="canvas" id="canvas" aria-label="Four Lifeforce home variants"></section>
+        <section class="canvas" id="canvas" aria-label="LifeForce dashboard states"></section>
 
         <section class="hero" style="margin-top: 44px">
           <p class="eyebrow">Labs Flow</p>
           <h1>Reports + Results</h1>
         </section>
 
-        <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
+        <section class="canvas three-up" id="labsFlow" aria-label="LifeForce lab report flow"></section>
 
         <section class="hero" style="margin-top: 44px">
           <p class="eyebrow">Recommendations / Products Flow</p>
           <h1>Recommendations + Products</h1>
         </section>
 
-        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations and product flow"></section>
+        <section class="canvas three-up" id="productFlow" aria-label="LifeForce recommendations and product flow"></section>
 
-        <section class="state-board" aria-label="Reusable Lifeforce Health Profile states">
-          <h2>Reusable Lifeforce Health Profile States</h2>
+        <section class="state-board" aria-label="Reusable Health Questionnaire states">
+          <h2>Reusable Health Questionnaire States</h2>
           <div class="state-grid" id="profileStates"></div>
         </section>
       </section>
@@ -1338,91 +1338,151 @@
           key: "non_member_no_labs",
           label: "01 · Non-member · No labs",
           title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
-          introTitle: "Your path to personalized health",
-          context: "Lifeforce uses your profile and lab results to guide clinician-reviewed recommendations.",
-          actionTitle: "First step: Health Profile",
-          actionCopy: "Answer a few questions before your first blood draw.",
-          cta: "Start Health Profile",
-          ctaIcon: "clipboard-list",
+          subtitle: "Powered by LifeForce",
+          introTitle: "Start with a Longevity Assessment",
+          context: "Get an in-center snapshot of your health and learn how LifeForce-powered membership can personalize your next steps.",
+          actionTitle: "Book a Longevity Assessment",
+          actionCopy: "Get an in-center snapshot of your strength, cardio, respiratory fitness, and body composition.",
+          cta: "Book Longevity Assessment",
+          ctaIcon: "activity",
           profileState: "not_started",
           hasLabs: false,
           productTitle: "Browse products",
-          productCopy: "Explore ULC wellness products before your labs.",
-          footerCard: "membership",
-          noLabsCta: "Start Your Plan",
+          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
+          journeyState: "prospect",
         },
         {
           key: "member_no_labs",
           label: "02 · Member · No labs",
           title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
+          subtitle: "Powered by LifeForce",
           member: true,
           compactContext: true,
           introTitle: "Your path to personalized health",
-          context: "Start with your health profile and first blood draw to unlock clinician-reviewed recommendations.",
+          context: "Start with your first blood draw and Health Questionnaire to unlock clinical review.",
           actionTitle: "Book your first blood draw",
-          actionCopy: "Your Lifeforce plan begins with comprehensive bloodwork and clinical review.",
+          actionCopy: "Your LifeForce journey begins with comprehensive bloodwork and clinical review.",
           cta: "Book Blood Draw",
           ctaIcon: "syringe",
           profileState: "in_progress",
           hasLabs: false,
           productTitle: "Browse Products While You Wait",
-          productCopy: "Your personalized recommendations will appear after your bloodwork is reviewed.",
-          footerCard: "membershipStatus",
-          noLabsCta: "Book Blood Draw",
+          productCopy: "Personalized recommendations will appear after your bloodwork and clinical review.",
+          journeyState: "member_no_labs",
         },
         {
-          key: "non_member_prior_labs",
-          label: "03 · Non-member · Prior labs",
+          key: "future_non_member_prior_labs",
+          label: "03 · Future Concept · Prior labs",
           title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
+          subtitle: "Powered by LifeForce",
           compactContext: true,
-          introTitle: "Your path to personalized health",
-          context: "Your prior labs can help inform your next review, but updated bloodwork may be needed.",
-          actionTitle: "Pick up where you left off",
-          actionCopy: "Your previous labs may help inform your next plan. Join or book a review to unlock updated recommendations.",
-          cta: "Explore Membership",
-          ctaIcon: "sparkles",
+          introTitle: "Future concept: prior lab upload",
+          context: "Prior lab upload is not current functionality, but may eventually help inform a LifeForce journey.",
+          actionTitle: "Bring your prior labs into LifeForce",
+          actionCopy: "In the future, you may be able to use prior lab history to inform your LifeForce journey.",
+          cta: "Coming Soon",
+          ctaIcon: "clock",
+          profileState: "not_started",
+          hasLabs: false,
+          journeyState: "future_prior_labs",
+        },
+        {
+          key: "member_labs_processing",
+          label: "04 · Member · Labs processing",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          compactContext: true,
+          actionTitle: "Bloodwork processing",
+          actionCopy: "Your LifeForce blood panel is being processed. Results and recommendations will appear after clinical review.",
+          cta: "Back to Your Longevity Journey",
+          ctaIcon: "loader",
+          profileState: "complete",
+          hasLabs: false,
+          resultsStatus: "labs_processing",
+          journeyState: "labs_processing",
+          productTitle: "Browse Products While You Wait",
+          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
+        },
+        {
+          key: "member_results_questionnaire_incomplete",
+          label: "05 · Results back · Questionnaire incomplete",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          compactContext: true,
+          actionTitle: "Your results are back",
+          actionCopy: "Complete your Health Questionnaire to unlock your LifeScore and clinician-reviewed recommendations.",
+          cta: "Complete Health Questionnaire",
+          ctaIcon: "clipboard-list",
           profileState: "update_required",
           hasLabs: true,
-          priorLabs: true,
-          productTitle: "Browse Products",
-          productCopy: "Explore supplements and wellness products available through ULC. Personalized recommendations unlock after updated bloodwork is reviewed.",
+          journeyState: "results_questionnaire_incomplete",
         },
         {
-          key: "member_prior_labs",
-          label: "04 · Member · Prior labs",
+          key: "member_results_questionnaire_complete",
+          label: "06 · Results back · Questionnaire complete",
           title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
+          subtitle: "Powered by LifeForce",
           member: true,
-          poweredChip: true,
           compactContext: true,
-          introTitle: "Your path to personalized health",
-          context: "Keep your profile and biomarkers current so your recommendations stay up to date.",
-          actionTitle: "Schedule your next draw",
-          actionCopy: "Keep your Lifeforce plan current with updated biomarkers and clinician review.",
+          actionTitle: "Review your results with a clinician",
+          actionCopy: "Schedule a telehealth visit to review your LifeScore, results, and recommendations.",
+          cta: "Book Clinician Visit",
+          ctaIcon: "stethoscope",
+          profileState: "complete",
+          hasLabs: true,
+          journeyState: "results_questionnaire_complete",
+          productTitle: "Your Product Recommendations",
+          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
+        },
+        {
+          key: "member_care_plan_active",
+          label: "07 · Care plan active",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          compactContext: true,
+          actionTitle: "Your care plan is active",
+          actionCopy: "Continue your recommendations and track progress until your next blood draw.",
+          cta: "View Recommendations",
+          ctaIcon: "sparkles",
+          profileState: "complete",
+          hasLabs: true,
+          journeyState: "care_plan_active",
+          productTitle: "Your Product Recommendations",
+          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
+        },
+        {
+          key: "member_time_for_next_draw",
+          label: "08 · Time for next draw",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by LifeForce",
+          member: true,
+          compactContext: true,
+          actionTitle: "It’s time for your next blood draw",
+          actionCopy: "Keep your biomarkers current and update your LifeForce recommendations.",
           cta: "Book Blood Draw",
           ctaIcon: "calendar-plus",
           profileState: "complete",
           hasLabs: true,
-          memberPriorLabs: true,
+          journeyState: "time_for_next_draw",
           productTitle: "Your Product Recommendations",
-          productCopy: "Based on your latest bloodwork, Lifeforce Health Profile, and clinician review.",
+          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
         },
       ];
 
       const profileStates = {
         not_started: {
           tag: "Not Started",
-          title: "Complete your Lifeforce Health Profile",
+          title: "Complete your Health Questionnaire",
           copy: "Your answers help prepare your lab review and recommendations.",
-          button: "Start Health Profile",
+          button: "Start Questionnaire",
           tagClass: "",
         },
         in_progress: {
           tag: "In Progress",
-          title: "Finish your Lifeforce Health Profile",
+          title: "Complete your Health Questionnaire",
           copy: "A few questions to prepare for your consult.",
           progressLabel: "3 of 8 sections complete",
           button: "Continue",
@@ -1431,8 +1491,8 @@
         },
         complete: {
           tag: "Complete",
-          title: "Lifeforce Health Profile complete",
-          copy: "Your profile is up to date.",
+          title: "Health Questionnaire complete",
+          copy: "Your questionnaire is up to date.",
           button: "View Answers",
           tagClass: "green",
           outline: true,
@@ -1440,15 +1500,15 @@
         },
         update_required: {
           tag: "Update Required",
-          title: "Update your Lifeforce Health Profile",
-          copy: "Your profile needs updating before recommendations can be finalized.",
+          title: "Complete your Health Questionnaire",
+          copy: "Complete your questionnaire to unlock your LifeScore and clinician-reviewed recommendations.",
           button: "Update Now",
           tagClass: "orange",
           orange: true,
         },
         update_recommended: {
           tag: "Update Recommended",
-          title: "Review your Lifeforce Health Profile",
+          title: "Review your Health Questionnaire",
           copy: "New questions are available to improve your recommendations.",
           button: "Review Updates",
           tagClass: "gold",
@@ -1462,15 +1522,19 @@
           id: "userType",
           label: "Preview as:",
           options: [
-            ["non_member_no_labs", "Non-member · No prior labs"],
-            ["member_no_labs", "Member · No prior labs"],
-            ["non_member_prior_labs", "Non-member · Prior labs"],
-            ["member_prior_labs", "Member · Prior labs"],
+            ["non_member_no_labs", "Non-member · No labs"],
+            ["member_no_labs", "Member · No labs"],
+            ["future_non_member_prior_labs", "Future · Non-member prior labs"],
+            ["member_labs_processing", "Member · Labs processing"],
+            ["member_results_questionnaire_incomplete", "Member · Results back · Questionnaire incomplete"],
+            ["member_results_questionnaire_complete", "Member · Results back · Questionnaire complete"],
+            ["member_care_plan_active", "Member · Care plan active"],
+            ["member_time_for_next_draw", "Member · Time for next draw"],
           ],
         },
         {
           id: "profileStatus",
-          label: "Lifeforce Health Profile Status:",
+          label: "Health Questionnaire Status:",
           options: [
             ["not_started", "Not started"],
             ["in_progress", "In progress"],
@@ -1479,24 +1543,11 @@
             ["update_recommended", "Update recommended"],
           ],
         },
-        {
-          id: "resultsStatus",
-          label: "Results Status:",
-          options: [
-            ["no_labs", "No labs"],
-            ["labs_booked", "Labs booked"],
-            ["labs_processing", "Labs processing"],
-            ["labs_reviewed", "Labs reviewed"],
-            ["recommendations_ready", "Recommendations ready"],
-            ["recommendations_locked", "Recommendations locked"],
-          ],
-        },
       ];
 
       const previewState = {
         userType: "non_member_no_labs",
         profileStatus: "not_started",
-        resultsStatus: "no_labs",
       };
 
       function icon(name, size = 20) {
@@ -1542,7 +1593,7 @@
             <div class="header-row">
               <div>
                 <h2 class="title">${v.title}</h2>
-                <span class="power-chip">${icon("sparkles", 13)} Powered by Lifeforce</span>
+                <span class="power-chip">${icon("sparkles", 13)} Powered by LifeForce</span>
               </div>
             </div>
           </header>
@@ -1550,10 +1601,10 @@
       }
 
       function contextModule(v) {
-        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs");
+        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs");
         return `
           <section class="card module context ${v.compactContext ? "compact" : ""} ${early ? "early-context" : ""}">
-            <h3 class="module-title">${v.introTitle || "How Lifeforce works inside ULC"}</h3>
+            <h3 class="module-title">${v.introTitle || "How LifeForce works inside ULC"}</h3>
             <p class="module-copy">${v.context}</p>
             <div class="process">
               <div class="step">${icon("test-tube-2", 15)}<br />Measure</div>
@@ -1611,31 +1662,94 @@
       function membershipConversionCard() {
         return `
           <section class="card module membership early-membership">
-            <h3 class="module-title">Unlock your full plan</h3>
-            <p class="module-copy">Membership includes clinical review, personalized recommendations, and ongoing tracking.</p>
+            <h3 class="module-title">What membership includes</h3>
+            <p class="module-copy">3 blood draws, 3 clinician visits, advanced panels, LifeScore, and personalized recommendations.</p>
+            <div class="chip-row">
+              <span class="chip">3 blood draws/year</span>
+              <span class="chip">3 clinician visits/year</span>
+              <span class="chip">Advanced panels</span>
+              <span class="chip">LifeScore</span>
+              <span class="chip">Hormone therapy access</span>
+              <span class="chip">Peptides + Rx when appropriate</span>
+            </div>
             <button class="cta">Explore Membership</button>
+          </section>
+        `;
+      }
+
+      function ivInjectableCard() {
+        return `
+          <section class="card module">
+            <h3 class="module-title">Schedule an IV or Injectable</h3>
+            <p class="module-copy">Book select in-center services. A short screening may be required before your visit.</p>
+            <button class="cta ghost">View Services</button>
+          </section>
+        `;
+      }
+
+      function longevityAssessmentCard() {
+        return `
+          <section class="card module">
+            <h3 class="module-title">Book a Longevity Assessment</h3>
+            <p class="module-copy">Get an in-center snapshot of strength, cardio, body composition, and respiratory fitness.</p>
+            <button class="mini-cta outline">Book Assessment</button>
+          </section>
+        `;
+      }
+
+      function lifeScoreCard(locked = false) {
+        return `
+          <section class="card module ${locked ? "membership" : ""}">
+            <div class="card-head">
+              <h3 class="module-title">${locked ? "LifeScore locked" : "LifeScore"}</h3>
+              ${locked ? `<span class="status-pill gray">${icon("lock", 13)} Locked</span>` : `<span class="status-pill">Updated</span>`}
+            </div>
+            ${
+              locked
+                ? `<p class="module-copy">Complete your Health Questionnaire to view your LifeScore.</p><button class="cta">Complete Health Questionnaire</button>`
+                : `<p class="title" style="font-size:44px;margin-top:8px">82<span class="subtitle">/100</span></p><p class="module-copy">Based on your latest bloodwork and completed Health Questionnaire.</p><button class="mini-cta outline">View LifeScore</button>`
+            }
+          </section>
+        `;
+      }
+
+      function clinicianVisitCard() {
+        return `
+          <section class="card module action">
+            <h3 class="module-title">Review your results with a clinician</h3>
+            <p class="module-copy">Schedule a telehealth visit to review your LifeScore, results, and recommendations.</p>
+            <button class="cta">${icon("stethoscope", 18)} Book Clinician Visit</button>
+          </section>
+        `;
+      }
+
+      function nextDrawCard(urgent = false) {
+        return `
+          <section class="card module ${urgent ? "action" : ""}">
+            <h3 class="module-title">${urgent ? "It’s time for your next blood draw" : "Next blood draw"}</h3>
+            <p class="module-copy">${urgent ? "Keep your biomarkers current and update your LifeForce recommendations." : "Available in 43 days. Keep following your care plan until your next retest window opens."}</p>
+            <button class="cta ${urgent ? "" : "ghost"}">${urgent ? "Book Blood Draw" : "View Results"}</button>
           </section>
         `;
       }
 
       function actionModule(v) {
         if (!v.actionTitle) return "";
-        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs");
-        if (early) {
-          return profileBanner(v.profileState || "not_started", { primary: true });
-        }
+        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs");
         return `
           <section class="card module action ${early ? "early-action" : ""}">
             <h3 class="module-title">${v.actionTitle}</h3>
             <p class="module-copy">${v.actionCopy}</p>
+            ${early ? `<div class="chip-row"><span class="chip">Strength</span><span class="chip">Cardio</span><span class="chip">Respiratory</span><span class="chip">Body composition</span></div>` : ""}
             <button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>
+            ${early ? `<button class="cta ghost">Learn what’s included</button>` : ""}
           </section>
         `;
       }
 
       function profileBanner(state, options = {}) {
         const s = profileStates[state];
-        const title = options.title || (options.primary && state === "not_started" ? "First step: Health Profile" : s.title);
+        const title = options.title || (options.primary && state === "not_started" ? "Complete your Health Questionnaire" : s.title);
         const copy = options.copy || (options.primary && state === "not_started" ? "Answer a few questions before your first blood draw." : s.copy);
         const primaryClass = options.primary ? "primary-profile" : "";
         const quietClass = s.quiet && !options.primary ? "quiet-profile" : "";
@@ -1730,7 +1844,7 @@
                 <span class="icon-bubble">${icon("calendar-check", 22)}</span>
                 <div>
                   <h3 class="module-title">Labs booked</h3>
-                  <p class="row-copy">Your Lifeforce blood panel is scheduled. Results will appear here after your draw is processed.</p>
+                  <p class="row-copy">Your LifeForce blood panel is scheduled. Results will appear here after your draw is processed.</p>
                 </div>
               </div>
               <button class="cta ghost">View Appointment ${icon("arrow-right", 17)}</button>
@@ -1745,7 +1859,7 @@
                 <span class="icon-bubble">${icon("loader", 22)}</span>
                 <div>
                   <h3 class="module-title">Bloodwork processing</h3>
-                  <p class="row-copy">Your Lifeforce blood panel is being processed. Recommendations unlock after clinical review.</p>
+                  <p class="row-copy">Your LifeForce blood panel is being processed. Recommendations unlock after clinical review.</p>
                 </div>
               </div>
               <button class="cta ghost">View Lab Status ${icon("arrow-right", 17)}</button>
@@ -1773,11 +1887,11 @@
             <div class="card-head">
               <div>
                 <h3 class="module-title">Lab Reports</h3>
-                <p class="module-copy">Review your previous Lifeforce blood panels and biomarker trends.</p>
+                <p class="module-copy">Review your previous LifeForce blood panels and biomarker trends.</p>
               </div>
               ${icon("chevron-right", 20)}
             </div>
-            <p class="row-copy"><strong>Latest:</strong> Mar 12, 2026 · Lifeforce Blood Panel</p>
+            <p class="row-copy"><strong>Latest:</strong> Mar 12, 2026 · LifeForce Blood Panel</p>
             <div class="metrics">
               <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
               <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
@@ -1790,8 +1904,8 @@
 
       function recommendationsLockedCard(v) {
         const lockedCopy = v.member
-          ? "Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Lifeforce Health Profile."
-          : "Join Lifeforce to unlock clinician-reviewed recommendations based on your lab results and Lifeforce Health Profile.";
+          ? "Your recommendations will appear after LifeForce completes clinical review of your bloodwork and Health Questionnaire."
+          : "Join LifeForce to unlock clinician-reviewed recommendations based on your lab results and Health Questionnaire.";
         return `
           <section class="card module membership">
             <div class="card-head">
@@ -1807,7 +1921,7 @@
       function documentCard() {
         return rowCard({
           title: "Documents",
-          copy: "View Lifeforce forms, lab PDFs, and care documents.",
+          copy: "View LifeForce forms, lab PDFs, and care documents.",
           iconName: "folder-open",
         });
       }
@@ -1817,8 +1931,8 @@
           <div class="utility-grid">
             <section class="card utility-card">
               <span class="icon-bubble green">${icon("clipboard-list", 19)}</span>
-              <h3 class="row-title">Lifeforce Health Profile</h3>
-              <p class="row-copy">Complete or update your profile.</p>
+              <h3 class="row-title">Health Questionnaire</h3>
+              <p class="row-copy">Complete or update your questionnaire.</p>
             </section>
             <section class="card utility-card">
               <span class="icon-bubble">${icon("folder-open", 19)}</span>
@@ -1945,160 +2059,107 @@
       }
 
       function liveHubContent(v) {
-        if (v.userType === "non_member_no_labs" && v.resultsStatus === "no_labs") {
+        return dashboardContent(v);
+      }
+
+      function dashboardContent(v) {
+        const state = v.journeyState || v.userType || v.key;
+
+        if (state === "prospect" || state === "non_member_no_labs") {
           return `
-            ${unlockCard()}
             ${membershipConversionCard()}
+            ${ivInjectableCard()}
             ${lightweightProductBrowse(v)}
           `;
         }
 
-        if (v.userType === "member_no_labs" && ["no_labs", "labs_booked", "labs_processing"].includes(v.resultsStatus)) {
+        if (state === "member_no_labs") {
           return `
             ${profileBanner(v.profileState)}
-            ${contextModule(v)}
-            ${labReportsHub({ ...v, noLabsCta: "Book Blood Draw" })}
+            ${longevityAssessmentCard()}
             ${productCard({ ...v, compactProducts: true }, false)}
-            ${documentCard()}
+            ${rowCard({
+              title: "Your Membership",
+              copy: "Active · LifeForce Diagnostic Plan",
+              iconName: "badge-check",
+              tone: "green",
+              className: "membership-status",
+            })}
           `;
         }
 
-        if (v.userType === "non_member_prior_labs") {
+        if (state === "future_prior_labs") {
           return `
+            <section class="card module membership">
+              <span class="tag gold">Future / V2</span>
+              <h3 class="module-title" style="margin-top:12px">Bring your prior labs into LifeForce</h3>
+              <p class="module-copy">In the future, you may be able to use prior lab history to inform your LifeForce journey.</p>
+              <button class="cta ghost">Coming Soon</button>
+            </section>
+          `;
+        }
+
+        if (state === "labs_processing") {
+          return `
+            ${labReportsHub({ ...v, resultsStatus: "labs_processing" })}
+            ${productCard({ ...v, compactProducts: true }, false)}
+            ${profileBanner(v.profileState)}
+          `;
+        }
+
+        if (state === "results_questionnaire_incomplete") {
+          return `
+            ${lifeScoreCard(true)}
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
-            ${membershipUpsell()}
-            ${quickInsights()}
             ${productCard({ ...v, compactProducts: true }, false)}
-            ${documentCard()}
           `;
         }
 
-        if (v.userType === "member_prior_labs" && v.resultsStatus === "recommendations_ready") {
+        if (state === "results_questionnaire_complete") {
           return `
-            ${recommendations()}
-            ${actionModule(v)}
-            ${profileBanner(v.profileState)}
+            ${lifeScoreCard(false)}
             ${labReportsHub(v)}
             ${productCard(v, true)}
-            ${drawHistory()}
-            ${documentCard()}
-            ${contextModule(v)}
           `;
         }
 
-        const hasReadyRecommendations = v.resultsStatus === "recommendations_ready";
-        const hasLockedRecommendations = v.resultsStatus === "recommendations_locked";
-        const showMemberStatus = v.member;
-        const showMembershipUpsell = !v.member && (v.hasLabs || hasLockedRecommendations);
+        if (state === "care_plan_active") {
+          return `
+            ${lifeScoreCard(false)}
+            ${recommendations()}
+            ${productCard(v, true)}
+            ${labReportsHub(v)}
+            ${nextDrawCard(false)}
+          `;
+        }
+
+        if (state === "time_for_next_draw") {
+          return `
+            ${nextDrawCard(true)}
+            ${lifeScoreCard(false)}
+            ${recommendations()}
+            ${productCard(v, true)}
+            ${labReportsHub(v)}
+          `;
+        }
 
         return `
           ${profileBanner(v.profileState)}
           ${labReportsHub(v)}
-          ${
-            hasReadyRecommendations
-              ? `${recommendations()}${productCard(v, true)}`
-              : hasLockedRecommendations
-                ? `${recommendationsLockedCard(v)}${productCard(v, false)}`
-                : productCard(v, false)
-          }
-          ${
-            showMemberStatus
-              ? rowCard({
-                  title: "Your Membership",
-                  copy: "Active · Lifeforce Diagnostic Plan",
-                  iconName: "badge-check",
-                  tone: "green",
-                  className: "membership-status",
-                })
-              : showMembershipUpsell
-                ? rowCard({
-                    title: "Unlock your updated plan",
-                    copy: "Use your lab history and refreshed biomarkers to receive clinician-reviewed recommendations.",
-                    iconName: "crown",
-                    className: "membership",
-                  })
-                : rowCard({
-                    title: "Become a Member",
-                    copy: "Unlock clinical review, personalized recommendations, and member savings.",
-                    iconName: "crown",
-                    className: "membership",
-                  })
-          }
-          ${documentCard()}
+          ${productCard({ ...v, compactProducts: true }, false)}
         `;
       }
 
       function lowerContent(v) {
-        if (v.livePreview) {
-          return liveHubContent(v);
-        }
-
-        if (v.key === "non_member_no_labs") {
-          return `
-            ${unlockCard()}
-            ${membershipConversionCard()}
-            ${lightweightProductBrowse(v)}
-          `;
-        }
-
-        if (v.priorLabs) {
-          return `
-            ${labReportsHub(v)}
-            ${profileBanner(v.profileState)}
-            ${membershipUpsell()}
-            ${quickInsights()}
-            ${productCard({ ...v, compactProducts: true }, false)}
-            ${documentCard()}
-          `;
-        }
-
-        if (v.memberPriorLabs) {
-          return `
-            ${recommendations()}
-            ${actionModule(v)}
-            ${profileBanner(v.profileState)}
-            ${labReportsHub(v)}
-            ${productCard(v, true)}
-            ${drawHistory()}
-            ${documentCard()}
-            ${contextModule(v)}
-          `;
-        }
-
-        return `
-          ${profileBanner(v.profileState)}
-          ${labReportsHub(v)}
-          ${contextModule(v)}
-          ${productCard({ ...v, compactProducts: true }, false)}
-          ${documentCard()}
-          ${
-            v.footerCard === "membership"
-              ? rowCard({
-                  title: "Become a Member",
-                  copy: "Unlock clinical review, personalized recommendations, and member savings.",
-                  iconName: "crown",
-                  className: "membership",
-                })
-              : rowCard({
-                  title: "Your Membership",
-                  copy: "Active · Lifeforce Diagnostic Plan",
-                  iconName: "badge-check",
-                  tone: "green",
-                  className: "membership-status",
-                })
-          }
-        `;
+        return dashboardContent(v);
       }
 
       function renderVariant(v) {
-        const introMovedLower =
-          v.key === "member_no_labs" ||
-          v.key === "member_prior_labs" ||
-          (v.livePreview && v.userType !== "non_member_no_labs" && v.userType !== "non_member_prior_labs");
-        const actionAfterRecommendations =
-          v.key === "member_prior_labs" ||
-          (v.livePreview && v.userType === "member_prior_labs" && v.resultsStatus === "recommendations_ready");
+        const showIntroTop =
+          v.key === "non_member_no_labs" ||
+          v.key === "future_non_member_prior_labs" ||
+          (v.livePreview && ["non_member_no_labs", "future_non_member_prior_labs"].includes(v.userType));
         return `
           <article class="variant">
             <div class="variant-label"><span>${v.label}</span></div>
@@ -2106,8 +2167,8 @@
               ${statusBar()}
               <div class="screen">
                 ${header(v)}
-                ${introMovedLower ? "" : contextModule(v)}
-                ${actionAfterRecommendations ? "" : actionModule(v)}
+                ${showIntroTop ? contextModule(v) : ""}
+                ${actionModule(v)}
                 ${lowerContent(v)}
               </div>
               ${bottomNav()}
@@ -2149,7 +2210,7 @@
             <div class="report-top">
               <div>
                 <h3 class="module-title">${date}</h3>
-                <p class="module-copy">Lifeforce Blood Panel</p>
+                <p class="module-copy">LifeForce Blood Panel</p>
               </div>
               ${latest ? `<span class="status-pill">Latest</span>` : icon("chevron-right", 20)}
             </div>
@@ -2165,9 +2226,9 @@
 
       function labReportsListing() {
         return phoneScreen(
-          "05 · Lab reports listing",
+          "09 · Lab reports listing",
           `
-            ${titleBar("Lab Reports", "Lifeforce Blood Panels", "plus")}
+            ${titleBar("Lab Reports", "LifeForce Blood Panels", "plus")}
             <div class="filter-bar">
               <span class="chip active">All</span>
               <span class="chip">Needs Attention</span>
@@ -2183,14 +2244,14 @@
 
       function labReportsEmpty() {
         return phoneScreen(
-          "06 · Lab reports empty state",
+          "10 · Lab reports empty state",
           `
-            ${titleBar("Lab Reports", "Lifeforce Blood Panels")}
+            ${titleBar("Lab Reports", "LifeForce Blood Panels")}
             <section class="card empty-state">
               <div>
                 <span class="icon-bubble">${icon("file-clock", 30)}</span>
                 <h3 class="module-title">No lab reports yet</h3>
-                <p class="module-copy">Your Lifeforce blood panel results will appear here after your first blood draw is processed.</p>
+                <p class="module-copy">Your LifeForce blood panel results will appear here after your first blood draw is processed.</p>
                 <button class="cta">Book Blood Draw</button>
                 <button class="cta ghost">Back to Your Longevity Journey</button>
               </div>
@@ -2243,9 +2304,9 @@
           .join("");
 
         return phoneScreen(
-          "07 · Lab report detail",
+          "11 · Lab report detail",
           `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Lifeforce Blood Panel", "March 15, 2025").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LifeForce Blood Panel", "March 15, 2025").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
               <h3 class="module-title">Clinician Summary</h3>
               <div class="note-preview">
@@ -2279,7 +2340,7 @@
       function biomarkerDetail() {
         const b = biomarkers.find((item) => item.name === "LDL Cholesterol");
         return phoneScreen(
-          "08 · Biomarker detail",
+          "12 · Biomarker detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LDL Cholesterol", "Key Risk Factors · Cardiovascular").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card hero-value">
@@ -2334,12 +2395,12 @@
 
       function recommendationsPage() {
         return phoneScreen(
-          "09 · Recommendations page",
+          "13 · Recommendations page",
           `
-            ${titleBar("Your Recommendations", "Based on latest bloodwork, Lifeforce Health Profile, and clinician review.", "sparkles")}
+            ${titleBar("Your Recommendations", "Based on latest bloodwork, Health Questionnaire, and clinician review.", "sparkles")}
             <section class="card module">
               <h3 class="module-title">Your recommended plan is ready</h3>
-              <p class="module-copy">Lifeforce reviewed your latest bloodwork and prepared 2 products, 2 services, and 1 follow-up action.</p>
+              <p class="module-copy">LifeForce reviewed your latest bloodwork and prepared 2 products, 2 services, and 1 follow-up action.</p>
               <div class="chip-row">
                 <span class="chip green">Clinician reviewed</span>
                 <span class="chip">Mar 12, 2026 panel</span>
@@ -2381,7 +2442,7 @@
 
       function productBrowsePage() {
         return phoneScreen(
-          "10 · Product browse page",
+          "14 · Product browse page",
           `
             ${titleBar("Browse Products", "Explore ULC wellness products. Personalized picks unlock after your bloodwork is reviewed.", "shopping-bag")}
             <section class="card module">
@@ -2427,7 +2488,7 @@
 
       function productDetailPage() {
         return phoneScreen(
-          "11 · Product detail page",
+          "15 · Product detail page",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Supplement Details", "Vitamin D3 · 4000 IU").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card shop-card">
@@ -2441,7 +2502,7 @@
             </section>
             <section class="card module">
               <h3 class="module-title">Why this was recommended</h3>
-              <p class="module-copy">Your Vitamin D level was below the optimal range on your latest bloodwork. Your clinician reviewed this alongside your Lifeforce Health Profile before recommending supplementation.</p>
+              <p class="module-copy">Your Vitamin D level was below the optimal range on your latest bloodwork. Your clinician reviewed this alongside your Health Questionnaire before recommending supplementation.</p>
               <div class="chip-row"><span class="chip gold">Based on Vitamin D</span><span class="chip green">Clinician-reviewed</span></div>
             </section>
             <section class="card module">
@@ -2469,7 +2530,7 @@
 
       function orderReviewPage() {
         return phoneScreen(
-          "12 · Review order",
+          "16 · Review order",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Product Plan", "2 recommended products selected").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
@@ -2508,9 +2569,9 @@
 
       function processingState() {
         return phoneScreen(
-          "13 · Processing labs state",
+          "17 · Processing labs state",
           `
-            ${titleBar("Lab Reports", "Lifeforce Blood Panels")}
+            ${titleBar("Lab Reports", "LifeForce Blood Panels")}
             <section class="card empty-state">
               <div>
                 <span class="icon-bubble">${icon("loader", 30)}</span>
@@ -2526,14 +2587,14 @@
 
       function recommendationsLocked() {
         return phoneScreen(
-          "14 · Recommendations locked",
+          "18 · Recommendations locked",
           `
             ${titleBar("Your Recommendations", "Pending clinical review", "lock")}
             <section class="card empty-state membership">
               <div>
                 <span class="icon-bubble">${icon("lock", 30)}</span>
                 <h3 class="module-title">Recommendations pending</h3>
-                <p class="module-copy">Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Lifeforce Health Profile.</p>
+                <p class="module-copy">Your recommendations will appear after LifeForce completes clinical review of your bloodwork and Health Questionnaire.</p>
                 <div class="chip-row" style="justify-content:center"><span class="chip">Bloodwork needed</span><span class="chip">Profile needed</span><span class="chip">Review pending</span></div>
                 <button class="cta">Book Blood Draw</button>
                 <button class="cta ghost">Browse Products While You Wait</button>
@@ -2568,62 +2629,17 @@
 
       function derivePreviewVariant() {
         const base = variants.find((variant) => variant.key === previewState.userType) || variants[0];
-        const member = previewState.userType.startsWith("member");
-        const priorLabs = previewState.userType.includes("prior_labs");
-        const status = previewState.resultsStatus;
-        const earlyNoLabs = previewState.userType === "non_member_no_labs" && status === "no_labs";
-        const hasLabs = ["labs_reviewed", "recommendations_ready", "recommendations_locked"].includes(status) || (priorLabs && status !== "no_labs");
-        const recommendationsReady = status === "recommendations_ready";
-        const locked = status === "recommendations_locked";
-        const waiting = ["labs_booked", "labs_processing", "labs_reviewed"].includes(status);
-        const waitingProductCopy =
-          status === "labs_reviewed"
-            ? "Explore products available through ULC. Personalized recommendations appear once Lifeforce completes clinical recommendation review."
-            : "Explore supplements and wellness products available through ULC. Personalized recommendations unlock after your bloodwork is reviewed.";
-
-        const stateCopy = {
-          no_labs: member
-            ? ["Book your first blood draw", "Your Lifeforce plan begins with comprehensive bloodwork and clinical review.", "Book Blood Draw", "syringe"]
-            : ["First step: Health Profile", "Answer a few questions before your first blood draw.", "Start Health Profile", "clipboard-list"],
-          labs_booked: ["Labs booked", "Your blood draw is scheduled. Complete your Lifeforce Health Profile so your review is ready.", "View Appointment", "calendar-check"],
-          labs_processing: ["Bloodwork processing", "Your results are being processed. Personalized recommendations unlock after clinical review.", "View Lab Status", "loader"],
-          labs_reviewed: ["Review your results", "Your Lifeforce blood panel is ready. Recommendations may require clinical review before they unlock.", "View Reports", "file-text"],
-          recommendations_ready: ["Review your plan", "Your clinician-reviewed recommendations are ready based on your latest bloodwork and Lifeforce Health Profile.", "View Recommendations", "sparkles"],
-          recommendations_locked: member
-            ? ["Recommendations pending", "Your recommendations will appear after Lifeforce completes clinical review.", "Check Review Status", "lock"]
-            : ["Unlock recommendations", "Join Lifeforce to unlock clinician-reviewed recommendations from your lab results.", "Explore Membership", "lock"],
-        };
-
-        const [actionTitle, actionCopy, cta, ctaIcon] = stateCopy[status];
         return {
           ...base,
           label: "Live · Prototype preview",
           livePreview: true,
           userType: previewState.userType,
-          member,
-          priorLabs: false,
-          memberPriorLabs: false,
-          poweredChip: member,
+          poweredChip: base.member,
           profileState: previewState.profileStatus,
-          hasLabs,
-          resultsStatus: status,
-          actionTitle,
-          actionCopy,
-          cta,
-          ctaIcon,
-          noLabsCta: member ? "Book Blood Draw" : "Start Your Plan",
           title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
-          context: base.context || "Lifeforce uses your profile and lab results to guide clinician-reviewed recommendations.",
+          subtitle: "Powered by LifeForce",
+          context: base.context || "LifeForce uses your profile and lab results to guide clinician-reviewed recommendations.",
           introTitle: base.introTitle,
-          compactContext: earlyNoLabs ? false : true,
-          productTitle: earlyNoLabs ? base.productTitle : recommendationsReady ? "Your Product Recommendations" : waiting ? "Browse Products While You Wait" : "Browse Products",
-          productCopy: recommendationsReady
-            ? "Based on your latest bloodwork, Lifeforce Health Profile, and clinician review."
-            : earlyNoLabs
-              ? base.productCopy
-              : waitingProductCopy,
-          locked,
         };
       }
 
