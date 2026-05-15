@@ -252,6 +252,9 @@
       .variant {
         display: grid;
         gap: 12px;
+        width: 100%;
+        max-width: 390px;
+        margin: 0 auto;
       }
 
       .variant-label {
@@ -1916,7 +1919,6 @@
             ${profileBanner(v.profileState)}
             ${membershipUpsell()}
             ${quickInsights()}
-            ${contextModule(v)}
             ${productCard({ ...v, compactProducts: true }, false)}
             ${documentCard()}
           `;
@@ -1995,7 +1997,6 @@
             ${profileBanner(v.profileState)}
             ${membershipUpsell()}
             ${quickInsights()}
-            ${contextModule(v)}
             ${productCard({ ...v, compactProducts: true }, false)}
             ${documentCard()}
           `;
@@ -2041,9 +2042,8 @@
       function renderVariant(v) {
         const introMovedLower =
           v.key === "member_no_labs" ||
-          v.key === "non_member_prior_labs" ||
           v.key === "member_prior_labs" ||
-          (v.livePreview && v.userType !== "non_member_no_labs");
+          (v.livePreview && v.userType !== "non_member_no_labs" && v.userType !== "non_member_prior_labs");
         return `
           <article class="variant">
             <div class="variant-label"><span>${v.label}</span></div>
