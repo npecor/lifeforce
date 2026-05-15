@@ -1709,10 +1709,12 @@
 
       function lightweightProductBrowse(v) {
         const categories = ["Hormone Therapy", "Weight Loss", "Sleep", "Energy", "Metabolic"];
+        const title = v.productTitle || "Browse Products";
+        const copy = v.productCopy || "Explore ULC wellness products. Personalized recommendations unlock after clinical review.";
         return `
           <section class="card product-card early-products">
-            <h3 class="module-title">${v.productTitle}</h3>
-            <p class="module-copy">${v.productCopy}</p>
+            <h3 class="module-title">${title}</h3>
+            <p class="module-copy">${copy}</p>
             <div class="chip-row">
               ${categories.map((category) => `<span class="chip">${category}</span>`).join("")}
             </div>
@@ -1867,13 +1869,16 @@
           return lightweightProductBrowse(v);
         }
 
+        const title = v.productTitle || (personalized ? "Your Product Recommendations" : "Browse Products");
+        const copy = v.productCopy || (personalized ? "Based on your latest bloodwork, Health Questionnaire, and clinician review." : "Explore ULC wellness products. Personalized recommendations unlock after clinical review.");
+
         return `
           <section class="card product-card">
             <div class="card-head">
-              <h3 class="module-title">${v.productTitle}</h3>
+              <h3 class="module-title">${title}</h3>
               ${personalized ? `<span class="status-pill">Updated</span>` : `<span class="link">Browse All</span>`}
             </div>
-            <p class="module-copy">${v.productCopy}</p>
+            <p class="module-copy">${copy}</p>
             ${
               personalized
                 ? `<div style="margin-top:12px">
