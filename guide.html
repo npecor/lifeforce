@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lifeforce Membership Preview</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+            },
+            colors: {
+              cream: {
+                50: "#FFFEFC",
+                100: "#FDFBF7",
+                200: "#F5EFE6",
+                300: "#EAE2D5",
+              },
+              earth: {
+                400: "#8A7968",
+                600: "#5C4E44",
+                800: "#3D3129",
+                900: "#2C2420",
+              },
+              amber: {
+                100: "#FDF5E6",
+                300: "#EFD59B",
+                400: "#E5C158",
+                500: "#D4AF37",
+              },
+              sage: {
+                200: "#D9DDD4",
+                300: "#C4C8B8",
+              },
+            },
+            boxShadow: {
+              soft: "0 24px 80px -36px rgba(44, 36, 32, 0.28)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: #fdfbf7;
+        color: #2c2420;
+      }
+
+      [data-plan-card] {
+        transition:
+          border-color 180ms ease,
+          background-color 180ms ease,
+          box-shadow 180ms ease,
+          transform 180ms ease;
+      }
+
+      [data-plan-card].is-active {
+        border-color: rgba(44, 36, 32, 0.88);
+        background-color: rgba(255, 254, 252, 0.96);
+        box-shadow: 0 18px 48px -28px rgba(44, 36, 32, 0.22);
+      }
+
+      [data-plan-card].is-active [data-plan-dot] {
+        box-shadow: inset 0 0 0 7px #2c2420;
+      }
+
+      [data-plan-card]:not(.is-active) [data-plan-dot] {
+        box-shadow: inset 0 0 0 0 #2c2420;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-cream-100 font-sans antialiased">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-earth-900/5 bg-cream-100/85 backdrop-blur-md">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
+        <div class="flex items-center gap-3">
+          <div class="flex h-11 w-11 items-center justify-center rounded-full border border-earth-900/10 bg-cream-50">
+            <span class="font-serif text-xl italic text-earth-900">L</span>
+          </div>
+          <div>
+            <p class="font-serif text-2xl tracking-tight text-earth-900">Lifeforce</p>
+            <p class="text-xs uppercase tracking-[0.24em] text-earth-400">Membership Preview</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="/index.html"
+            class="hidden rounded-full border border-earth-900/10 px-5 py-2.5 text-sm font-medium text-earth-900 transition hover:bg-cream-50 md:inline-flex"
+          >
+            View Modal Concepts
+          </a>
+          <a
+            href="#plans"
+            class="rounded-full bg-earth-900 px-5 py-2.5 text-sm font-medium text-cream-50 transition hover:bg-earth-800"
+          >
+            Get Started
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="relative isolate overflow-hidden px-6 pb-24 pt-32 lg:px-8 lg:pb-28 lg:pt-40">
+        <video
+          class="absolute inset-0 h-full w-full object-cover opacity-20"
+          autoplay
+          muted
+          loop
+          playsinline
+          poster="https://a.storyblok.com/f/130005/4320x2400/5403a6a541/lf_hp_fallback.jpg"
+        >
+          <source
+            src="https://a.storyblok.com/f/130005/x/f0d281d701/26-0114_homepage-750x1550-small.mp4"
+            media="(max-width: 767px)"
+            type="video/mp4"
+          />
+          <source
+            src="https://a.storyblok.com/f/130005/x/f99de0b943/26-0114_homepage-2880x1620-small.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(239,213,155,0.36),transparent_42%),linear-gradient(180deg,rgba(253,251,247,0.95),rgba(253,251,247,0.96))]"></div>
+
+        <div class="relative mx-auto max-w-6xl text-center">
+          <div class="inline-flex items-center rounded-full bg-sage-300 px-5 py-2 text-sm font-medium text-earth-900 shadow-sm">
+            Save $150 Today
+          </div>
+
+          <h1 class="mx-auto mt-10 max-w-6xl font-serif text-[clamp(3.4rem,9vw,7.4rem)] leading-[0.94] tracking-[-0.04em] text-earth-900">
+            Real Data. Real Doctors.<br />
+            Real Results.
+          </h1>
+
+          <p class="mx-auto mt-10 max-w-5xl font-serif text-[clamp(1.7rem,3.8vw,3.4rem)] font-light leading-[1.15] text-earth-600">
+            Join the #1 clinician-led longevity program and get the clarity, oversight, and results you’ve been
+            missing.
+          </p>
+
+          <div class="mx-auto mt-14 grid max-w-5xl gap-6 text-left md:grid-cols-2">
+            <div class="flex items-start gap-4 rounded-[1.75rem] border border-earth-900/8 bg-cream-50/80 p-5 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mt-1 h-9 w-9 text-earth-600">
+                <path d="M10 2v7.31" />
+                <path d="M14 9.3V2" />
+                <path d="M8.5 2h7" />
+                <path d="M14.5 9.3H9.48a2 2 0 0 0-1.94 1.52l-1.75 7A2 2 0 0 0 7.73 20h8.54a2 2 0 0 0 1.94-2.48l-1.75-7a2 2 0 0 0-1.96-1.52Z" />
+                <circle cx="18" cy="18" r="3" />
+                <path d="M18 16.5v3" />
+                <path d="M16.5 18h3" />
+              </svg>
+              <div>
+                <p class="text-[15px] uppercase tracking-[0.24em] text-earth-400">Testing</p>
+                <p class="mt-1 text-[clamp(1.35rem,2vw,2rem)] leading-tight text-earth-900">50+ Biomarkers Tested 4x/yr</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 rounded-[1.75rem] border border-earth-900/8 bg-cream-50/80 p-5 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mt-1 h-9 w-9 text-earth-600">
+                <path d="M8 2h8" />
+                <path d="M9 2v4" />
+                <path d="M15 2v4" />
+                <path d="M4 8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Z" />
+                <circle cx="10" cy="12" r="2.2" />
+                <path d="M8 18a4 4 0 0 1 4-3.2 4 4 0 0 1 2.7 1" />
+                <circle cx="18" cy="8" r="2.5" />
+                <path d="M18 6.5v3" />
+                <path d="M16.5 8h3" />
+              </svg>
+              <div>
+                <p class="text-[15px] uppercase tracking-[0.24em] text-earth-400">Clinician Visit</p>
+                <p class="mt-1 text-[clamp(1.35rem,2vw,2rem)] leading-tight text-earth-900">45-Minute Clinician Visit</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 rounded-[1.75rem] border border-earth-900/8 bg-cream-50/80 p-5 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mt-1 h-9 w-9 text-earth-600">
+                <path d="M3 12h8" />
+                <path d="M5 8h8" />
+                <path d="M7 16h6" />
+                <path d="m13 18 3 3 5-5" />
+                <path d="M13 4a8 8 0 1 1 0 16" />
+              </svg>
+              <div>
+                <p class="text-[15px] uppercase tracking-[0.24em] text-earth-400">Delivered</p>
+                <p class="mt-1 text-[clamp(1.35rem,2vw,2rem)] leading-tight text-earth-900">Rx Delivered to Your Door</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 rounded-[1.75rem] border border-earth-900/8 bg-cream-50/80 p-5 shadow-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mt-1 h-9 w-9 text-earth-600">
+                <circle cx="12" cy="8" r="3.5" />
+                <path d="M6 19c1.3-2.7 3.5-4 6-4s4.7 1.3 6 4" />
+                <path d="M18 4.5h4" />
+                <path d="M20 2.5v4" />
+                <circle cx="9" cy="8" r="0.2" fill="currentColor" />
+              </svg>
+              <div>
+                <p class="text-[15px] uppercase tracking-[0.24em] text-earth-400">Today</p>
+                <p class="mt-1 text-[clamp(1.35rem,2vw,2rem)] leading-tight text-earth-900">$199 Today (Was $349)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-14">
+            <a
+              href="#plans"
+              class="inline-flex min-w-[18rem] items-center justify-center rounded-full bg-[#FFD37D] px-10 py-5 text-xl font-semibold text-earth-900 transition hover:brightness-[0.98]"
+            >
+              Get Started
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="plans" class="relative overflow-hidden px-6 pb-24 lg:px-8 lg:pb-28">
+        <div class="absolute inset-x-0 top-10 mx-auto h-[34rem] max-w-7xl rounded-[2.5rem] bg-[url('https://a.storyblok.com/f/130005/1344x1080/63b7101369/lf24_footer_2_retouched.jpg')] bg-cover bg-center opacity-20"></div>
+        <div class="absolute inset-x-0 top-10 mx-auto h-[34rem] max-w-7xl rounded-[2.5rem] bg-[linear-gradient(180deg,rgba(44,36,32,0.28),rgba(44,36,32,0.55))]"></div>
+
+        <div class="relative mx-auto max-w-7xl">
+          <div class="rounded-[2.25rem] border border-earth-900/12 bg-cream-100/96 p-6 shadow-soft backdrop-blur-sm md:p-8 lg:p-10">
+            <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+              <div class="max-w-xl">
+                <p class="text-sm font-medium uppercase tracking-[0.28em] text-earth-400">Choose Your Plan</p>
+                <h2 class="mt-4 font-serif text-[clamp(2.6rem,5vw,4.6rem)] leading-[1.02] text-earth-900">
+                  Take the First Step Toward Optimal Health
+                </h2>
+                <p class="mt-6 text-lg font-light leading-8 text-earth-600">
+                  Pick the membership that fits your pace, then step into clinician-led support, testing, coaching,
+                  and personalized treatment.
+                </p>
+
+                <div class="mt-8 overflow-hidden rounded-[2rem] border border-earth-900/10">
+                  <img
+                    src="https://a.storyblok.com/f/130005/3208x4000/70df100518/desktop-hp-crop-vertical.png"
+                    alt="Lifeforce clinician consultation"
+                    class="h-full min-h-[22rem] w-full object-cover"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-6">
+                <button
+                  type="button"
+                  data-plan-card
+                  class="is-active w-full rounded-[1.75rem] border border-earth-900/15 bg-cream-50/90 p-6 text-left"
+                >
+                  <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="flex items-center gap-5">
+                      <span data-plan-dot class="flex h-12 w-12 rounded-full border-4 border-earth-900 bg-cream-50 transition"></span>
+                      <div>
+                        <div class="flex flex-wrap items-center gap-3">
+                          <h3 class="font-serif text-[2rem] leading-none text-earth-900">Monthly Membership</h3>
+                          <span class="rounded-full bg-sage-200 px-4 py-1.5 text-sm font-medium text-earth-900">
+                            Save $150
+                          </span>
+                        </div>
+                        <p class="mt-4 text-lg font-light leading-8 text-earth-600">
+                          Get started for $199, then $149/month (cancel anytime).
+                        </p>
+                      </div>
+                    </div>
+                    <div class="shrink-0 pt-1 text-right">
+                      <p class="text-[1.1rem] text-earth-400 line-through">$349</p>
+                      <p class="text-[2.2rem] leading-none text-earth-900">$199</p>
+                    </div>
+                  </div>
+
+                  <ul class="mt-6 space-y-3 pl-8 text-[1.1rem] font-light leading-9 text-earth-600 marker:text-earth-400 md:text-[1.35rem]">
+                    <li>4x/year blood draw of 50+ biomarkers (at-home)</li>
+                    <li>4x/year in-depth telehealth clinical consults</li>
+                    <li>Unlimited health coaching</li>
+                    <li>Personalized health program</li>
+                    <li>Access to prescription medications (when clinically appropriate)</li>
+                    <li>30% off supplement subscriptions</li>
+                  </ul>
+                </button>
+
+                <button
+                  type="button"
+                  data-plan-card
+                  class="w-full rounded-[1.75rem] border border-earth-900/10 bg-cream-50/55 p-6 text-left"
+                >
+                  <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="flex items-center gap-5">
+                      <span data-plan-dot class="flex h-12 w-12 rounded-full border-4 border-earth-900 bg-cream-50 transition"></span>
+                      <div>
+                        <h3 class="font-serif text-[2rem] leading-none text-earth-900">Core Annual Membership</h3>
+                        <p class="mt-4 text-lg font-light leading-8 text-earth-600">
+                          One-time cost for a full year of expert care.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="shrink-0 pt-1 text-right">
+                      <p class="text-[1.1rem] text-earth-400 line-through">$699</p>
+                      <p class="text-[2.2rem] leading-none text-earth-900">$599</p>
+                    </div>
+                  </div>
+
+                  <ul class="mt-6 space-y-3 pl-8 text-[1.1rem] font-light leading-9 text-earth-600 marker:text-earth-400 md:text-[1.35rem]">
+                    <li>2x/year blood draws of 50+ biomarkers</li>
+                    <li>1x/year 45-minute telehealth clinical consult</li>
+                    <li>Personalized health program with access to prescriptions</li>
+                    <li>30% off supplements</li>
+                  </ul>
+                </button>
+
+                <a
+                  href="#"
+                  class="inline-flex w-full items-center justify-center rounded-full bg-[#FFD37D] px-8 py-5 text-2xl font-semibold text-earth-900 transition hover:brightness-[0.98]"
+                >
+                  Get Started
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="px-6 pb-24 lg:px-8 lg:pb-28">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-12 max-w-3xl">
+            <p class="text-sm font-medium uppercase tracking-[0.28em] text-earth-400">How It Works</p>
+            <h2 class="mt-4 font-serif text-[clamp(2.4rem,4.8vw,4.4rem)] leading-[1.04] text-earth-900">
+              Measure, interpret, and act with a program designed around real follow-through.
+            </h2>
+          </div>
+
+          <div class="grid gap-8 lg:grid-cols-3">
+            <article class="overflow-hidden rounded-[2rem] border border-earth-900/10 bg-cream-50 shadow-soft">
+              <img
+                src="https://a.storyblok.com/f/130005/1983x2224/43d361ba02/lf_home_howitworks_1b.jpg"
+                alt="At-home biomarker testing"
+                class="h-80 w-full object-cover"
+              />
+              <div class="p-7">
+                <p class="text-sm font-medium uppercase tracking-[0.24em] text-earth-400">Step 1</p>
+                <h3 class="mt-3 font-serif text-3xl text-earth-900">Measure your baseline.</h3>
+                <p class="mt-4 text-lg font-light leading-8 text-earth-600">
+                  At-home blood draws, wearables, and onboarding data give you a high-resolution view of where you
+                  are starting.
+                </p>
+              </div>
+            </article>
+
+            <article class="overflow-hidden rounded-[2rem] border border-earth-900/10 bg-cream-50 shadow-soft">
+              <img
+                src="https://a.storyblok.com/f/130005/1766x1702/2e1d3f9dc2/lf_home_howitworks_2b.jpg"
+                alt="Health data interpretation"
+                class="h-80 w-full object-cover"
+              />
+              <div class="p-7">
+                <p class="text-sm font-medium uppercase tracking-[0.24em] text-earth-400">Step 2</p>
+                <h3 class="mt-3 font-serif text-3xl text-earth-900">Understand what matters.</h3>
+                <p class="mt-4 text-lg font-light leading-8 text-earth-600">
+                  Longevity-trained clinicians translate your results into clear priorities instead of generic,
+                  one-size-fits-all advice.
+                </p>
+              </div>
+            </article>
+
+            <article class="overflow-hidden rounded-[2rem] border border-earth-900/10 bg-cream-50 shadow-soft">
+              <img
+                src="https://a.storyblok.com/f/130005/1203x1500/612c575cb2/retest_and_refine_lf.png"
+                alt="Retest and refine"
+                class="h-80 w-full object-cover"
+              />
+              <div class="p-7">
+                <p class="text-sm font-medium uppercase tracking-[0.24em] text-earth-400">Step 3</p>
+                <h3 class="mt-3 font-serif text-3xl text-earth-900">Refine and improve.</h3>
+                <p class="mt-4 text-lg font-light leading-8 text-earth-600">
+                  You don’t stop at insight. The program evolves with repeat testing, coaching, and treatment that
+                  stays matched to your goals.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const planCards = Array.from(document.querySelectorAll("[data-plan-card]"));
+
+      planCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          planCards.forEach((item) => item.classList.remove("is-active"));
+          card.classList.add("is-active");
+        });
+      });
+    </script>
+  </body>
+</html>
