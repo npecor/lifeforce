@@ -19,7 +19,7 @@ Use this snapshot as the revert point if the next round of MVP state-model chang
 Current dashboard states after the v0.3 MVP state model pass:
 
 - Non-member · No labs
-- Labs · No member / one-off labs
+- Non-member · one-off labs
 - Member · No labs · draw not scheduled
 - Member · Blood draw booked · draw not completed
 - Member · Labs processing · questionnaire incomplete
@@ -49,6 +49,7 @@ Current supporting flows:
 - The prototype includes collaborative comments through Supabase.
 - Comments are shared across users/devices and do not require login.
 - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
+- Comment Mode is intentionally retained: off allows normal prototype interaction, on allows click-to-place pinned comments.
 - The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
 - Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
 - The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
@@ -158,12 +159,22 @@ Persistence rules:
 Supported comment actions:
 
 - Add comment
+- Toggle Comment Mode for click-to-place pinned comments
+- Add general unpinned comment
 - View comments grouped by screen
 - View screen from comment
 - Resolve/unresolve
 - Delete
 - Export all comments
 - Drag pinned comment markers to update location
+
+Comment interaction rules:
+
+- Comment Mode off: prototype buttons, screen controls, and navigation work normally.
+- Comment Mode on: clicking a visible mobile screen places a temporary pin and opens the composer.
+- Canceling the composer removes the temporary pin.
+- Saving the composer persists the comment in Supabase and keeps the pin visible.
+- Add general comment attaches feedback to the active screen without x/y coordinates.
 
 ## Changelog Process
 

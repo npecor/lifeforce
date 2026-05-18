@@ -1,5 +1,29 @@
 # ULC x LifeForce Prototype Changelog
 
+## v0.5 · Comment mode refinement
+
+Date: May 18, 2026
+
+Summary:
+- Reintroduces Comment Mode so reviewers can choose between normal prototype interaction and click-to-comment placement.
+- Keeps the simplified comments panel with all comments grouped by screen.
+- Adds a visible Comment Mode banner, screen outline, hover affordance, and crosshair cursor while placement mode is on.
+- Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
+- Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
+- Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
+
+User states affected:
+- Prototype shell / collaborative comments
+- All dashboard and flow screens that can receive comment pins
+
+Known open questions:
+- Should pinned comment placement remain enabled for all screen groups, or only the active dynamic preview?
+- Should Comment Mode auto-turn off after saving a comment, or stay on for rapid review passes?
+
+Risky changes or assumptions:
+- Comment Mode stays on after saving so reviewers can quickly add multiple pinned comments.
+- The composer remains in the comments panel rather than floating beside the pin to keep implementation stable.
+
 ## v0.4 · Care plan refinement
 
 Date: May 18, 2026
@@ -13,7 +37,7 @@ Summary:
 - Updates the labs/no-member card to use user-facing biomarker testing language and removes TBD chips from the mobile UI.
 
 User states affected:
-- Labs · No member / one-off labs
+- Non-member · one-off labs
 - Post-clinician visit · Care plan active
 
 Known open questions:
@@ -42,7 +66,7 @@ Summary:
 
 User states affected:
 - Non-member · No labs
-- Labs · No member / one-off labs
+- Non-member · one-off labs
 - Member · No labs · draw not scheduled
 - Member · Blood draw booked · draw not completed
 - Labs processing · questionnaire incomplete
