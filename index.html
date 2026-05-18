@@ -368,27 +368,6 @@
         text-transform: uppercase;
       }
 
-      .screen-comment-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 24px;
-        height: 24px;
-        padding: 0 8px;
-        border-radius: 999px;
-        background: #1f7aff;
-        color: #fff;
-        font-size: 11px;
-        font-weight: 900;
-        letter-spacing: 0;
-        text-transform: none;
-        box-shadow: 0 8px 18px rgba(31, 122, 255, 0.24);
-      }
-
-      .screen-comment-badge.active {
-        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 8px 18px rgba(31, 122, 255, 0.24);
-      }
-
       .phone {
         position: relative;
         width: 100%;
@@ -2575,12 +2554,6 @@
         return openCommentsForScreen(screenId).filter(hasValidPinCoordinates);
       }
 
-      function screenCommentBadge(screenId) {
-        const count = openCommentsForScreen(screenId).length;
-        const isSelected = Boolean(selectedCommentId && openCommentsForScreen(screenId).some((comment) => comment.id === selectedCommentId));
-        return count ? `<span class="screen-comment-badge ${isSelected ? "active" : ""}" title="${count} open comments">${count}</span>` : "";
-      }
-
       function lifeScoreHeart(size = 64) {
         return `
           <svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
@@ -3209,7 +3182,7 @@
         const screenTitle = screenTitleForVariant(v);
         return `
           <article class="variant">
-            <div class="variant-label"><span>${v.label}</span>${screenCommentBadge(screenId)}</div>
+            <div class="variant-label"><span>${v.label}</span></div>
             <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
               <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
@@ -3231,7 +3204,7 @@
         const hasStickyAction = Boolean(stickyAction);
         return `
           <article class="variant">
-            <div class="variant-label"><span>${label}</span>${screenCommentBadge(resolvedScreenId)}</div>
+            <div class="variant-label"><span>${label}</span></div>
             <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
               <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
