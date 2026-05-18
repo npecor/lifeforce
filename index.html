@@ -434,6 +434,10 @@
         scrollbar-width: none;
       }
 
+      .phone.has-sticky-action .screen {
+        padding-bottom: 250px;
+      }
+
       .comment-mode .screen {
         outline: 2px solid rgba(31, 122, 255, 0.4);
         outline-offset: -2px;
@@ -1100,19 +1104,26 @@
       }
 
       .sticky-action {
-        position: sticky;
-        bottom: 0;
-        z-index: 2;
-        margin: 16px -6px 0;
+        position: absolute;
+        right: 24px;
+        bottom: 94px;
+        left: 24px;
+        z-index: 18;
+        margin: 0;
         padding: 12px;
         border: 1px solid var(--line);
         border-radius: 18px;
         background: rgba(255, 255, 255, 0.96);
-        box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(14px);
       }
 
       .sticky-action .cta {
         margin-top: 10px;
+      }
+
+      .sticky-action .cta.ghost {
+        min-height: 42px;
       }
 
       .order-line {
@@ -1782,7 +1793,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.5 · Comment mode refinement</span>
+          <span class="version-pill">v0.6 · Sticky CTA cleanup</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1860,8 +1871,14 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.5</summary>
+          <summary>Change log · v0.6</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.6 · Sticky CTA cleanup</h3>
+          <ul>
+            <li>Moved recommendations, product, and order purchase CTAs out of the scroll content and into phone-level bottom bars.</li>
+            <li>Anchored purchase bars above the bottom navigation so they feel intentional and consistent.</li>
+            <li>Added extra scroll padding on purchase screens so page content can clear the bottom action area.</li>
+          </ul>
           <h3>v0.5 · Comment mode refinement</h3>
           <ul>
             <li>Reintroduced Comment Mode so normal prototype interactions still work when commenting is off.</li>
@@ -3008,18 +3025,20 @@
         `;
       }
 
-      function phoneScreen(label, body, screenId = "") {
+      function phoneScreen(label, body, screenId = "", stickyAction = "") {
         const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
+        const hasStickyAction = Boolean(stickyAction);
         return `
           <article class="variant">
             <div class="variant-label"><span>${label}</span>${screenCommentBadge(resolvedScreenId)}</div>
-            <div class="phone" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+            <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
               <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
                 ${renderCommentPins(resolvedScreenId)}
                 ${body}
               </div>
+              ${stickyAction}
               ${bottomNav()}
             </div>
           </article>
@@ -3265,6 +3284,9 @@
               <p class="module-copy">Prescription options are available only when clinically appropriate after clinician review.</p>
               <button class="mini-cta outline">View Rx Options</button>
             </section>
+          `,
+          "recommendations",
+          `
             <section class="sticky-action">
               <div class="card-head">
                 <div>
@@ -3276,7 +3298,6 @@
               <button class="cta">Add All to Plan</button>
             </section>
           `,
-          "recommendations",
         );
       }
 
@@ -3355,18 +3376,20 @@
               <h3 class="module-title">Related ULC services</h3>
               <p class="module-copy">Follow-up consult and next blood draw can help monitor response over time.</p>
             </section>
+          `,
+          "product-detail",
+          `
             <section class="sticky-action">
               <div class="card-head">
                 <div>
-                  <h3 class="row-title">Add to My Plan</h3>
-                  <p class="row-copy">Vitamin D3 · 4000 IU · $32/mo</p>
+                  <h3 class="row-title">Vitamin D3 · 4000 IU</h3>
+                  <p class="row-copy">$32/mo</p>
                 </div>
                 <span class="status-pill">Recommended</span>
               </div>
               <button class="cta">Add to Plan · $32/mo</button>
             </section>
           `,
-          "product-detail",
         );
       }
 
@@ -3394,6 +3417,9 @@
               <h3 class="module-title">Shipping + payment</h3>
               <p class="module-copy">Use saved shipping address and payment method. Details can be confirmed before placing the order.</p>
             </section>
+          `,
+          "review-order",
+          `
             <section class="sticky-action">
               <div class="card-head">
                 <div>
@@ -3406,7 +3432,6 @@
               <button class="cta ghost">Keep Browsing</button>
             </section>
           `,
-          "review-order",
         );
       }
 

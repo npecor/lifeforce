@@ -1,5 +1,26 @@
 # ULC x LifeForce Prototype Changelog
 
+## v0.6 · Sticky CTA cleanup
+
+Date: May 18, 2026
+
+Summary:
+- Moves recommendations, product detail, and order review purchase CTAs out of scrollable screen content and into phone-level bottom bars.
+- Anchors the purchase bars above the ULC bottom navigation.
+- Adds extra scroll padding on screens with bottom purchase bars so content can scroll clear of the CTA area.
+- Tightens the product detail sticky bar copy to emphasize product name, price, and one primary action.
+
+User states affected:
+- Product Detail
+- Review Order
+- Recommendations
+
+Known open questions:
+- Should order review keep the secondary Keep Browsing action in the bottom bar, or move it inline as a text link?
+
+Risky changes or assumptions:
+- Purchase bars are treated as prototype shell/mobile viewport overlays for these screens, not inline content cards.
+
 ## v0.5 · Comment mode refinement
 
 Date: May 18, 2026
