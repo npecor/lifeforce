@@ -1,28 +1,5 @@
 # ULC x LifeForce Prototype Changelog
 
-## v0.7 · Collaborative open questions
-
-Date: May 18, 2026
-
-Summary:
-- Makes the Open Questions section collaborative and editable with Supabase.
-- Adds an Add open question form with initials/name, category, and question text.
-- Groups questions by category and supports Open / Resolved / All filters.
-- Adds resolve, unresolve, and confirmed delete actions.
-- Adds SQL seed rows for the existing MVP open questions with fixed IDs to avoid duplicates.
-- Adds SQL setup for the prototype_open_questions table and anonymous RLS policies.
-
-User states affected:
-- Prototype shell / Open Questions section
-
-Known open questions:
-- Should seeded questions be protected from deletion, or should reviewers be able to fully curate the shared list?
-- Should open questions support owners or target decision dates later?
-
-Risky changes or assumptions:
-- Seeded questions are inserted by the SQL setup with fixed IDs; if reviewers delete them later, the frontend will not recreate them.
-- The Supabase table must be created with the updated SQL before this works in production.
-
 ## v0.6 · Sticky CTA cleanup
 
 Date: May 18, 2026
@@ -43,32 +20,6 @@ Known open questions:
 
 Risky changes or assumptions:
 - Purchase bars are treated as prototype shell/mobile viewport overlays for these screens, not inline content cards.
-
-## v0.5 · Comment mode refinement
-
-Date: May 18, 2026
-
-Summary:
-- Reintroduces Comment Mode so reviewers can choose between normal prototype interaction and click-to-comment placement.
-- Keeps the simplified comments panel with all comments grouped by screen.
-- Adds a visible Comment Mode banner, screen outline, hover affordance, and crosshair cursor while placement mode is on.
-- Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
-- Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
-- Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
-- Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
-- Fixes screen overlay filtering so only open comments for the exact screen/state render as badges or pins.
-
-User states affected:
-- Prototype shell / collaborative comments
-- All dashboard and flow screens that can receive comment pins
-
-Known open questions:
-- Should pinned comment placement remain enabled for all screen groups, or only the active dynamic preview?
-- Should Comment Mode auto-turn off after saving a comment, or stay on for rapid review passes?
-
-Risky changes or assumptions:
-- Comment Mode stays on after saving so reviewers can quickly add multiple pinned comments.
-- The composer remains in the comments panel rather than floating beside the pin to keep implementation stable.
 
 ## v0.4 · Care plan refinement
 
@@ -140,7 +91,7 @@ Date: May 18, 2026
 
 Summary:
 - Captures the prototype before the May 15 meeting-driven state model changes.
-- Includes current dashboard states, reports/results flow, recommendations/products flow, and collaborative comments feature.
+- Includes current dashboard states, reports/results flow, and recommendations/products flow.
 - Use this as the revert point if the next round of changes goes in the wrong direction.
 
 User states affected:
