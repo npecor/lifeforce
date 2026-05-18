@@ -1,5 +1,28 @@
 # ULC x LifeForce Prototype Changelog
 
+## v0.7 · Collaborative open questions
+
+Date: May 18, 2026
+
+Summary:
+- Makes the Open Questions section collaborative and editable with Supabase.
+- Adds an Add open question form with initials/name, category, and question text.
+- Groups questions by category and supports Open / Resolved / All filters.
+- Adds resolve, unresolve, and confirmed delete actions.
+- Adds SQL seed rows for the existing MVP open questions with fixed IDs to avoid duplicates.
+- Adds SQL setup for the prototype_open_questions table and anonymous RLS policies.
+
+User states affected:
+- Prototype shell / Open Questions section
+
+Known open questions:
+- Should seeded questions be protected from deletion, or should reviewers be able to fully curate the shared list?
+- Should open questions support owners or target decision dates later?
+
+Risky changes or assumptions:
+- Seeded questions are inserted by the SQL setup with fixed IDs; if reviewers delete them later, the frontend will not recreate them.
+- The Supabase table must be created with the updated SQL before this works in production.
+
 ## v0.6 · Sticky CTA cleanup
 
 Date: May 18, 2026

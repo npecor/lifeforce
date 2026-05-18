@@ -50,6 +50,7 @@ Current supporting flows:
 - Comments are shared across users/devices and do not require login.
 - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
 - Comment Mode is intentionally retained: off allows normal prototype interaction, on allows click-to-place pinned comments.
+- Open Questions are also collaborative through Supabase and can be added, resolved, unresolved, and deleted by reviewers.
 - The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
 - Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
 - The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
@@ -146,6 +147,8 @@ Future blood draws:
 
 Comments use Supabase table: prototype_comments
 
+Open Questions use Supabase table: prototype_open_questions
+
 Frontend environment variables:
 
 - VITE_SUPABASE_URL
@@ -154,6 +157,7 @@ Frontend environment variables:
 Persistence rules:
 
 - Comments are stored in Supabase.
+- Open Questions are stored in Supabase.
 - localStorage is used only for the last-entered reviewer initials/name.
 
 Supported comment actions:
@@ -175,6 +179,15 @@ Comment interaction rules:
 - Canceling the composer removes the temporary pin.
 - Saving the composer persists the comment in Supabase and keeps the pin visible.
 - Add general comment attaches feedback to the active screen without x/y coordinates.
+
+Supported open question actions:
+
+- Add open question with initials/name, category, and text
+- View questions grouped by category
+- Filter by Open / Resolved / All
+- Resolve/unresolve
+- Confirmed delete
+- Seed the existing MVP open questions through the SQL setup with fixed IDs
 
 ## Changelog Process
 
