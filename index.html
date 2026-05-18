@@ -390,11 +390,13 @@
         border-radius: 999px;
         background: #1f7aff;
         color: #fff;
-        cursor: pointer;
+        cursor: grab;
         font-size: 12px;
         font-weight: 900;
         box-shadow: 0 10px 20px rgba(31, 122, 255, 0.3);
         pointer-events: auto;
+        touch-action: none;
+        user-select: none;
       }
 
       .comment-pin.resolved {
@@ -406,7 +408,13 @@
       .comment-pin.active {
         width: 32px;
         height: 32px;
-        background: #111;
+        background: #0069ff;
+        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.18), 0 12px 24px rgba(31, 122, 255, 0.34);
+      }
+
+      .comment-pin.dragging {
+        cursor: grabbing;
+        opacity: 0.88;
       }
 
       .screen-titlebar {
@@ -1922,6 +1930,7 @@
       let commentFilter = "open";
       let pendingComment = null;
       let commentEventsBound = false;
+      let suppressNextPinClick = false;
       let currentViewMode = "all";
       let comments = [];
 
@@ -2062,7 +2071,7 @@
               .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
               .map((comment) => {
                 const number = comments.findIndex((item) => item.id === comment.id) + 1;
-                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:${comment.x}%;top:${comment.y}%;" title="${escapeHtml(comment.text)}">${number}</button>`;
+                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="${escapeHtml(comment.text)}">${number}</button>`;
               })
               .join("")}
           </div>
@@ -3334,6 +3343,62 @@
         }, 0);
       }
 
+      function pinPositionFromEvent(event, screen) {
+        const rect = screen.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        return {
+          x: Math.max(0, Math.min(100, x)),
+          y: Math.max(0, Math.min(100, y)),
+        };
+      }
+
+      async function updateCommentPosition(commentId, x, y) {
+        const client = initSupabase();
+        if (!client) return;
+        const { error } = await client
+          .from("prototype_comments")
+          .update({ x, y, updated_at: new Date().toISOString() })
+          .eq("id", commentId)
+          .eq("prototype_id", PROTOTYPE_ID);
+        if (!error) await fetchComments();
+      }
+
+      function beginPinDrag(event, pin) {
+        const commentId = pin.dataset.commentPin;
+        const screen = pin.closest(".screen[data-screen-id]");
+        if (!screen) return;
+        let moved = false;
+        pin.classList.add("dragging");
+        pin.setPointerCapture?.(event.pointerId);
+
+        const movePin = (moveEvent) => {
+          moved = true;
+          const { x, y } = pinPositionFromEvent(moveEvent, screen);
+          pin.style.left = `clamp(16px, ${x}%, calc(100% - 16px))`;
+          pin.style.top = `clamp(16px, ${y}%, calc(100% - 16px))`;
+          pin.dataset.dragX = String(x);
+          pin.dataset.dragY = String(y);
+        };
+
+        const endPinDrag = async (upEvent) => {
+          pin.classList.remove("dragging");
+          pin.releasePointerCapture?.(event.pointerId);
+          pin.removeEventListener("pointermove", movePin);
+          pin.removeEventListener("pointerup", endPinDrag);
+          pin.removeEventListener("pointercancel", endPinDrag);
+          if (!moved) return;
+          upEvent.preventDefault();
+          upEvent.stopPropagation();
+          suppressNextPinClick = true;
+          await updateCommentPosition(commentId, Number(pin.dataset.dragX), Number(pin.dataset.dragY));
+        };
+
+        pin.addEventListener("pointermove", movePin);
+        pin.addEventListener("pointerup", endPinDrag);
+        pin.addEventListener("pointercancel", endPinDrag);
+      }
+
       function setupCommentEvents() {
         if (commentEventsBound) return;
         commentEventsBound = true;
@@ -3374,6 +3439,10 @@
           if (!button) return;
           setViewMode(button.dataset.view);
         });
+        document.addEventListener("pointerdown", (event) => {
+          const pin = event.target.closest("[data-comment-pin]");
+          if (pin) beginPinDrag(event, pin);
+        });
 
         document.addEventListener("click", async (event) => {
           const tab = event.target.closest("[data-comment-tab]");
@@ -3392,6 +3461,10 @@
           if (pin) {
             event.preventDefault();
             event.stopPropagation();
+            if (suppressNextPinClick) {
+              suppressNextPinClick = false;
+              return;
+            }
             const comment = comments.find((item) => item.id === pin.dataset.commentPin);
             if (comment) {
               selectedCommentId = comment.id;
