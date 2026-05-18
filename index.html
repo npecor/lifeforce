@@ -963,6 +963,8 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
+        width: auto;
+        max-width: fit-content;
         min-height: 28px;
         padding: 0 10px;
         border-radius: 999px;
@@ -970,6 +972,8 @@
         color: var(--muted);
         font-size: 12px;
         font-weight: 800;
+        flex: 0 0 auto;
+        white-space: nowrap;
       }
 
       .chip.active {
@@ -1085,11 +1089,15 @@
 
       .rec-row {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto minmax(0, 1fr) auto;
         gap: 11px;
         align-items: center;
         padding: 12px 0;
         border-top: 1px solid #ece8e2;
+      }
+
+      .rec-row > div {
+        min-width: 0;
       }
 
       .rec-row:first-of-type {
