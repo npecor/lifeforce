@@ -469,6 +469,12 @@
         user-select: none;
       }
 
+      .comment-mode .comment-pin:hover {
+        width: 30px;
+        height: 30px;
+        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 12px 24px rgba(31, 122, 255, 0.34);
+      }
+
       .comment-pin.resolved {
         background: #8c8983;
         box-shadow: none;
@@ -1857,6 +1863,7 @@
             <li>Reintroduced Comment Mode so normal prototype interactions still work when commenting is off.</li>
             <li>Clicking Add comment now turns on placement mode with a clear banner and screen hover affordance.</li>
             <li>Clicking a screen in Comment Mode places a temporary pin and opens the comment composer.</li>
+            <li>Saved pins can be dragged to a new location in Comment Mode and persist updated coordinates to Supabase.</li>
             <li>Canceling removes the temporary pin; saving keeps the pin and highlights the new comment.</li>
             <li>Added screen-level comment badges and kept Add general comment as a fallback for unpinned feedback.</li>
           </ul>
@@ -2184,6 +2191,7 @@
       let pendingComment = null;
       let commentEventsBound = false;
       let suppressNextPinClick = false;
+      let activePinDrag = null;
       let pendingPin = null;
       let currentViewMode = "all";
       let comments = [];
@@ -2326,7 +2334,7 @@
               .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
               .map((comment) => {
                 const number = comments.findIndex((item) => item.id === comment.id) + 1;
-                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="${escapeHtml(comment.text)}">${number}</button>`;
+                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${number}</button>`;
               })
               .join("")}
             ${pending}
@@ -3500,10 +3508,10 @@
         status.textContent = commentMode ? "Comment Mode On" : "Collaborative review";
         helper.textContent = commentsError
           ? commentsError
-          : commentsLoading
-            ? "Loading shared comments from Supabase..."
+            : commentsLoading
+              ? "Loading shared comments from Supabase..."
             : commentMode
-              ? "Click anywhere on a screen to leave feedback. Turn Comment Mode off to interact normally."
+              ? "Click to add comments. Drag pins to reposition. Turn Comment Mode off to interact normally."
               : `Turn on Comment Mode to click on a screen and leave feedback. ${screenCount} open on the current screen.`;
         if (modeToggle) {
           modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
@@ -3651,38 +3659,54 @@
       }
 
       function beginPinDrag(event, pin) {
+        if (!commentMode) return;
         const commentId = pin.dataset.commentPin;
         const screen = pin.closest(".screen[data-screen-id]");
         if (!screen) return;
-        let moved = false;
+        event.preventDefault();
+        event.stopPropagation();
+        selectedCommentId = commentId;
+        commentsPanelOpen = true;
         pin.classList.add("dragging");
         pin.setPointerCapture?.(event.pointerId);
-
-        const movePin = (moveEvent) => {
-          moved = true;
-          const { x, y } = pinPositionFromEvent(moveEvent, screen);
-          pin.style.left = `clamp(16px, ${x}%, calc(100% - 16px))`;
-          pin.style.top = `clamp(16px, ${y}%, calc(100% - 16px))`;
-          pin.dataset.dragX = String(x);
-          pin.dataset.dragY = String(y);
+        activePinDrag = {
+          commentId,
+          pin,
+          pointerId: event.pointerId,
+          screen,
+          moved: false,
+          startX: event.clientX,
+          startY: event.clientY,
         };
+        renderCommentUI();
+      }
 
-        const endPinDrag = async (upEvent) => {
-          pin.classList.remove("dragging");
-          pin.releasePointerCapture?.(event.pointerId);
-          pin.removeEventListener("pointermove", movePin);
-          pin.removeEventListener("pointerup", endPinDrag);
-          pin.removeEventListener("pointercancel", endPinDrag);
-          if (!moved) return;
-          upEvent.preventDefault();
-          upEvent.stopPropagation();
-          suppressNextPinClick = true;
-          await updateCommentPosition(commentId, Number(pin.dataset.dragX), Number(pin.dataset.dragY));
-        };
+      function moveActivePinDrag(event) {
+        if (!activePinDrag || event.pointerId !== activePinDrag.pointerId) return false;
+        event.preventDefault();
+        event.stopPropagation();
+        const distance = Math.hypot(event.clientX - activePinDrag.startX, event.clientY - activePinDrag.startY);
+        if (distance > 2) activePinDrag.moved = true;
+        const { x, y } = pinPositionFromEvent(event, activePinDrag.screen);
+        activePinDrag.pin.style.left = `clamp(16px, ${x}%, calc(100% - 16px))`;
+        activePinDrag.pin.style.top = `clamp(16px, ${y}%, calc(100% - 16px))`;
+        activePinDrag.x = x;
+        activePinDrag.y = y;
+        return true;
+      }
 
-        pin.addEventListener("pointermove", movePin);
-        pin.addEventListener("pointerup", endPinDrag);
-        pin.addEventListener("pointercancel", endPinDrag);
+      async function endActivePinDrag(event) {
+        if (!activePinDrag || event.pointerId !== activePinDrag.pointerId) return false;
+        event.preventDefault();
+        event.stopPropagation();
+        const drag = activePinDrag;
+        activePinDrag = null;
+        drag.pin.classList.remove("dragging");
+        drag.pin.releasePointerCapture?.(event.pointerId);
+        if (!drag.moved) return true;
+        suppressNextPinClick = true;
+        await updateCommentPosition(drag.commentId, Number(drag.x), Number(drag.y));
+        return true;
       }
 
       function setupCommentEvents() {
@@ -3736,12 +3760,19 @@
           if (pin) beginPinDrag(event, pin);
         });
         document.addEventListener("pointermove", (event) => {
+          if (moveActivePinDrag(event)) return;
           if (!commentMode) return;
           const screen = event.target.closest(".screen[data-screen-id]");
           if (!screen) return;
           const { x, y } = pinPositionFromEvent(event, screen);
           screen.style.setProperty("--comment-x", `${x}%`);
           screen.style.setProperty("--comment-y", `${y}%`);
+        });
+        document.addEventListener("pointerup", (event) => {
+          endActivePinDrag(event);
+        });
+        document.addEventListener("pointercancel", (event) => {
+          endActivePinDrag(event);
         });
 
         document.addEventListener("click", async (event) => {

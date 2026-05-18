@@ -11,6 +11,7 @@ Summary:
 - Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
 - Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
 - Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
+- Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
 
 User states affected:
 - Prototype shell / collaborative comments
