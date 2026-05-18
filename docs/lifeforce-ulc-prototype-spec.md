@@ -49,7 +49,9 @@ Current supporting flows:
 - The prototype includes collaborative comments through Supabase.
 - Comments are shared across users/devices and do not require login.
 - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
-- The current pre-MVP state model still includes states and modules that may be removed or renamed in the next pass.
+- The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
+- Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
+- The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
 
 ## May 15 MVP Direction
 

@@ -1699,7 +1699,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.3 · MVP state model pass</span>
+          <span class="version-pill">v0.4 · Care plan refinement</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1773,8 +1773,16 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.3</summary>
+          <summary>Change log · v0.4</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.4 · Care plan refinement</h3>
+          <ul>
+            <li>Simplified the post-clinician care plan state to avoid repeated recommendation CTAs.</li>
+            <li>Changed the top care plan CTA to View Care Plan.</li>
+            <li>Replaced generic supplement examples with prescription recommendations: Estradiol Patch and Semaglutide.</li>
+            <li>Moved Prescription Recommendations above LifeScore and Lab Reports in the post-clinician state.</li>
+            <li>Updated the labs/no-member card copy to use user-facing biomarker testing language and removed TBD chips from the mobile UI.</li>
+          </ul>
           <h3>v0.3 · MVP state model pass</h3>
           <ul>
             <li>Updated dashboard states to reflect the May 15 operational journey.</li>
@@ -2006,14 +2014,12 @@
           member: true,
           compactContext: true,
           actionTitle: "Your care plan is active",
-          actionCopy: "Continue your post-visit recommendations and review your care plan.",
-          cta: "View Recommendations",
+          actionCopy: "Review your clinician-approved recommendations and next steps.",
+          cta: "View Care Plan",
           ctaIcon: "sparkles",
           profileState: "complete",
           hasLabs: true,
           journeyState: "care_plan_active",
-          productTitle: "Your Product Recommendations",
-          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
         },
       ];
 
@@ -2432,14 +2438,15 @@
       function oneOffLabsInfoCard() {
         return `
           <section class="card module">
-            <h3 class="module-title">One-off lab access</h3>
-            <p class="module-copy">This path supports lab access without assuming an ongoing clinical membership or care plan.</p>
+            <h3 class="module-title">Get your biomarkers tested</h3>
+            <p class="module-copy">Begin with a Lifeforce blood draw. Upgrade to clinical membership for LifeScore, clinician review, and a personalized care plan.</p>
             <div class="chip-row">
-              <span class="chip">Blood draw access</span>
-              <span class="chip">Results access TBD</span>
-              <span class="chip">LifeScore TBD</span>
-              <span class="chip">Clinician visit TBD</span>
+              <span class="chip">Blood draw</span>
+              <span class="chip">Biomarker results</span>
+              <span class="chip">Upgrade for clinician review</span>
             </div>
+            <button class="cta">Schedule Blood Draw</button>
+            <button class="cta ghost">Explore Membership</button>
           </section>
         `;
       }
@@ -2730,34 +2737,35 @@
         `;
       }
 
-      function recommendations() {
+      function prescriptionRecommendations() {
         return `
           <section class="card recommendation">
             <div class="card-head">
               <div>
-                <h3 class="module-title">Ready to start your product plan?</h3>
-                <p class="module-copy">2 clinician-reviewed products are recommended from your latest panel.</p>
+                <h3 class="module-title">Prescription Recommendations</h3>
+                <p class="module-copy">Your clinician has recommended these products as part of your care plan.</p>
               </div>
-              <span class="status-pill">Updated</span>
+              <span class="status-pill">Post-visit</span>
             </div>
             <div class="rec-row">
-              <span class="icon-bubble green">${icon("pill", 19)}</span>
+              <span class="icon-bubble green">${icon("badge-plus", 19)}</span>
               <div>
-                <h4 class="row-title">Vitamin D3 · 4000 IU</h4>
-                <p class="row-copy">Based on Vitamin D · $32/mo</p>
+                <h4 class="row-title">Estradiol Patch</h4>
+                <p class="row-copy">Hormone support · $110/mo</p>
+                <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Add to Plan</button>
             </div>
             <div class="rec-row">
-              <span class="icon-bubble">${icon("heart", 19)}</span>
+              <span class="icon-bubble">${icon("syringe", 19)}</span>
               <div>
-                <h4 class="row-title">Omega-3 Protocol</h4>
-                <p class="row-copy">Based on LDL · $38/mo</p>
+                <h4 class="row-title">Semaglutide</h4>
+                <p class="row-copy">Metabolic support · $270/mo</p>
+                <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Add to Plan</button>
             </div>
             <button class="cta">Order Recommended Products ${icon("arrow-right", 17)}</button>
-            <button class="cta ghost">View Recommendations</button>
           </section>
         `;
       }
@@ -2835,9 +2843,8 @@
 
         if (state === "care_plan_active") {
           return `
+            ${prescriptionRecommendations()}
             ${lifeScoreCard(false)}
-            ${recommendations()}
-            ${productCard(v, true)}
             ${labReportsHub(v)}
           `;
         }

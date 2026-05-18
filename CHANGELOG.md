@@ -1,5 +1,30 @@
 # ULC x LifeForce Prototype Changelog
 
+## v0.4 · Care plan refinement
+
+Date: May 18, 2026
+
+Summary:
+- Simplifies the post-clinician visit / care plan active state.
+- Replaces repeated recommendation/product CTAs with one top-level care plan CTA and one prescription product CTA.
+- Changes the top care plan CTA to View Care Plan.
+- Replaces generic supplement examples with Estradiol Patch and Semaglutide in the post-clinician prescription recommendations module.
+- Moves prescription recommendations above LifeScore and Lab Reports.
+- Updates the labs/no-member card to use user-facing biomarker testing language and removes TBD chips from the mobile UI.
+
+User states affected:
+- Labs · No member / one-off labs
+- Post-clinician visit · Care plan active
+
+Known open questions:
+- Should post-clinician product CTA language be Add to Plan, Order Now, or Order Recommended Products?
+- Which Rx products and prices are approved for prototype/demo use?
+- Where should product ordering deep-link in the main ULC app?
+
+Risky changes or assumptions:
+- Estradiol Patch and Semaglutide are used as prototype examples and should be validated by the clinical/product team.
+- The care plan state now emphasizes prescription recommendations over supplement recommendations.
+
 ## v0.3 · MVP state model pass
 
 Date: May 18, 2026
