@@ -82,6 +82,20 @@
         letter-spacing: -0.06em;
       }
 
+      .version-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.02em;
+      }
+
       h1 {
         margin: 0;
         font-size: clamp(34px, 4vw, 62px);
@@ -1389,6 +1403,57 @@
         gap: 12px;
       }
 
+      .prototype-changelog {
+        max-width: 1440px;
+        margin: 28px auto 0;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .prototype-changelog summary {
+        cursor: pointer;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.03em;
+      }
+
+      .prototype-changelog h2,
+      .prototype-changelog h3 {
+        margin: 14px 0 6px;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+      }
+
+      .prototype-changelog h2 {
+        font-size: 17px;
+      }
+
+      .prototype-changelog h3 {
+        font-size: 14px;
+      }
+
+      .prototype-changelog ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .prototype-changelog li + li {
+        margin-top: 3px;
+      }
+
+      .changelog-updated {
+        margin: 10px 0 0;
+        color: var(--soft);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
       .comments-panel {
         position: fixed;
         top: 18px;
@@ -1642,6 +1707,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
+          <span class="version-pill">v0.2 · Pre-MVP state update</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1691,6 +1757,29 @@
           <h2>Reusable Health Questionnaire States</h2>
           <div class="state-grid" id="profileStates"></div>
         </section>
+
+        <details class="prototype-changelog">
+          <summary>Change log · v0.2</summary>
+          <h2>Prototype changelog</h2>
+          <h3>v0.2 · Pre-MVP state update snapshot</h3>
+          <ul>
+            <li>Snapshot created before May 15 meeting-driven state model changes.</li>
+            <li>Current prototype includes dashboard states, reports/results, recommendations/products, and collaborative comments.</li>
+            <li>This is the baseline to revert to if the next round of changes goes in the wrong direction.</li>
+          </ul>
+          <h3>Upcoming / in progress</h3>
+          <ul>
+            <li>Update state model based on May 15 review.</li>
+            <li>Rework non-member/no-labs flow.</li>
+            <li>Add labs/no-member or one-off labs state.</li>
+            <li>Revise Health Questionnaire logic.</li>
+            <li>Remove unsupported questionnaire states.</li>
+            <li>Remove membership management from LifeForce embedded view.</li>
+            <li>Add LifeScore gating logic.</li>
+            <li>Revisit recommendations and product purchase flow.</li>
+          </ul>
+          <p class="changelog-updated">Last updated May 18, 2026.</p>
+        </details>
       </section>
 
       <aside class="comments-panel" id="commentsPanel" hidden>
