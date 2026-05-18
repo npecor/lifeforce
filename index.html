@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ULC x Lifeforce Mobile Prototype</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/api/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
         --ink: #171717;
@@ -238,6 +240,57 @@
         color: var(--brown);
       }
 
+      .comment-shell {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        max-width: 1440px;
+        margin: 18px auto 0;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+      }
+
+      .comment-tools {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .comment-status {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .comment-button {
+        min-height: 36px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--brown);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .comment-button.active {
+        border-color: var(--brown);
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .comment-helper {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
       .view-panel[hidden] {
         display: none;
       }
@@ -308,10 +361,52 @@
       }
 
       .screen {
+        position: relative;
         height: 750px;
         overflow: auto;
         padding: 0 22px 104px;
         scrollbar-width: none;
+      }
+
+      .comment-mode .screen {
+        cursor: crosshair;
+      }
+
+      .comment-pin-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+      }
+
+      .comment-pin {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        transform: translate(-50%, -50%);
+        border: 2px solid #fff;
+        border-radius: 999px;
+        background: #1f7aff;
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 10px 20px rgba(31, 122, 255, 0.3);
+        pointer-events: auto;
+      }
+
+      .comment-pin.resolved {
+        background: #8c8983;
+        box-shadow: none;
+        opacity: 0.72;
+      }
+
+      .comment-pin.active {
+        width: 32px;
+        height: 32px;
+        background: #111;
       }
 
       .screen-titlebar {
@@ -1289,6 +1384,165 @@
         gap: 12px;
       }
 
+      .comments-panel {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 80;
+        display: grid;
+        gap: 14px;
+        width: min(420px, calc(100vw - 28px));
+        max-height: calc(100vh - 36px);
+        overflow: auto;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.2);
+      }
+
+      .comments-panel[hidden],
+      .composer[hidden] {
+        display: none;
+      }
+
+      .panel-head,
+      .comment-item-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .panel-head h2 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: -0.04em;
+      }
+
+      .panel-tabs,
+      .panel-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .panel-tabs button,
+      .panel-filters button {
+        min-height: 32px;
+        padding: 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .panel-tabs button[aria-pressed="true"],
+      .panel-filters button[aria-pressed="true"] {
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .comment-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .comment-item {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--wash-2);
+      }
+
+      .comment-item.resolved {
+        opacity: 0.62;
+      }
+
+      .comment-item.selected {
+        border-color: #1f7aff;
+        box-shadow: 0 0 0 3px rgba(31, 122, 255, 0.12);
+      }
+
+      .comment-meta {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .comment-text {
+        margin: 8px 0 0;
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .comment-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .comment-actions button,
+      .composer-actions button {
+        min-height: 31px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--brown);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .comment-actions .danger {
+        color: #b74626;
+      }
+
+      .composer {
+        display: grid;
+        gap: 10px;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fffdf0;
+      }
+
+      .composer label {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .composer input,
+      .composer textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+      }
+
+      .composer textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .composer-actions {
+        display: flex;
+        gap: 8px;
+      }
+
       @media (max-width: 1440px) {
         .canvas {
           grid-template-columns: repeat(2, minmax(315px, 1fr));
@@ -1344,6 +1598,16 @@
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
           </div>
         </div>
+        <div class="comment-shell" id="commentShell">
+          <div>
+            <div class="comment-status" id="commentStatus">Comment Mode Off</div>
+            <div class="comment-helper" id="commentHelper">Turn on comment mode, then click a prototype screen to leave a pinned note.</div>
+          </div>
+          <div class="comment-tools">
+            <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
+            <button class="comment-button" type="button" id="commentsPanelToggle">Comments: 0</button>
+          </div>
+        </div>
       </section>
 
       <section class="interactive-preview view-panel" id="interactiveView" aria-label="Dynamic prototype preview" hidden>
@@ -1380,6 +1644,45 @@
           <div class="state-grid" id="profileStates"></div>
         </section>
       </section>
+
+      <aside class="comments-panel" id="commentsPanel" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Comments</h2>
+            <div class="comment-meta" id="activeScreenLabel">No screen selected</div>
+          </div>
+          <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
+        </div>
+        <div class="panel-tabs">
+          <button type="button" data-comment-tab="screen" aria-pressed="true">This Screen</button>
+          <button type="button" data-comment-tab="all" aria-pressed="false">All Comments</button>
+        </div>
+        <div class="panel-filters">
+          <button type="button" data-comment-filter="open" aria-pressed="true">Open only</button>
+          <button type="button" data-comment-filter="all" aria-pressed="false">Show all</button>
+          <button type="button" data-comment-filter="resolved" aria-pressed="false">Resolved</button>
+        </div>
+        <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
+        <button class="comment-button" type="button" id="addScreenComment">Add Screen Comment</button>
+        <div class="composer" id="commentComposer" hidden>
+          <strong id="composerTitle">Add comment</strong>
+          <label>
+            Initials / Name
+            <input id="commentAuthor" type="text" placeholder="NP" />
+          </label>
+          <label>
+            Comment
+            <textarea id="commentText" placeholder="Leave feedback on this screen..."></textarea>
+          </label>
+          <div class="composer-actions">
+            <button type="button" id="saveComment">Save Comment</button>
+            <button type="button" id="cancelComment">Cancel</button>
+          </div>
+          <div class="comment-meta" id="composerError"></div>
+        </div>
+        <div class="comment-list" id="commentList"></div>
+        <button class="comment-button" type="button" id="exportComments">Export Comments</button>
+      </aside>
     </main>
 
     <script>
@@ -1604,8 +1907,166 @@
         profileStatus: "not_started",
       };
 
+      const PROTOTYPE_ID = "ulc-lifeforce";
+      const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
+      let supabaseClient = null;
+      let commentsLoading = false;
+      let commentsError = "";
+      let realtimeChannel = null;
+      let commentMode = false;
+      let commentsPanelOpen = false;
+      let activeScreenId = "dashboard-non-member-no-labs";
+      let activeScreenTitle = "Dashboard · Non-member · No labs";
+      let selectedCommentId = "";
+      let commentTab = "screen";
+      let commentFilter = "open";
+      let pendingComment = null;
+      let commentEventsBound = false;
+      let currentViewMode = "all";
+      let comments = [];
+
       function icon(name, size = 20) {
         return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+      }
+
+      function escapeHtml(value = "") {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function getSupabaseConfig() {
+        const runtimeConfig = window.ULC_LIFEFORCE_SUPABASE_CONFIG || {};
+        return {
+          url: runtimeConfig.url || window.VITE_SUPABASE_URL || "",
+          anonKey: runtimeConfig.anonKey || window.VITE_SUPABASE_ANON_KEY || "",
+        };
+      }
+
+      function initSupabase() {
+        const config = getSupabaseConfig();
+        if (!config?.url || !config?.anonKey || !window.supabase?.createClient) {
+          commentsError = "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.";
+          return null;
+        }
+        if (!supabaseClient) {
+          supabaseClient = window.supabase.createClient(config.url, config.anonKey);
+        }
+        return supabaseClient;
+      }
+
+      function normalizeComment(row) {
+        return {
+          id: row.id,
+          screenId: row.screen_id,
+          screenTitle: row.screen_title,
+          stateKey: row.state_key || "",
+          route: row.route || "",
+          x: row.x === null || row.x === undefined ? null : Number(row.x),
+          y: row.y === null || row.y === undefined ? null : Number(row.y),
+          author: row.author,
+          text: row.text,
+          resolved: Boolean(row.resolved),
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+        };
+      }
+
+      function serializeComment(comment) {
+        return {
+          prototype_id: PROTOTYPE_ID,
+          screen_id: comment.screenId,
+          screen_title: comment.screenTitle,
+          state_key: comment.stateKey || null,
+          route: comment.route || null,
+          x: comment.x ?? null,
+          y: comment.y ?? null,
+          author: comment.author,
+          text: comment.text,
+          resolved: Boolean(comment.resolved),
+        };
+      }
+
+      async function fetchComments() {
+        const client = initSupabase();
+        if (!client) {
+          renderCommentUI();
+          return;
+        }
+        commentsLoading = true;
+        commentsError = "";
+        renderCommentUI();
+        const { data, error } = await client
+          .from("prototype_comments")
+          .select("*")
+          .eq("prototype_id", PROTOTYPE_ID)
+          .order("created_at", { ascending: true });
+        commentsLoading = false;
+        if (error) {
+          commentsError = error.message;
+          renderCommentUI();
+          return;
+        }
+        comments = (data || []).map(normalizeComment);
+        renderPrototype();
+      }
+
+      function subscribeToComments() {
+        const client = initSupabase();
+        if (!client || realtimeChannel) return;
+        realtimeChannel = client
+          .channel("ulc-lifeforce-prototype-comments")
+          .on("postgres_changes", { event: "*", schema: "public", table: "prototype_comments", filter: `prototype_id=eq.${PROTOTYPE_ID}` }, () => fetchComments())
+          .subscribe();
+      }
+
+      function makeId() {
+        return window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : `comment-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      }
+
+      function screenIdForVariant(v) {
+        const overrides = {
+          member_time_for_next_draw: "dashboard-member-next-draw-due",
+        };
+        return overrides[v.key] || `dashboard-${v.key.replaceAll("_", "-")}`;
+      }
+
+      function screenTitleForVariant(v) {
+        return `Dashboard · ${v.label.replace(/^\d+\s·\s/, "")}`;
+      }
+
+      function variantKeyForScreenId(screenId) {
+        return variants.find((variant) => screenIdForVariant(variant) === screenId)?.key || "";
+      }
+
+      const flowScreenTitles = {
+        "lab-reports-list": "Lab Reports · Listing",
+        "lab-reports-empty": "Lab Reports · Empty State",
+        "lab-report-detail": "Lab Report Detail",
+        "biomarker-detail": "Biomarker Detail",
+        recommendations: "Recommendations",
+        "product-browse": "Product Browse",
+        "product-detail": "Product Detail",
+        "review-order": "Review Order",
+        "labs-processing": "Labs Processing",
+        "recommendations-locked": "Recommendations Locked",
+      };
+
+      function renderCommentPins(screenId) {
+        return `
+          <div class="comment-pin-layer" aria-label="Comment pins">
+            ${comments
+              .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
+              .map((comment) => {
+                const number = comments.findIndex((item) => item.id === comment.id) + 1;
+                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:${comment.x}%;top:${comment.y}%;" title="${escapeHtml(comment.text)}">${number}</button>`;
+              })
+              .join("")}
+          </div>
+        `;
       }
 
       function lifeScoreHeart(size = 64) {
@@ -2216,12 +2677,15 @@
         const showIntroTop =
           v.key === "non_member_no_labs" ||
           (v.livePreview && v.userType === "non_member_no_labs");
+        const screenId = screenIdForVariant(v);
+        const screenTitle = screenTitleForVariant(v);
         return `
           <article class="variant">
             <div class="variant-label"><span>${v.label}</span></div>
-            <div class="phone">
+            <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
-              <div class="screen">
+              <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                ${renderCommentPins(screenId)}
                 ${header(v)}
                 ${showIntroTop ? contextModule(v) : ""}
                 ${actionModule(v)}
@@ -2233,13 +2697,18 @@
         `;
       }
 
-      function phoneScreen(label, body) {
+      function phoneScreen(label, body, screenId = "") {
+        const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
         return `
           <article class="variant">
             <div class="variant-label"><span>${label}</span></div>
-            <div class="phone">
+            <div class="phone" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
-              <div class="screen">${body}</div>
+              <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                ${renderCommentPins(resolvedScreenId)}
+                ${body}
+              </div>
               ${bottomNav()}
             </div>
           </article>
@@ -2295,6 +2764,7 @@
             ${reportCard({ date: "Sep 5, 2025", counts: [10, 4, 1], status: "Reviewed" })}
             ${reportCard({ date: "May 10, 2025", counts: [0, 0, 0], status: "Processing", muted: true })}
           `,
+          "lab-reports-list",
         );
       }
 
@@ -2313,6 +2783,7 @@
               </div>
             </section>
           `,
+          "lab-reports-empty",
         );
       }
 
@@ -2390,6 +2861,7 @@
             </div>
             ${grouped}
           `,
+          "lab-report-detail",
         );
       }
 
@@ -2446,6 +2918,7 @@
               <button class="mini-cta outline">See all recommendations ${icon("arrow-right", 16)}</button>
             </section>
           `,
+          "biomarker-detail",
         );
       }
 
@@ -2493,6 +2966,7 @@
               <button class="cta">Add All to Plan</button>
             </section>
           `,
+          "recommendations",
         );
       }
 
@@ -2539,6 +3013,7 @@
                 .join("")}
             </div>
           `,
+          "product-browse",
         );
       }
 
@@ -2581,6 +3056,7 @@
               <button class="cta">Add to Plan · $32/mo</button>
             </section>
           `,
+          "product-detail",
         );
       }
 
@@ -2620,6 +3096,7 @@
               <button class="cta ghost">Keep Browsing</button>
             </section>
           `,
+          "review-order",
         );
       }
 
@@ -2638,6 +3115,7 @@
               </div>
             </section>
           `,
+          "labs-processing",
         );
       }
 
@@ -2657,7 +3135,312 @@
               </div>
             </section>
           `,
+          "recommendations-locked",
         );
+      }
+
+      function setActiveScreen(screenId, screenTitle) {
+        activeScreenId = screenId || activeScreenId;
+        activeScreenTitle = screenTitle || flowScreenTitles[activeScreenId] || activeScreenTitle;
+        renderCommentUI();
+      }
+
+      function filteredComments() {
+        const base = commentTab === "screen" ? comments.filter((comment) => comment.screenId === activeScreenId) : comments;
+        return base.filter((comment) => {
+          if (commentFilter === "open") return !comment.resolved;
+          if (commentFilter === "resolved") return comment.resolved;
+          return true;
+        });
+      }
+
+      function formatDate(value) {
+        return new Date(value).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+      }
+
+      function renderCommentList() {
+        const list = filteredComments();
+        if (!list.length) {
+          return `<section class="comment-item"><p class="comment-text">No ${commentFilter === "resolved" ? "resolved" : "open"} comments ${commentTab === "screen" ? "on this screen" : "yet"}.</p></section>`;
+        }
+
+        const grouped = commentTab === "all";
+        if (!grouped) {
+          return list.map(renderCommentItem).join("");
+        }
+
+        const groups = list.reduce((acc, comment) => {
+          const key = comment.screenTitle || comment.screenId;
+          acc[key] = acc[key] || [];
+          acc[key].push(comment);
+          return acc;
+        }, {});
+
+        return Object.entries(groups)
+          .map(
+            ([screenTitle, groupComments]) => `
+              <section class="comment-item">
+                <strong>${escapeHtml(screenTitle)}</strong>
+                <div class="comment-list" style="margin-top:10px">${groupComments.map(renderCommentItem).join("")}</div>
+              </section>
+            `,
+          )
+          .join("");
+      }
+
+      function renderCommentItem(comment) {
+        const number = comments.findIndex((item) => item.id === comment.id) + 1;
+        return `
+          <article class="comment-item ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "selected" : ""}">
+            <div class="comment-item-head">
+              <strong>${number}. ${escapeHtml(comment.author)}</strong>
+              <span class="comment-meta">${comment.resolved ? "Resolved" : "Open"}</span>
+            </div>
+            <div class="comment-meta">${escapeHtml(comment.screenTitle)} · ${formatDate(comment.createdAt)}</div>
+            <p class="comment-text">${escapeHtml(comment.text)}</p>
+            <div class="comment-actions">
+              <button type="button" data-comment-jump="${comment.id}">View Screen</button>
+              <button type="button" data-comment-resolve="${comment.id}">${comment.resolved ? "Unresolve" : "Resolve"}</button>
+              <button type="button" class="danger" data-comment-delete="${comment.id}">Delete</button>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderCommentUI() {
+        const openCount = comments.filter((comment) => !comment.resolved).length;
+        const screenCount = comments.filter((comment) => comment.screenId === activeScreenId && !comment.resolved).length;
+        const shell = document.getElementById("commentShell");
+        const status = document.getElementById("commentStatus");
+        const helper = document.getElementById("commentHelper");
+        const modeToggle = document.getElementById("commentModeToggle");
+        const panelToggle = document.getElementById("commentsPanelToggle");
+        const panel = document.getElementById("commentsPanel");
+        if (!shell || !status || !modeToggle || !panelToggle || !panel) return;
+
+        if (document.body) document.body.classList.toggle("comment-mode", commentMode);
+        status.textContent = commentMode ? "Comment Mode On" : "Comment Mode Off";
+        helper.textContent = commentsError
+          ? commentsError
+          : commentsLoading
+            ? "Loading shared comments from Supabase..."
+            : commentMode
+              ? "Comment Mode On — click the screen to leave feedback."
+              : "Turn on comment mode, then click a prototype screen to leave a pinned note.";
+        modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
+        modeToggle.classList.toggle("active", commentMode);
+        modeToggle.setAttribute("aria-pressed", String(commentMode));
+        panelToggle.textContent = `Comments: ${openCount}`;
+        document.getElementById("activeScreenLabel").textContent = `${activeScreenTitle} · ${screenCount} open on this screen`;
+        panel.hidden = !commentsPanelOpen;
+        document.querySelectorAll("[data-comment-tab]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentTab === commentTab)));
+        document.querySelectorAll("[data-comment-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentFilter === commentFilter)));
+        document.getElementById("commentList").innerHTML = commentsError ? `<section class="comment-item"><p class="comment-text">${escapeHtml(commentsError)}</p></section>` : renderCommentList();
+      }
+
+      function stateKeyForScreen(screenId) {
+        if (!screenId.startsWith("dashboard-")) return "";
+        return screenId.replace("dashboard-", "").replaceAll("-", "_");
+      }
+
+      function openComposer(screen, x = null, y = null) {
+        pendingComment = {
+          screenId: screen.dataset.screenId,
+          screenTitle: screen.dataset.screenTitle,
+          stateKey: stateKeyForScreen(screen.dataset.screenId),
+          route: currentViewMode,
+          x,
+          y,
+        };
+        selectedCommentId = "";
+        commentsPanelOpen = true;
+        const composer = document.getElementById("commentComposer");
+        composer.hidden = false;
+        document.getElementById("composerTitle").textContent = `Add comment · ${pendingComment.screenTitle}`;
+        document.getElementById("commentAuthor").value = localStorage.getItem(COMMENT_AUTHOR_KEY) || "";
+        document.getElementById("commentText").value = "";
+        document.getElementById("composerError").textContent = "";
+        setActiveScreen(pendingComment.screenId, pendingComment.screenTitle);
+        setTimeout(() => document.getElementById("commentText").focus(), 0);
+      }
+
+      function closeComposer() {
+        pendingComment = null;
+        document.getElementById("commentComposer").hidden = true;
+        document.getElementById("composerError").textContent = "";
+      }
+
+      async function addCommentFromComposer() {
+        const author = document.getElementById("commentAuthor").value.trim();
+        const text = document.getElementById("commentText").value.trim();
+        const error = document.getElementById("composerError");
+        if (!author || !text || !pendingComment) {
+          error.textContent = "Please add your initials/name and a comment.";
+          return;
+        }
+        localStorage.setItem(COMMENT_AUTHOR_KEY, author);
+        const nextComment = {
+          ...pendingComment,
+          author,
+          text,
+          createdAt: new Date().toISOString(),
+          resolved: false,
+        };
+        const client = initSupabase();
+        if (!client) {
+          error.textContent = commentsError || "Supabase is not configured.";
+          return;
+        }
+        const { error: insertError } = await client.from("prototype_comments").insert(serializeComment(nextComment));
+        if (insertError) {
+          error.textContent = insertError.message;
+          return;
+        }
+        closeComposer();
+        await fetchComments();
+      }
+
+      function exportCommentsText() {
+        const groups = comments.reduce((acc, comment) => {
+          const key = comment.screenTitle || comment.screenId;
+          acc[key] = acc[key] || [];
+          acc[key].push(comment);
+          return acc;
+        }, {});
+        const lines = ["ULC x Lifeforce Prototype Comments", ""];
+        Object.entries(groups).forEach(([screen, group]) => {
+          lines.push(screen);
+          group.forEach((comment) => lines.push(`- ${comment.author}: ${comment.text}${comment.resolved ? " [Resolved]" : ""}`));
+          lines.push("");
+        });
+        return lines.join("\n").trim();
+      }
+
+      function jumpToComment(comment) {
+        selectedCommentId = comment.id;
+        setActiveScreen(comment.screenId, comment.screenTitle);
+        const dashboardKey = comment.screenId.startsWith("dashboard-") ? variantKeyForScreenId(comment.screenId) : "";
+        if (dashboardKey && variants.some((variant) => variant.key === dashboardKey)) {
+          previewState.userType = dashboardKey;
+          renderInteractivePreview();
+          setViewMode("dynamic");
+        } else {
+          setViewMode("all");
+        }
+        renderPrototype();
+        setTimeout(() => {
+          const target = document.querySelector(`[data-screen-id="${comment.screenId}"]`);
+          if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 0);
+      }
+
+      function setupCommentEvents() {
+        if (commentEventsBound) return;
+        commentEventsBound = true;
+
+        document.getElementById("commentModeToggle").addEventListener("click", () => {
+          commentMode = !commentMode;
+          renderCommentUI();
+        });
+        document.getElementById("commentsPanelToggle").addEventListener("click", () => {
+          commentsPanelOpen = !commentsPanelOpen;
+          renderCommentUI();
+        });
+        document.getElementById("closeCommentsPanel").addEventListener("click", () => {
+          commentsPanelOpen = false;
+          renderCommentUI();
+        });
+        document.getElementById("saveComment").addEventListener("click", addCommentFromComposer);
+        document.getElementById("cancelComment").addEventListener("click", closeComposer);
+        document.getElementById("addScreenComment").addEventListener("click", () => {
+          const screen = document.querySelector(`.screen[data-screen-id="${activeScreenId}"]`) || document.querySelector(".screen[data-screen-id]");
+          if (screen) openComposer(screen, null, null);
+        });
+        document.getElementById("exportComments").addEventListener("click", async () => {
+          const text = exportCommentsText();
+          if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
+          else window.prompt("Copy comments", text);
+        });
+        document.getElementById("stateControls").addEventListener("click", (event) => {
+          const button = event.target.closest("[data-control]");
+          if (!button) return;
+          previewState[button.dataset.control] = button.dataset.value;
+          const preview = derivePreviewVariant();
+          setActiveScreen(screenIdForVariant(preview), screenTitleForVariant(preview));
+          renderInteractivePreview();
+        });
+        document.getElementById("viewToggle").addEventListener("click", (event) => {
+          const button = event.target.closest("[data-view]");
+          if (!button) return;
+          setViewMode(button.dataset.view);
+        });
+
+        document.addEventListener("click", async (event) => {
+          const tab = event.target.closest("[data-comment-tab]");
+          if (tab) {
+            commentTab = tab.dataset.commentTab;
+            renderCommentUI();
+            return;
+          }
+          const filter = event.target.closest("[data-comment-filter]");
+          if (filter) {
+            commentFilter = filter.dataset.commentFilter;
+            renderCommentUI();
+            return;
+          }
+          const pin = event.target.closest("[data-comment-pin]");
+          if (pin) {
+            event.preventDefault();
+            event.stopPropagation();
+            const comment = comments.find((item) => item.id === pin.dataset.commentPin);
+            if (comment) {
+              selectedCommentId = comment.id;
+              commentsPanelOpen = true;
+              setActiveScreen(comment.screenId, comment.screenTitle);
+              renderPrototype();
+            }
+            return;
+          }
+          const jump = event.target.closest("[data-comment-jump]");
+          if (jump) {
+            const comment = comments.find((item) => item.id === jump.dataset.commentJump);
+            if (comment) jumpToComment(comment);
+            return;
+          }
+          const resolve = event.target.closest("[data-comment-resolve]");
+          if (resolve) {
+            const comment = comments.find((item) => item.id === resolve.dataset.commentResolve);
+            if (comment) {
+              const client = initSupabase();
+              if (client) {
+                await client.from("prototype_comments").update({ resolved: !comment.resolved, updated_at: new Date().toISOString() }).eq("id", comment.id).eq("prototype_id", PROTOTYPE_ID);
+                await fetchComments();
+              }
+            }
+            return;
+          }
+          const deleteButton = event.target.closest("[data-comment-delete]");
+          if (deleteButton) {
+            const client = initSupabase();
+            if (client) {
+              await client.from("prototype_comments").delete().eq("id", deleteButton.dataset.commentDelete).eq("prototype_id", PROTOTYPE_ID);
+              await fetchComments();
+            }
+            return;
+          }
+          const screen = event.target.closest(".screen[data-screen-id]");
+          if (screen) {
+            setActiveScreen(screen.dataset.screenId, screen.dataset.screenTitle);
+            if (commentMode) {
+              event.preventDefault();
+              event.stopPropagation();
+              const rect = screen.getBoundingClientRect();
+              const x = ((event.clientX - rect.left) / rect.width) * 100;
+              const y = ((event.clientY - rect.top) / rect.height) * 100;
+              openComposer(screen, Math.max(0, Math.min(100, x)), Math.max(0, Math.min(100, y)));
+            }
+          }
+        });
       }
 
       function renderControls() {
@@ -2703,9 +3486,11 @@
         renderControls();
         document.getElementById("livePreview").innerHTML = renderVariant(derivePreviewVariant());
         hydrateIcons();
+        renderCommentUI();
       }
 
       function setViewMode(mode) {
+        currentViewMode = mode;
         const showAll = mode === "all";
         document.getElementById("interactiveView").hidden = showAll;
         document.getElementById("allScreensView").hidden = !showAll;
@@ -2741,23 +3526,14 @@
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
           .map((state) => profileBanner(state))
           .join("");
-        document.getElementById("stateControls").addEventListener("click", (event) => {
-          const button = event.target.closest("[data-control]");
-          if (!button) return;
-          previewState[button.dataset.control] = button.dataset.value;
-          renderInteractivePreview();
-        });
-
-        document.getElementById("viewToggle").addEventListener("click", (event) => {
-          const button = event.target.closest("[data-view]");
-          if (!button) return;
-          setViewMode(button.dataset.view);
-        });
-        setViewMode("all");
+        setupCommentEvents();
+        setViewMode(currentViewMode);
+        renderCommentUI();
         hydrateIcons();
       }
 
       renderPrototype();
+      fetchComments().then(() => subscribeToComments());
     </script>
   </body>
 </html>
