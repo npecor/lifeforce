@@ -1258,14 +1258,6 @@
         background: #edf7f0;
       }
 
-      .profile-banner.update_required {
-        background: var(--red-soft);
-      }
-
-      .profile-banner.update_recommended {
-        background: #fffae9;
-      }
-
       .profile-banner.primary-profile {
         background: #fffdf2;
       }
@@ -1707,7 +1699,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.2 · Pre-MVP state update</span>
+          <span class="version-pill">v0.3 · MVP state model pass</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1759,8 +1751,39 @@
         </section>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.2</summary>
+          <summary>Open questions · MVP state model</summary>
+          <h2>Open questions</h2>
+          <h3>Non-member and one-off labs</h3>
+          <ul>
+            <li>Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?</li>
+            <li>What exactly is included for labs-no-member / one-off labs users?</li>
+            <li>Do one-off labs users receive LifeScore, recommendations, or a clinician visit?</li>
+          </ul>
+          <h3>Products, supplements, and services</h3>
+          <ul>
+            <li>Are supplements purchasable in-app or in-store only?</li>
+            <li>Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?</li>
+            <li>Which ULC services can be recommended before clinician review, and which biomarkers trigger them?</li>
+          </ul>
+          <h3>Blood draw and questionnaire data</h3>
+          <ul>
+            <li>What blood draw booking status/date data can Lifeforce receive from ULC/Kite?</li>
+            <li>Should the completed Health Questionnaire state be shown, or should it disappear after completion?</li>
+          </ul>
+        </details>
+
+        <details class="prototype-changelog">
+          <summary>Change log · v0.3</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.3 · MVP state model pass</h3>
+          <ul>
+            <li>Updated dashboard states to reflect the May 15 operational journey.</li>
+            <li>Added labs/no-member and blood-draw-booked states.</li>
+            <li>Changed blood draw terminology to Schedule Blood Draw.</li>
+            <li>Hid Health Questionnaire from the unscheduled member no-labs state.</li>
+            <li>Split labs processing by questionnaire incomplete vs complete.</li>
+            <li>Removed next-draw-due logic and LifeForce membership management from dashboard states.</li>
+          </ul>
           <h3>v0.2 · Pre-MVP state update snapshot</h3>
           <ul>
             <li>Snapshot created before May 15 meeting-driven state model changes.</li>
@@ -1769,14 +1792,10 @@
           </ul>
           <h3>Upcoming / in progress</h3>
           <ul>
-            <li>Update state model based on May 15 review.</li>
-            <li>Rework non-member/no-labs flow.</li>
-            <li>Add labs/no-member or one-off labs state.</li>
-            <li>Revise Health Questionnaire logic.</li>
-            <li>Remove unsupported questionnaire states.</li>
-            <li>Remove membership management from LifeForce embedded view.</li>
-            <li>Add LifeScore gating logic.</li>
-            <li>Revisit recommendations and product purchase flow.</li>
+            <li>Clarify non-member primary CTA strategy.</li>
+            <li>Confirm one-off labs entitlements.</li>
+            <li>Confirm supplement purchase path and pre-clinician recommendation rules.</li>
+            <li>Define ULC service recommendation rules and deep links.</li>
           </ul>
           <p class="changelog-updated">Last updated May 18, 2026.</p>
         </details>
@@ -1858,69 +1877,120 @@
           journeyState: "prospect",
         },
         {
-          key: "member_no_labs",
-          label: "02 · Member · No labs",
+          key: "labs_no_member",
+          label: "02 · Labs · No member / one-off labs",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by Lifeforce",
+          compactContext: true,
+          introTitle: "One-off labs inside ULC",
+          context: "Schedule a blood draw and view lab results without assuming an ongoing clinical membership.",
+          actionTitle: "Schedule Blood Draw",
+          actionCopy: "Use one-off lab access to complete your blood draw through ULC.",
+          cta: "Schedule Blood Draw",
+          ctaIcon: "syringe",
+          hasLabs: false,
+          journeyState: "labs_no_member",
+          productTitle: "Browse products",
+          productCopy: "Explore ULC wellness products. Personalized recommendations require clinical review.",
+        },
+        {
+          key: "member_no_labs_not_scheduled",
+          label: "03 · Member · No labs · draw not scheduled",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           member: true,
           compactContext: true,
           introTitle: "Your path to personalized health",
-          context: "Start with your first blood draw and Health Questionnaire to unlock clinical review.",
-          actionTitle: "Book your first blood draw",
+          context: "Start with your first blood draw to unlock the next steps in your Lifeforce review.",
+          actionTitle: "Schedule your first blood draw",
           actionCopy: "Your Lifeforce journey begins with comprehensive bloodwork and clinical review.",
-          cta: "Book Blood Draw",
+          cta: "Schedule Blood Draw",
           ctaIcon: "syringe",
-          profileState: "in_progress",
           hasLabs: false,
           productTitle: "Browse Products While You Wait",
-          productCopy: "Personalized recommendations will appear after your bloodwork and clinical review.",
+          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after bloodwork and clinical review.",
           journeyState: "member_no_labs",
         },
         {
-          key: "member_labs_processing",
-          label: "03 · Member · Labs processing",
+          key: "member_blood_draw_booked",
+          label: "04 · Member · Blood draw booked · draw not completed",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by Lifeforce",
+          member: true,
+          compactContext: true,
+          actionTitle: "Complete your Health Questionnaire",
+          actionCopy: "Finish this before your results review so your clinician has the context they need.",
+          cta: "Complete Health Questionnaire",
+          ctaIcon: "clipboard-list",
+          profileState: "not_started",
+          hasLabs: false,
+          resultsStatus: "labs_booked",
+          journeyState: "blood_draw_booked",
+          productTitle: "Browse Products While You Wait",
+          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after bloodwork and clinical review.",
+        },
+        {
+          key: "member_labs_processing_questionnaire_incomplete",
+          label: "05 · Labs processing · questionnaire incomplete",
+          title: "Your Longevity Journey",
+          subtitle: "Powered by Lifeforce",
+          member: true,
+          compactContext: true,
+          actionTitle: "Complete your Health Questionnaire",
+          actionCopy: "Your bloodwork is processing. Complete your questionnaire while Lifeforce reviews your panel.",
+          cta: "Complete Health Questionnaire",
+          ctaIcon: "clipboard-list",
+          profileState: "in_progress",
+          hasLabs: false,
+          resultsStatus: "labs_processing",
+          journeyState: "labs_processing_questionnaire_incomplete",
+          productTitle: "Browse Products While You Wait",
+          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
+        },
+        {
+          key: "member_labs_processing_questionnaire_complete",
+          label: "06 · Labs processing · questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           member: true,
           compactContext: true,
           actionTitle: "Bloodwork processing",
           actionCopy: "Your Lifeforce blood panel is being processed. Results and recommendations will appear after clinical review.",
-          cta: "Back to Your Longevity Journey",
           ctaIcon: "loader",
           profileState: "complete",
           hasLabs: false,
           resultsStatus: "labs_processing",
-          journeyState: "labs_processing",
+          journeyState: "labs_processing_questionnaire_complete",
           productTitle: "Browse Products While You Wait",
           productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
         },
         {
           key: "member_results_questionnaire_incomplete",
-          label: "04 · Results back · Questionnaire incomplete",
+          label: "07 · Results back · questionnaire incomplete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           member: true,
           compactContext: true,
-          actionTitle: "Your results are back",
-          actionCopy: "Complete your Health Questionnaire to unlock your LifeScore and clinician-reviewed recommendations.",
+          actionTitle: "Complete your Health Questionnaire",
+          actionCopy: "Your results are back. Complete your questionnaire so your clinician has the context they need.",
           cta: "Complete Health Questionnaire",
           ctaIcon: "clipboard-list",
-          profileState: "update_required",
+          profileState: "in_progress",
           hasLabs: true,
           journeyState: "results_questionnaire_incomplete",
           productTitle: "Browse Products While You Wait",
-          productCopy: "Your personalized recommendations will appear after your Health Questionnaire and clinical review are complete.",
+          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after questionnaire completion and clinical review.",
         },
         {
           key: "member_results_questionnaire_complete",
-          label: "05 · Results back · Questionnaire complete",
+          label: "08 · Results back · questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           member: true,
           compactContext: true,
           actionTitle: "Review your results with a clinician",
           actionCopy: "Schedule a telehealth visit to review your LifeScore, results, and recommendations.",
-          cta: "Book Clinician Visit",
+          cta: "Schedule Clinician Visit",
           ctaIcon: "stethoscope",
           profileState: "complete",
           hasLabs: true,
@@ -1930,13 +2000,13 @@
         },
         {
           key: "member_care_plan_active",
-          label: "06 · Care plan active",
+          label: "09 · Post-clinician visit · Care plan active",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           member: true,
           compactContext: true,
           actionTitle: "Your care plan is active",
-          actionCopy: "Continue your recommendations and track progress until your next blood draw.",
+          actionCopy: "Continue your post-visit recommendations and review your care plan.",
           cta: "View Recommendations",
           ctaIcon: "sparkles",
           profileState: "complete",
@@ -1945,26 +2015,18 @@
           productTitle: "Your Product Recommendations",
           productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
         },
-        {
-          key: "member_time_for_next_draw",
-          label: "07 · Time for next draw",
-          title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
-          member: true,
-          compactContext: true,
-          actionTitle: "It’s time for your next blood draw",
-          actionCopy: "Keep your biomarkers current and update your Lifeforce recommendations.",
-          cta: "Book Blood Draw",
-          ctaIcon: "calendar-plus",
-          profileState: "complete",
-          hasLabs: true,
-          journeyState: "time_for_next_draw",
-          productTitle: "Your Product Recommendations",
-          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
-        },
       ];
 
       const profileStates = {
+        not_available: {
+          tag: "Not Available Yet",
+          title: "Health Questionnaire",
+          copy: "Available after a blood draw is scheduled.",
+          button: "",
+          tagClass: "gray",
+          outline: true,
+          quiet: true,
+        },
         not_started: {
           tag: "Not Started",
           title: "Complete your Health Questionnaire",
@@ -1984,26 +2046,9 @@
         complete: {
           tag: "Complete",
           title: "Health Questionnaire complete",
-          copy: "Your questionnaire is up to date.",
-          button: "View Answers",
+          copy: "Your questionnaire is complete.",
+          button: "",
           tagClass: "green",
-          outline: true,
-          quiet: true,
-        },
-        update_required: {
-          tag: "Update Required",
-          title: "Complete your Health Questionnaire",
-          copy: "Complete your questionnaire to unlock your LifeScore and clinician-reviewed recommendations.",
-          button: "Update Now",
-          tagClass: "orange",
-          orange: true,
-        },
-        update_recommended: {
-          tag: "Update Recommended",
-          title: "Review your Health Questionnaire",
-          copy: "New questions are available to improve your recommendations.",
-          button: "Review Updates",
-          tagClass: "gold",
           outline: true,
           quiet: true,
         },
@@ -2015,30 +2060,20 @@
           label: "Preview as:",
           options: [
             ["non_member_no_labs", "Non-member · No labs"],
-            ["member_no_labs", "Member · No labs"],
-            ["member_labs_processing", "Member · Labs processing"],
+            ["labs_no_member", "Labs · No member / one-off labs"],
+            ["member_no_labs_not_scheduled", "Member · No labs · draw not scheduled"],
+            ["member_blood_draw_booked", "Member · Blood draw booked"],
+            ["member_labs_processing_questionnaire_incomplete", "Labs processing · questionnaire incomplete"],
+            ["member_labs_processing_questionnaire_complete", "Labs processing · questionnaire complete"],
             ["member_results_questionnaire_incomplete", "Member · Results back · Questionnaire incomplete"],
             ["member_results_questionnaire_complete", "Member · Results back · Questionnaire complete"],
-            ["member_care_plan_active", "Member · Care plan active"],
-            ["member_time_for_next_draw", "Member · Time for next draw"],
-          ],
-        },
-        {
-          id: "profileStatus",
-          label: "Health Questionnaire Status:",
-          options: [
-            ["not_started", "Not started"],
-            ["in_progress", "In progress"],
-            ["complete", "Complete"],
-            ["update_required", "Update required"],
-            ["update_recommended", "Update recommended"],
+            ["member_care_plan_active", "Post-clinician visit · Care plan active"],
           ],
         },
       ];
 
       const previewState = {
         userType: "non_member_no_labs",
-        profileStatus: "not_started",
       };
 
       const PROTOTYPE_ID = "ulc-lifeforce";
@@ -2161,10 +2196,7 @@
       }
 
       function screenIdForVariant(v) {
-        const overrides = {
-          member_time_for_next_draw: "dashboard-member-next-draw-due",
-        };
-        return overrides[v.key] || `dashboard-${v.key.replaceAll("_", "-")}`;
+        return `dashboard-${v.key.replaceAll("_", "-")}`;
       }
 
       function screenTitleForVariant(v) {
@@ -2377,17 +2409,37 @@
           <section class="card module action">
             <h3 class="module-title">Review your results with a clinician</h3>
             <p class="module-copy">Schedule a telehealth visit to review your LifeScore, results, and recommendations.</p>
-            <button class="cta">${icon("stethoscope", 18)} Book Clinician Visit</button>
+            <button class="cta">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
           </section>
         `;
       }
 
-      function nextDrawCard(urgent = false) {
+      function bloodDrawBookedCard() {
         return `
-          <section class="card module ${urgent ? "action" : ""}">
-            <h3 class="module-title">${urgent ? "It’s time for your next blood draw" : "Next blood draw"}</h3>
-            <p class="module-copy">${urgent ? "Keep your biomarkers current and update your Lifeforce recommendations." : "Available in 43 days. Keep following your care plan until your next retest window opens."}</p>
-            <button class="cta ${urgent ? "" : "ghost"}">${urgent ? "Book Blood Draw" : "View Results"}</button>
+          <section class="card lab-card">
+            <div class="lab-head">
+              <span class="icon-bubble">${icon("calendar-check", 22)}</span>
+              <div>
+                <h3 class="module-title">Blood draw booked</h3>
+                <p class="row-copy">Your blood draw has been booked. Manage booking details in the ULC app.</p>
+              </div>
+            </div>
+            <button class="cta ghost">Manage Booking ${icon("arrow-right", 17)}</button>
+          </section>
+        `;
+      }
+
+      function oneOffLabsInfoCard() {
+        return `
+          <section class="card module">
+            <h3 class="module-title">One-off lab access</h3>
+            <p class="module-copy">This path supports lab access without assuming an ongoing clinical membership or care plan.</p>
+            <div class="chip-row">
+              <span class="chip">Blood draw access</span>
+              <span class="chip">Results access TBD</span>
+              <span class="chip">LifeScore TBD</span>
+              <span class="chip">Clinician visit TBD</span>
+            </div>
           </section>
         `;
       }
@@ -2400,7 +2452,7 @@
             <h3 class="module-title">${v.actionTitle}</h3>
             <p class="module-copy">${v.actionCopy}</p>
             ${early ? `<div class="chip-row"><span class="chip">Strength</span><span class="chip">Cardio</span><span class="chip">Respiratory</span><span class="chip">Body composition</span></div>` : ""}
-            <button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>
+            ${v.cta ? `<button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>` : ""}
             ${early ? `<button class="cta ghost">Learn what’s included</button>` : ""}
           </section>
         `;
@@ -2420,7 +2472,7 @@
             <h3 class="module-title">${title}</h3>
             <p class="module-copy">${copy}</p>
             ${s.progress ? `<p class="row-copy"><strong>${s.progressLabel}</strong></p><div class="progress-track" aria-label="${s.progressLabel}"><div class="progress-fill"></div></div>` : ""}
-            <button class="${options.primary ? "cta" : "mini-cta"} ${s.outline && !options.primary ? "outline" : ""}">${options.primary && state === "not_started" ? icon("clipboard-list", 18) : ""} ${s.button}</button>
+            ${s.button ? `<button class="${options.primary ? "cta" : "mini-cta"} ${s.outline && !options.primary ? "outline" : ""}">${options.primary && state === "not_started" ? icon("clipboard-list", 18) : ""} ${s.button}</button>` : ""}
           </section>
         `;
       }
@@ -2499,20 +2551,9 @@
       }
 
       function labReportsHub(v) {
-        const reportsLocked = v.journeyState === "results_questionnaire_incomplete";
-
         if (v.resultsStatus === "labs_booked") {
           return `
-            <section class="card lab-card">
-              <div class="lab-head">
-                <span class="icon-bubble">${icon("calendar-check", 22)}</span>
-                <div>
-                  <h3 class="module-title">Labs booked</h3>
-                  <p class="row-copy">Your Lifeforce blood panel is scheduled. Results will appear here after your draw is processed.</p>
-                </div>
-              </div>
-              <button class="cta ghost">View Appointment ${icon("arrow-right", 17)}</button>
-            </section>
+            ${bloodDrawBookedCard()}
           `;
         }
 
@@ -2526,7 +2567,6 @@
                   <p class="row-copy">Your Lifeforce blood panel is being processed. Recommendations unlock after clinical review.</p>
                 </div>
               </div>
-              <button class="cta ghost">View Lab Status ${icon("arrow-right", 17)}</button>
             </section>
           `;
         }
@@ -2541,7 +2581,7 @@
                   <p class="row-copy">Your results will appear here after your first blood draw is processed.</p>
                 </div>
               </div>
-              <button class="cta ghost">${v.noLabsCta || "Book Blood Draw"} ${icon("arrow-right", 17)}</button>
+              <button class="cta ghost">${v.noLabsCta || "Schedule Blood Draw"} ${icon("arrow-right", 17)}</button>
             </section>
           `;
         }
@@ -2551,9 +2591,9 @@
             <div class="card-head">
               <div>
                 <h3 class="module-title">Lab Reports</h3>
-                <p class="module-copy">${reportsLocked ? "Complete your Health Questionnaire before viewing your latest Lifeforce blood panel." : "Review your previous Lifeforce blood panels and biomarker trends."}</p>
+                <p class="module-copy">Review your latest Lifeforce blood panel and biomarker trends.</p>
               </div>
-              ${reportsLocked ? `<span class="status-pill gray">${icon("lock", 13)} Locked</span>` : icon("chevron-right", 20)}
+              ${icon("chevron-right", 20)}
             </div>
             <p class="row-copy"><strong>Latest:</strong> Mar 12, 2026 · Lifeforce Blood Panel</p>
             <div class="metrics">
@@ -2561,7 +2601,7 @@
               <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
               <div class="metric attention"><strong>2</strong><span>Attention</span></div>
             </div>
-            <button class="cta ghost ${reportsLocked ? "disabled" : ""}" ${reportsLocked ? "disabled" : ""}>${reportsLocked ? "Complete Questionnaire to View" : `View Reports ${icon("arrow-right", 17)}`}</button>
+            <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
           </section>
         `;
       }
@@ -2737,24 +2777,45 @@
           `;
         }
 
+        if (state === "labs_no_member") {
+          return `
+            ${oneOffLabsInfoCard()}
+            ${membershipConversionCard()}
+            ${lightweightProductBrowse(v)}
+          `;
+        }
+
         if (state === "member_no_labs") {
           return `
-            ${profileBanner(v.profileState)}
             ${longevityAssessmentCard()}
             ${productCard({ ...v, compactProducts: true }, false)}
           `;
         }
 
-        if (state === "labs_processing") {
+        if (state === "blood_draw_booked") {
           return `
+            ${bloodDrawBookedCard()}
             ${productCard({ ...v, compactProducts: true }, false)}
+          `;
+        }
+
+        if (state === "labs_processing_questionnaire_incomplete") {
+          return `
+            ${labReportsHub(v)}
+            ${productCard({ ...v, compactProducts: true }, false)}
+          `;
+        }
+
+        if (state === "labs_processing_questionnaire_complete") {
+          return `
+            ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
+            ${productCard({ ...v, compactProducts: true }, false)}
           `;
         }
 
         if (state === "results_questionnaire_incomplete") {
           return `
-            ${lifeScoreCard(true)}
             ${labReportsHub(v)}
             ${productCard({ ...v, compactProducts: true }, false)}
           `;
@@ -2764,23 +2825,16 @@
           return `
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
-            ${productCard(v, true)}
+            <section class="card module">
+              <h3 class="module-title">Potential next steps</h3>
+              <p class="module-copy">Supplement recommendations are pending ULC purchase-path clarification. Review services and product topics during your clinician visit.</p>
+              <button class="mini-cta outline">View topics to discuss</button>
+            </section>
           `;
         }
 
         if (state === "care_plan_active") {
           return `
-            ${lifeScoreCard(false)}
-            ${recommendations()}
-            ${productCard(v, true)}
-            ${labReportsHub(v)}
-            ${nextDrawCard(false)}
-          `;
-        }
-
-        if (state === "time_for_next_draw") {
-          return `
-            ${nextDrawCard(true)}
             ${lifeScoreCard(false)}
             ${recommendations()}
             ${productCard(v, true)}
@@ -2904,8 +2958,7 @@
                 <span class="icon-bubble">${icon("file-clock", 30)}</span>
                 <h3 class="module-title">No lab reports yet</h3>
                 <p class="module-copy">Your Lifeforce blood panel results will appear here after your first blood draw is processed.</p>
-                <button class="cta">Book Blood Draw</button>
-                <button class="cta ghost">Back to Your Longevity Journey</button>
+                <button class="cta">Schedule Blood Draw</button>
               </div>
             </section>
           `,
@@ -3074,7 +3127,7 @@
             <section class="card recommendation">
               <h3 class="module-title">ULC service recommendations</h3>
               <div class="rec-row"><span class="icon-bubble">${icon("waves", 18)}</span><div><h4 class="row-title">Metabolic Health Consult</h4><p class="row-copy">Review LDL and glucose trends with a clinician.</p><div class="chip-row"><span class="chip gold">LDL Cholesterol</span><span class="chip">Hemoglobin A1c</span></div></div><button class="mini-cta">Book</button></div>
-              <div class="rec-row"><span class="icon-bubble green">${icon("calendar-days", 18)}</span><div><h4 class="row-title">Next blood draw</h4><p class="row-copy">Retest in 90 days to track response.</p></div><button class="mini-cta">Schedule</button></div>
+              <div class="rec-row"><span class="icon-bubble green">${icon("waves", 18)}</span><div><h4 class="row-title">Recovery services</h4><p class="row-copy">Discuss hyperbaric, dry plunge, and infusion options tied to your goals.</p></div><button class="mini-cta">View Services</button></div>
             </section>
             <section class="card module membership-status">
               <h3 class="module-title">Membership Rx</h3>
@@ -3236,8 +3289,7 @@
                 <span class="icon-bubble">${icon("loader", 30)}</span>
                 <h3 class="module-title">Bloodwork processing</h3>
                 <p class="module-copy">Your bloodwork is being processed. Personalized recommendations will appear after clinical review. In the meantime, you can browse wellness products available through ULC.</p>
-                <button class="cta">Browse Products While You Wait</button>
-                <button class="cta ghost">Back to Your Longevity Journey</button>
+                <button class="cta ghost">Browse Products While You Wait</button>
               </div>
             </section>
           `,
@@ -3255,8 +3307,8 @@
                 <span class="icon-bubble">${icon("lock", 30)}</span>
                 <h3 class="module-title">Recommendations pending</h3>
                 <p class="module-copy">Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Health Questionnaire.</p>
-                <div class="chip-row" style="justify-content:center"><span class="chip">Bloodwork needed</span><span class="chip">Profile needed</span><span class="chip">Review pending</span></div>
-                <button class="cta">Book Blood Draw</button>
+                <div class="chip-row" style="justify-content:center"><span class="chip">Bloodwork needed</span><span class="chip">Questionnaire needed</span><span class="chip">Review pending</span></div>
+                <button class="cta">Schedule Blood Draw</button>
                 <button class="cta ghost">Browse Products While You Wait</button>
               </div>
             </section>
@@ -3632,7 +3684,7 @@
           livePreview: true,
           userType: previewState.userType,
           poweredChip: base.member,
-          profileState: previewState.profileStatus,
+          profileState: base.profileState,
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           context: base.context || "Lifeforce uses your profile and lab results to guide clinician-reviewed recommendations.",

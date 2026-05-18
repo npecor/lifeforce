@@ -16,15 +16,17 @@ Use this snapshot as the revert point if the next round of MVP state-model chang
 
 ## Current Supported Prototype States
 
-Current dashboard states in the pre-MVP prototype:
+Current dashboard states after the v0.3 MVP state model pass:
 
 - Non-member · No labs
-- Member · No labs
-- Member · Labs processing
-- Results back · Questionnaire incomplete
-- Results back · Questionnaire complete
-- Care plan active
-- Time for next draw
+- Labs · No member / one-off labs
+- Member · No labs · draw not scheduled
+- Member · Blood draw booked · draw not completed
+- Member · Labs processing · questionnaire incomplete
+- Member · Labs processing · questionnaire complete
+- Member · Results back · questionnaire incomplete
+- Member · Results back · questionnaire complete
+- Member · Post-clinician visit / care plan active
 
 Current supporting flows:
 
@@ -49,25 +51,13 @@ Current supporting flows:
 - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
 - The current pre-MVP state model still includes states and modules that may be removed or renamed in the next pass.
 
-## May 15 MVP Direction To Apply Next
+## May 15 MVP Direction
 
-The next round of design changes should simplify the LifeForce section around the operational journey:
+The prototype now begins simplifying the LifeForce section around the operational journey:
 
 Orient -> Schedule blood draw -> Complete Health Questionnaire -> View results -> Schedule clinician visit -> Review recommendations / care plan
 
-Planned state model:
-
-- Non-member · No labs
-- Labs · No member / one-off labs
-- Member · No labs · blood draw not scheduled
-- Member · Blood draw booked · draw not completed
-- Member · Labs processing · questionnaire incomplete
-- Member · Labs processing · questionnaire complete
-- Member · Results back · questionnaire incomplete
-- Member · Results back · questionnaire complete
-- Member · Post-clinician visit / care plan active
-
-Planned removals or de-emphasis:
+Applied removals or de-emphasis:
 
 - Time for next blood draw
 - Questionnaire update required
@@ -75,6 +65,18 @@ Planned removals or de-emphasis:
 - View questionnaire answers
 - Membership management inside the embedded LifeForce view
 - Future blood draw cadence / eligibility logic
+
+Applied terminology:
+
+- Use Schedule Blood Draw, not Book Blood Draw.
+- Use Health Questionnaire, not Health Profile.
+- Use Schedule Clinician Visit for the post-results review CTA.
+
+Applied gating:
+
+- Health Questionnaire does not appear before blood draw is booked.
+- Results can be viewed when results are back, even if the Health Questionnaire is incomplete.
+- LifeScore appears only when results are back and Health Questionnaire is complete.
 
 ## Key Open Questions
 

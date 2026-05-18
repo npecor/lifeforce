@@ -1,5 +1,44 @@
 # ULC x LifeForce Prototype Changelog
 
+## v0.3 · MVP state model pass
+
+Date: May 18, 2026
+
+Summary:
+- Updates the prototype toward the May 15 MVP operational journey.
+- Adds labs/no-member and blood-draw-booked states.
+- Changes blood draw terminology from Book Blood Draw to Schedule Blood Draw.
+- Hides Health Questionnaire before blood draw is scheduled.
+- Splits labs processing into questionnaire incomplete and questionnaire complete states.
+- Allows results access when questionnaire is incomplete while gating LifeScore.
+- Renames care plan active to post-clinician visit / care plan active.
+- Removes next-draw-due logic from the production-facing state set.
+- Removes LifeForce membership management from dashboard states.
+
+User states affected:
+- Non-member · No labs
+- Labs · No member / one-off labs
+- Member · No labs · draw not scheduled
+- Member · Blood draw booked · draw not completed
+- Labs processing · questionnaire incomplete
+- Labs processing · questionnaire complete
+- Results back · questionnaire incomplete
+- Results back · questionnaire complete
+- Post-clinician visit · Care plan active
+
+Known open questions:
+- What should the non-member/no-labs primary CTA be?
+- What does labs/no-member or one-off labs include?
+- Do one-off labs users receive LifeScore, recommendations, or clinician visits?
+- Are supplements purchasable in-app or in-store only?
+- Which ULC services can be recommended before clinician visit?
+- What booking status/date data can Lifeforce receive from ULC/Kite?
+
+Risky changes or assumptions:
+- One-off labs content is represented as an MVP placeholder with clear TBD items.
+- Supplement/product recommendations remain cautious before clinician visit until purchase handling is clarified.
+- Future blood draw cadence is intentionally omitted because Kite/ULC lifecycle systems own eligibility and reminders.
+
 ## v0.2 · Pre-MVP state update snapshot
 
 Date: May 18, 2026
