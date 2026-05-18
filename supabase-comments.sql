@@ -16,6 +16,9 @@ create table if not exists prototype_comments (
 
 alter table prototype_comments enable row level security;
 
+grant usage on schema public to anon;
+grant select, insert, update, delete on table prototype_comments to anon;
+
 drop policy if exists "Allow anonymous read" on prototype_comments;
 create policy "Allow anonymous read"
 on prototype_comments
