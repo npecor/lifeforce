@@ -12,6 +12,7 @@ Summary:
 - Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
 - Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
 - Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
+- Fixes screen overlay filtering so only open comments for the exact screen/state render as badges or pins.
 
 User states affected:
 - Prototype shell / collaborative comments

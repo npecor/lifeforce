@@ -385,6 +385,10 @@
         box-shadow: 0 8px 18px rgba(31, 122, 255, 0.24);
       }
 
+      .screen-comment-badge.active {
+        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 8px 18px rgba(31, 122, 255, 0.24);
+      }
+
       .phone {
         position: relative;
         width: 100%;
@@ -2328,23 +2332,36 @@
           pendingPin && pendingPin.screenId === screenId && typeof pendingPin.x === "number" && typeof pendingPin.y === "number"
             ? `<button class="comment-pin pending active" type="button" data-pending-comment-pin style="left:clamp(16px, ${pendingPin.x}%, calc(100% - 16px));top:clamp(16px, ${pendingPin.y}%, calc(100% - 16px));" title="New comment">+</button>`
             : "";
+        const pinnedComments = openPinnedCommentsForScreen(screenId);
         return `
           <div class="comment-pin-layer" aria-label="Comment pins">
-            ${comments
-              .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
-              .map((comment) => {
-                const number = comments.findIndex((item) => item.id === comment.id) + 1;
-                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${number}</button>`;
-              })
+            ${pinnedComments
+              .map(
+                (comment, index) =>
+                  `<button class="comment-pin ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${index + 1}</button>`,
+              )
               .join("")}
             ${pending}
           </div>
         `;
       }
 
+      function hasValidPinCoordinates(comment) {
+        return Number.isFinite(comment.x) && Number.isFinite(comment.y);
+      }
+
+      function openCommentsForScreen(screenId) {
+        return comments.filter((comment) => comment.screenId === screenId && !comment.resolved);
+      }
+
+      function openPinnedCommentsForScreen(screenId) {
+        return openCommentsForScreen(screenId).filter(hasValidPinCoordinates);
+      }
+
       function screenCommentBadge(screenId) {
-        const count = comments.filter((comment) => comment.screenId === screenId && !comment.resolved).length;
-        return count ? `<span class="screen-comment-badge" title="${count} open comments">${count}</span>` : "";
+        const count = openCommentsForScreen(screenId).length;
+        const isSelected = Boolean(selectedCommentId && openCommentsForScreen(screenId).some((comment) => comment.id === selectedCommentId));
+        return count ? `<span class="screen-comment-badge ${isSelected ? "active" : ""}" title="${count} open comments">${count}</span>` : "";
       }
 
       function lifeScoreHeart(size = 64) {
@@ -3462,20 +3479,20 @@
           return acc;
         }, {});
 
+        const displayNumbers = new Map(list.map((comment, index) => [comment.id, index + 1]));
         return Object.entries(groups)
           .map(
             ([screenTitle, groupComments]) => `
               <section class="comment-group">
                 <div class="comment-group-title">${escapeHtml(screenTitle)}</div>
-                <div>${groupComments.map(renderCommentItem).join("")}</div>
+                <div>${groupComments.map((comment) => renderCommentItem(comment, displayNumbers.get(comment.id))).join("")}</div>
               </section>
             `,
           )
           .join("");
       }
 
-      function renderCommentItem(comment) {
-        const number = comments.findIndex((item) => item.id === comment.id) + 1;
+      function renderCommentItem(comment, number) {
         return `
           <article class="comment-item ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "selected" : ""}">
             <div class="comment-item-head">
