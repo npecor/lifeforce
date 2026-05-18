@@ -1917,8 +1917,8 @@
         </div>
         <div class="comment-shell" id="commentShell">
           <div>
-            <div class="comment-status" id="commentStatus">Collaborative review</div>
-            <div class="comment-helper" id="commentHelper">Shared comments for this prototype.</div>
+            <div class="comment-status" id="commentStatus">Comment Mode On</div>
+            <div class="comment-helper" id="commentHelper">Click to add comments. Drag pins to reposition. Turn Comment Mode off to interact normally.</div>
           </div>
           <div class="comment-tools">
             <button class="comment-button primary" type="button" id="commentsPanelToggle">Comments (0)</button>
@@ -2050,7 +2050,7 @@
           <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
         </div>
         <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
-        <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
+        <button class="comment-button active" type="button" id="commentModeToggle" aria-pressed="true">Comment Mode: On</button>
         <button class="comment-button primary" type="button" id="addScreenComment">Add comment</button>
         <button class="comment-export-link" type="button" id="addGeneralComment">Add general comment</button>
         <div class="panel-filters">
@@ -2344,7 +2344,7 @@
       let openQuestionsError = "";
       let realtimeChannel = null;
       let openQuestionsRealtimeChannel = null;
-      let commentMode = false;
+      let commentMode = true;
       let commentsPanelOpen = false;
       let activeScreenId = "dashboard-non-member-no-labs";
       let activeScreenTitle = "Dashboard · Non-member · No labs";
