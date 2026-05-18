@@ -279,6 +279,7 @@
         font-weight: 850;
       }
 
+      .comment-button.primary,
       .comment-button.active {
         border-color: var(--brown);
         background: var(--brown);
@@ -366,10 +367,6 @@
         overflow: auto;
         padding: 0 22px 104px;
         scrollbar-width: none;
-      }
-
-      .comment-mode .screen {
-        cursor: crosshair;
       }
 
       .comment-pin-layer {
@@ -1428,42 +1425,58 @@
         letter-spacing: -0.04em;
       }
 
-      .panel-tabs,
       .panel-filters {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
+        align-items: center;
       }
 
-      .panel-tabs button,
       .panel-filters button {
-        min-height: 32px;
-        padding: 0 11px;
+        min-height: 28px;
+        padding: 0 10px;
         border: 1px solid var(--line);
         border-radius: 999px;
         background: #fff;
         color: var(--muted);
         cursor: pointer;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 850;
       }
 
-      .panel-tabs button[aria-pressed="true"],
       .panel-filters button[aria-pressed="true"] {
         background: var(--brown);
         color: #fff;
       }
 
+      .filter-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 850;
+      }
+
       .comment-list {
         display: grid;
-        gap: 10px;
+        gap: 14px;
+      }
+
+      .comment-group {
+        display: grid;
+        gap: 8px;
+      }
+
+      .comment-group-title {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
       }
 
       .comment-item {
-        padding: 12px;
+        padding: 10px 0;
         border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--wash-2);
+        border-width: 0 0 1px;
+        background: transparent;
       }
 
       .comment-item.resolved {
@@ -1471,8 +1484,12 @@
       }
 
       .comment-item.selected {
-        border-color: #1f7aff;
-        box-shadow: 0 0 0 3px rgba(31, 122, 255, 0.12);
+        margin: 0 -8px;
+        padding-right: 8px;
+        padding-left: 8px;
+        border-radius: 12px;
+        background: rgba(31, 122, 255, 0.08);
+        box-shadow: none;
       }
 
       .comment-meta {
@@ -1483,7 +1500,7 @@
       }
 
       .comment-text {
-        margin: 8px 0 0;
+        margin: 5px 0 0;
         color: var(--ink);
         font-size: 14px;
         line-height: 1.35;
@@ -1493,10 +1510,21 @@
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
-        margin-top: 10px;
+        margin-top: 6px;
       }
 
-      .comment-actions button,
+      .comment-actions button {
+        min-height: auto;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 850;
+      }
+
       .composer-actions button {
         min-height: 31px;
         padding: 0 10px;
@@ -1511,6 +1539,19 @@
 
       .comment-actions .danger {
         color: #b74626;
+      }
+
+      .comment-export-link {
+        justify-self: start;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 850;
+        text-decoration: underline;
+        text-underline-offset: 3px;
       }
 
       .composer {
@@ -1608,12 +1649,11 @@
         </div>
         <div class="comment-shell" id="commentShell">
           <div>
-            <div class="comment-status" id="commentStatus">Comment Mode Off</div>
-            <div class="comment-helper" id="commentHelper">Turn on comment mode, then click a prototype screen to leave a pinned note.</div>
+            <div class="comment-status" id="commentStatus">Collaborative review</div>
+            <div class="comment-helper" id="commentHelper">Shared comments for this prototype.</div>
           </div>
           <div class="comment-tools">
-            <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
-            <button class="comment-button" type="button" id="commentsPanelToggle">Comments: 0</button>
+            <button class="comment-button primary" type="button" id="commentsPanelToggle">Comments (0)</button>
           </div>
         </div>
       </section>
@@ -1657,21 +1697,18 @@
         <div class="panel-head">
           <div>
             <h2>Comments</h2>
-            <div class="comment-meta" id="activeScreenLabel">No screen selected</div>
+            <div class="comment-meta" id="activeScreenLabel">0 open comments</div>
           </div>
           <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
         </div>
-        <div class="panel-tabs">
-          <button type="button" data-comment-tab="screen" aria-pressed="true">This Screen</button>
-          <button type="button" data-comment-tab="all" aria-pressed="false">All Comments</button>
-        </div>
+        <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
+        <button class="comment-button primary" type="button" id="addScreenComment">Add comment</button>
         <div class="panel-filters">
-          <button type="button" data-comment-filter="open" aria-pressed="true">Open only</button>
-          <button type="button" data-comment-filter="all" aria-pressed="false">Show all</button>
+          <span class="filter-label">Filter:</span>
+          <button type="button" data-comment-filter="open" aria-pressed="true">Open</button>
+          <button type="button" data-comment-filter="all" aria-pressed="false">All</button>
           <button type="button" data-comment-filter="resolved" aria-pressed="false">Resolved</button>
         </div>
-        <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
-        <button class="comment-button" type="button" id="addScreenComment">Add Screen Comment</button>
         <div class="composer" id="commentComposer" hidden>
           <strong id="composerTitle">Add comment</strong>
           <label>
@@ -1689,7 +1726,7 @@
           <div class="comment-meta" id="composerError"></div>
         </div>
         <div class="comment-list" id="commentList"></div>
-        <button class="comment-button" type="button" id="exportComments">Export Comments</button>
+        <button class="comment-export-link" type="button" id="exportComments">Export all comments</button>
       </aside>
     </main>
 
@@ -1921,12 +1958,10 @@
       let commentsLoading = false;
       let commentsError = "";
       let realtimeChannel = null;
-      let commentMode = false;
       let commentsPanelOpen = false;
       let activeScreenId = "dashboard-non-member-no-labs";
       let activeScreenTitle = "Dashboard · Non-member · No labs";
       let selectedCommentId = "";
-      let commentTab = "screen";
       let commentFilter = "open";
       let pendingComment = null;
       let commentEventsBound = false;
@@ -3155,8 +3190,7 @@
       }
 
       function filteredComments() {
-        const base = commentTab === "screen" ? comments.filter((comment) => comment.screenId === activeScreenId) : comments;
-        return base.filter((comment) => {
+        return comments.filter((comment) => {
           if (commentFilter === "open") return !comment.resolved;
           if (commentFilter === "resolved") return comment.resolved;
           return true;
@@ -3170,12 +3204,7 @@
       function renderCommentList() {
         const list = filteredComments();
         if (!list.length) {
-          return `<section class="comment-item"><p class="comment-text">No ${commentFilter === "resolved" ? "resolved" : "open"} comments ${commentTab === "screen" ? "on this screen" : "yet"}.</p></section>`;
-        }
-
-        const grouped = commentTab === "all";
-        if (!grouped) {
-          return list.map(renderCommentItem).join("");
+          return `<section class="comment-item"><p class="comment-text">No ${commentFilter === "resolved" ? "resolved" : "open"} comments yet.</p></section>`;
         }
 
         const groups = list.reduce((acc, comment) => {
@@ -3188,9 +3217,9 @@
         return Object.entries(groups)
           .map(
             ([screenTitle, groupComments]) => `
-              <section class="comment-item">
-                <strong>${escapeHtml(screenTitle)}</strong>
-                <div class="comment-list" style="margin-top:10px">${groupComments.map(renderCommentItem).join("")}</div>
+              <section class="comment-group">
+                <div class="comment-group-title">${escapeHtml(screenTitle)}</div>
+                <div>${groupComments.map(renderCommentItem).join("")}</div>
               </section>
             `,
           )
@@ -3205,8 +3234,8 @@
               <strong>${number}. ${escapeHtml(comment.author)}</strong>
               <span class="comment-meta">${comment.resolved ? "Resolved" : "Open"}</span>
             </div>
-            <div class="comment-meta">${escapeHtml(comment.screenTitle)} · ${formatDate(comment.createdAt)}</div>
             <p class="comment-text">${escapeHtml(comment.text)}</p>
+            <div class="comment-meta">${formatDate(comment.createdAt)}</div>
             <div class="comment-actions">
               <button type="button" data-comment-jump="${comment.id}">View Screen</button>
               <button type="button" data-comment-resolve="${comment.id}">${comment.resolved ? "Unresolve" : "Resolve"}</button>
@@ -3222,27 +3251,19 @@
         const shell = document.getElementById("commentShell");
         const status = document.getElementById("commentStatus");
         const helper = document.getElementById("commentHelper");
-        const modeToggle = document.getElementById("commentModeToggle");
         const panelToggle = document.getElementById("commentsPanelToggle");
         const panel = document.getElementById("commentsPanel");
-        if (!shell || !status || !modeToggle || !panelToggle || !panel) return;
+        if (!shell || !status || !panelToggle || !panel) return;
 
-        if (document.body) document.body.classList.toggle("comment-mode", commentMode);
-        status.textContent = commentMode ? "Comment Mode On" : "Comment Mode Off";
+        status.textContent = "Collaborative review";
         helper.textContent = commentsError
           ? commentsError
           : commentsLoading
             ? "Loading shared comments from Supabase..."
-            : commentMode
-              ? "Comment Mode On — click the screen to leave feedback."
-              : "Turn on comment mode, then click a prototype screen to leave a pinned note.";
-        modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
-        modeToggle.classList.toggle("active", commentMode);
-        modeToggle.setAttribute("aria-pressed", String(commentMode));
-        panelToggle.textContent = `Comments: ${openCount}`;
-        document.getElementById("activeScreenLabel").textContent = `${activeScreenTitle} · ${screenCount} open on this screen`;
+            : `Shared comments for this prototype. ${screenCount} open on the current screen.`;
+        panelToggle.textContent = `Comments (${openCount})`;
+        document.getElementById("activeScreenLabel").textContent = `${openCount} open comments`;
         panel.hidden = !commentsPanelOpen;
-        document.querySelectorAll("[data-comment-tab]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentTab === commentTab)));
         document.querySelectorAll("[data-comment-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentFilter === commentFilter)));
         document.getElementById("commentList").innerHTML = commentsError ? `<section class="comment-item"><p class="comment-text">${escapeHtml(commentsError)}</p></section>` : renderCommentList();
       }
@@ -3403,10 +3424,6 @@
         if (commentEventsBound) return;
         commentEventsBound = true;
 
-        document.getElementById("commentModeToggle").addEventListener("click", () => {
-          commentMode = !commentMode;
-          renderCommentUI();
-        });
         document.getElementById("commentsPanelToggle").addEventListener("click", () => {
           commentsPanelOpen = !commentsPanelOpen;
           renderCommentUI();
@@ -3445,12 +3462,6 @@
         });
 
         document.addEventListener("click", async (event) => {
-          const tab = event.target.closest("[data-comment-tab]");
-          if (tab) {
-            commentTab = tab.dataset.commentTab;
-            renderCommentUI();
-            return;
-          }
           const filter = event.target.closest("[data-comment-filter]");
           if (filter) {
             commentFilter = filter.dataset.commentFilter;
@@ -3504,14 +3515,6 @@
           const screen = event.target.closest(".screen[data-screen-id]");
           if (screen) {
             setActiveScreen(screen.dataset.screenId, screen.dataset.screenTitle);
-            if (commentMode) {
-              event.preventDefault();
-              event.stopPropagation();
-              const rect = screen.getBoundingClientRect();
-              const x = ((event.clientX - rect.left) / rect.width) * 100;
-              const y = ((event.clientY - rect.top) / rect.height) * 100;
-              openComposer(screen, Math.max(0, Math.min(100, x)), Math.max(0, Math.min(100, y)));
-            }
           }
         });
       }
