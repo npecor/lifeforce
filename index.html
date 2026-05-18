@@ -1570,6 +1570,11 @@
         color: var(--brown);
       }
 
+      .open-question-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
       .open-question-form {
         display: grid;
         gap: 10px;
@@ -2338,6 +2343,16 @@
         "Membership / packaging",
         "Other",
       ];
+      const OPEN_QUESTION_SEEDS = [
+        ["Non-member and one-off labs", "Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?"],
+        ["Non-member and one-off labs", "What exactly is included for labs-no-member / one-off labs users?"],
+        ["Non-member and one-off labs", "Do one-off labs users receive LifeScore, recommendations, or a clinician visit?"],
+        ["Products, supplements, and services", "Are supplements purchasable in-app or in-store only?"],
+        ["Products, supplements, and services", "Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?"],
+        ["Products, supplements, and services", "Which ULC services can be recommended before clinician review, and which biomarkers trigger them?"],
+        ["Blood draw and questionnaire data", "What blood draw booking status/date data can Lifeforce receive from ULC/Kite?"],
+        ["Blood draw and questionnaire data", "Should the completed Health Questionnaire state be shown, or should it disappear after completion?"],
+      ];
       let supabaseClient = null;
       let commentsLoading = false;
       let commentsError = "";
@@ -2361,6 +2376,7 @@
       let openQuestions = [];
       let openQuestionFilter = "open";
       let openQuestionEventsBound = false;
+      let openQuestionsUsingFallback = false;
 
       function icon(name, size = 20) {
         return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
@@ -2463,12 +2479,15 @@
       async function fetchOpenQuestions() {
         const client = initSupabase();
         if (!client) {
-          openQuestionsError = commentsError || "Supabase is not configured.";
+          openQuestions = fallbackOpenQuestions();
+          openQuestionsUsingFallback = true;
+          openQuestionsError = commentsError || "Supabase is not configured. Showing default open questions until setup is complete.";
           renderOpenQuestions();
           return;
         }
         openQuestionsLoading = true;
         openQuestionsError = "";
+        openQuestionsUsingFallback = false;
         renderOpenQuestions();
         const { data, error } = await client
           .from("prototype_open_questions")
@@ -2477,11 +2496,14 @@
           .order("created_at", { ascending: true });
         openQuestionsLoading = false;
         if (error) {
-          openQuestionsError = error.message;
+          openQuestions = fallbackOpenQuestions();
+          openQuestionsUsingFallback = true;
+          openQuestionsError = "Open questions are showing default read-only items. Run the updated Supabase SQL to enable shared editing.";
           renderOpenQuestions();
           return;
         }
         openQuestions = (data || []).map(normalizeOpenQuestion);
+        openQuestionsUsingFallback = false;
         renderOpenQuestions();
       }
 
@@ -3686,6 +3708,19 @@
         };
       }
 
+      function fallbackOpenQuestions() {
+        return OPEN_QUESTION_SEEDS.map(([category, text], index) => ({
+          id: `fallback-open-question-${index + 1}`,
+          category,
+          author: "ULC",
+          text,
+          resolved: false,
+          createdAt: "2026-05-18T00:00:00.000Z",
+          updatedAt: "2026-05-18T00:00:00.000Z",
+          readOnly: true,
+        }));
+      }
+
       function filteredOpenQuestions() {
         return openQuestions.filter((question) => {
           if (openQuestionFilter === "open") return !question.resolved;
@@ -3702,11 +3737,15 @@
         return `
           <li class="open-question-item ${question.resolved ? "resolved" : ""}">
             <p class="open-question-text"><strong>${escapeHtml(question.author)}:</strong> ${escapeHtml(question.text)}</p>
-            <div class="open-question-meta">${question.resolved ? "Resolved" : "Open"} · Added ${formatDate(question.createdAt)}</div>
-            <div class="open-question-actions">
-              <button class="open-question-link" type="button" data-question-resolve="${question.id}">${question.resolved ? "Unresolve" : "Resolve"}</button>
-              <button class="open-question-link" type="button" data-question-delete="${question.id}">Delete</button>
-            </div>
+            <div class="open-question-meta">${question.readOnly ? "Default question · setup required for editing" : `${question.resolved ? "Resolved" : "Open"} · Added ${formatDate(question.createdAt)}`}</div>
+            ${
+              question.readOnly
+                ? ""
+                : `<div class="open-question-actions">
+                    <button class="open-question-link" type="button" data-question-resolve="${question.id}">${question.resolved ? "Unresolve" : "Resolve"}</button>
+                    <button class="open-question-link" type="button" data-question-delete="${question.id}">Delete</button>
+                  </div>`
+            }
           </li>
         `;
       }
@@ -3718,13 +3757,18 @@
 
         const count = openQuestionCount();
         summary.textContent = `Open questions · MVP state model · ${count} open`;
+        const addButton = document.getElementById("addOpenQuestion");
+        if (addButton) {
+          addButton.disabled = openQuestionsUsingFallback;
+          addButton.title = openQuestionsUsingFallback ? "Run the Supabase SQL setup to enable shared editing." : "";
+        }
         document.querySelectorAll("[data-question-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.questionFilter === openQuestionFilter)));
         const select = document.getElementById("openQuestionCategory");
         if (select && !select.options.length) {
           select.innerHTML = OPEN_QUESTION_CATEGORIES.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
         }
 
-        if (openQuestionsError) {
+        if (openQuestionsError && !openQuestions.length) {
           list.innerHTML = `<p class="comment-meta">${escapeHtml(openQuestionsError)}</p>`;
           return;
         }
@@ -3747,7 +3791,10 @@
         const uncategorized = visible.filter((question) => !OPEN_QUESTION_CATEGORIES.includes(question.category));
         if (uncategorized.length) grouped.push(["Other", uncategorized]);
 
-        list.innerHTML = grouped
+        const notice = openQuestionsError ? `<p class="comment-meta">${escapeHtml(openQuestionsError)}</p>` : "";
+        list.innerHTML =
+          notice +
+          grouped
           .map(
             ([category, questions]) => `
               <section class="open-question-group">
@@ -4162,6 +4209,7 @@
         openQuestionEventsBound = true;
 
         document.getElementById("addOpenQuestion").addEventListener("click", () => {
+          if (openQuestionsUsingFallback) return;
           document.getElementById("openQuestionsDetails").open = true;
           document.getElementById("openQuestionForm").hidden = false;
           document.getElementById("openQuestionAuthor").value = localStorage.getItem(QUESTION_AUTHOR_KEY) || localStorage.getItem(COMMENT_AUTHOR_KEY) || "";
