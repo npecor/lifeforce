@@ -1,0 +1,3349 @@
+From d6791ce15b4456ad446ed54ca3c177591e3ae496 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Sun, 17 May 2026 22:25:23 -0700
+Subject: [PATCH] Add collaborative Supabase comments
+
+---
+ README.md             |  13 +-
+ api/config.js         |  10 +
+ index.html            | 812 +++++++++++++++++++++++++++++++++++++++++-
+ supabase-comments.sql |  46 +++
+ 4 files changed, 861 insertions(+), 20 deletions(-)
+ create mode 100644 api/config.js
+ create mode 100644 supabase-comments.sql
+
+diff --git a/README.md b/README.md
+index d7af8f1..944525b 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,14 @@
+-# ULC x LifeForce Prototype
++# ULC x Lifeforce Prototype
+ 
+-Static coded prototype for the LifeForce experience inside the Ultimate Longevity Center mobile app.
++Static coded prototype for the Lifeforce experience inside the Ultimate Longevity Center mobile app.
+ 
+ Open `index.html` directly or deploy the folder as a static site.
++
++## Collaborative comments
++
++The prototype comments are stored in Supabase. Run `supabase-comments.sql` in your Supabase SQL editor, then set these Vercel environment variables:
++
++- `VITE_SUPABASE_URL`
++- `VITE_SUPABASE_ANON_KEY`
++
++The Vercel function at `api/config.js` exposes those values to the browser at runtime. Reviewer initials are remembered locally, but comments are not stored in `localStorage`.
+diff --git a/api/config.js b/api/config.js
+new file mode 100644
+index 0000000..6bff15b
+--- /dev/null
++++ b/api/config.js
+@@ -0,0 +1,10 @@
++export default function handler(_request, response) {
++  const config = {
++    url: process.env.VITE_SUPABASE_URL || "",
++    anonKey: process.env.VITE_SUPABASE_ANON_KEY || "",
++  };
++
++  response.setHeader("Content-Type", "application/javascript; charset=utf-8");
++  response.setHeader("Cache-Control", "no-store");
++  response.status(200).send(`window.ULC_LIFEFORCE_SUPABASE_CONFIG = ${JSON.stringify(config)};`);
++}
+diff --git a/index.html b/index.html
+index 2ad98b2..5e5dbc7 100644
+--- a/index.html
++++ b/index.html
+@@ -5,6 +5,8 @@
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>ULC x Lifeforce Mobile Prototype</title>
+     <script src="https://unpkg.com/lucide@latest"></script>
++    <script src="/api/config.js"></script>
++    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+     <style>
+       :root {
+         --ink: #171717;
+@@ -238,6 +240,57 @@
+         color: var(--brown);
+       }
+ 
++      .comment-shell {
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 14px;
++        max-width: 1440px;
++        margin: 18px auto 0;
++        padding: 13px 14px;
++        border: 1px solid var(--line);
++        border-radius: 22px;
++        background: rgba(255, 255, 255, 0.72);
++        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
++      }
++
++      .comment-tools {
++        display: flex;
++        align-items: center;
++        gap: 10px;
++        flex-wrap: wrap;
++      }
++
++      .comment-status {
++        color: var(--muted);
++        font-size: 13px;
++        font-weight: 800;
++      }
++
++      .comment-button {
++        min-height: 36px;
++        padding: 0 14px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: #fff;
++        color: var(--brown);
++        cursor: pointer;
++        font-size: 13px;
++        font-weight: 850;
++      }
++
++      .comment-button.active {
++        border-color: var(--brown);
++        background: var(--brown);
++        color: #fff;
++      }
++
++      .comment-helper {
++        color: var(--muted);
++        font-size: 12px;
++        line-height: 1.3;
++      }
++
+       .view-panel[hidden] {
+         display: none;
+       }
+@@ -308,12 +361,54 @@
+       }
+ 
+       .screen {
++        position: relative;
+         height: 750px;
+         overflow: auto;
+         padding: 0 22px 104px;
+         scrollbar-width: none;
+       }
+ 
++      .comment-mode .screen {
++        cursor: crosshair;
++      }
++
++      .comment-pin-layer {
++        position: absolute;
++        inset: 0;
++        z-index: 20;
++        pointer-events: none;
++      }
++
++      .comment-pin {
++        position: absolute;
++        display: grid;
++        place-items: center;
++        width: 26px;
++        height: 26px;
++        transform: translate(-50%, -50%);
++        border: 2px solid #fff;
++        border-radius: 999px;
++        background: #1f7aff;
++        color: #fff;
++        cursor: pointer;
++        font-size: 12px;
++        font-weight: 900;
++        box-shadow: 0 10px 20px rgba(31, 122, 255, 0.3);
++        pointer-events: auto;
++      }
++
++      .comment-pin.resolved {
++        background: #8c8983;
++        box-shadow: none;
++        opacity: 0.72;
++      }
++
++      .comment-pin.active {
++        width: 32px;
++        height: 32px;
++        background: #111;
++      }
++
+       .screen-titlebar {
+         display: flex;
+         align-items: center;
+@@ -1289,6 +1384,165 @@
+         gap: 12px;
+       }
+ 
++      .comments-panel {
++        position: fixed;
++        top: 18px;
++        right: 18px;
++        z-index: 80;
++        display: grid;
++        gap: 14px;
++        width: min(420px, calc(100vw - 28px));
++        max-height: calc(100vh - 36px);
++        overflow: auto;
++        padding: 18px;
++        border: 1px solid var(--line);
++        border-radius: 24px;
++        background: #fff;
++        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.2);
++      }
++
++      .comments-panel[hidden],
++      .composer[hidden] {
++        display: none;
++      }
++
++      .panel-head,
++      .comment-item-head {
++        display: flex;
++        align-items: center;
++        justify-content: space-between;
++        gap: 12px;
++      }
++
++      .panel-head h2 {
++        margin: 0;
++        font-size: 22px;
++        letter-spacing: -0.04em;
++      }
++
++      .panel-tabs,
++      .panel-filters {
++        display: flex;
++        gap: 8px;
++        flex-wrap: wrap;
++      }
++
++      .panel-tabs button,
++      .panel-filters button {
++        min-height: 32px;
++        padding: 0 11px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: #fff;
++        color: var(--muted);
++        cursor: pointer;
++        font-size: 12px;
++        font-weight: 850;
++      }
++
++      .panel-tabs button[aria-pressed="true"],
++      .panel-filters button[aria-pressed="true"] {
++        background: var(--brown);
++        color: #fff;
++      }
++
++      .comment-list {
++        display: grid;
++        gap: 10px;
++      }
++
++      .comment-item {
++        padding: 12px;
++        border: 1px solid var(--line);
++        border-radius: 16px;
++        background: var(--wash-2);
++      }
++
++      .comment-item.resolved {
++        opacity: 0.62;
++      }
++
++      .comment-item.selected {
++        border-color: #1f7aff;
++        box-shadow: 0 0 0 3px rgba(31, 122, 255, 0.12);
++      }
++
++      .comment-meta {
++        color: var(--muted);
++        font-size: 11px;
++        font-weight: 800;
++        line-height: 1.35;
++      }
++
++      .comment-text {
++        margin: 8px 0 0;
++        color: var(--ink);
++        font-size: 14px;
++        line-height: 1.35;
++      }
++
++      .comment-actions {
++        display: flex;
++        gap: 8px;
++        flex-wrap: wrap;
++        margin-top: 10px;
++      }
++
++      .comment-actions button,
++      .composer-actions button {
++        min-height: 31px;
++        padding: 0 10px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: #fff;
++        color: var(--brown);
++        cursor: pointer;
++        font-size: 12px;
++        font-weight: 850;
++      }
++
++      .comment-actions .danger {
++        color: #b74626;
++      }
++
++      .composer {
++        display: grid;
++        gap: 10px;
++        padding: 13px;
++        border: 1px solid var(--line);
++        border-radius: 18px;
++        background: #fffdf0;
++      }
++
++      .composer label {
++        display: grid;
++        gap: 6px;
++        color: var(--muted);
++        font-size: 12px;
++        font-weight: 850;
++      }
++
++      .composer input,
++      .composer textarea {
++        width: 100%;
++        border: 1px solid var(--line);
++        border-radius: 12px;
++        padding: 10px;
++        color: var(--ink);
++        font: inherit;
++        font-size: 14px;
++      }
++
++      .composer textarea {
++        min-height: 96px;
++        resize: vertical;
++      }
++
++      .composer-actions {
++        display: flex;
++        gap: 8px;
++      }
++
+       @media (max-width: 1440px) {
+         .canvas {
+           grid-template-columns: repeat(2, minmax(315px, 1fr));
+@@ -1344,6 +1598,16 @@
+             <button type="button" data-view="all" aria-pressed="true">All screens</button>
+           </div>
+         </div>
++        <div class="comment-shell" id="commentShell">
++          <div>
++            <div class="comment-status" id="commentStatus">Comment Mode Off</div>
++            <div class="comment-helper" id="commentHelper">Turn on comment mode, then click a prototype screen to leave a pinned note.</div>
++          </div>
++          <div class="comment-tools">
++            <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
++            <button class="comment-button" type="button" id="commentsPanelToggle">Comments: 0</button>
++          </div>
++        </div>
+       </section>
+ 
+       <section class="interactive-preview view-panel" id="interactiveView" aria-label="Dynamic prototype preview" hidden>
+@@ -1380,6 +1644,45 @@
+           <div class="state-grid" id="profileStates"></div>
+         </section>
+       </section>
++
++      <aside class="comments-panel" id="commentsPanel" hidden>
++        <div class="panel-head">
++          <div>
++            <h2>Comments</h2>
++            <div class="comment-meta" id="activeScreenLabel">No screen selected</div>
++          </div>
++          <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
++        </div>
++        <div class="panel-tabs">
++          <button type="button" data-comment-tab="screen" aria-pressed="true">This Screen</button>
++          <button type="button" data-comment-tab="all" aria-pressed="false">All Comments</button>
++        </div>
++        <div class="panel-filters">
++          <button type="button" data-comment-filter="open" aria-pressed="true">Open only</button>
++          <button type="button" data-comment-filter="all" aria-pressed="false">Show all</button>
++          <button type="button" data-comment-filter="resolved" aria-pressed="false">Resolved</button>
++        </div>
++        <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
++        <button class="comment-button" type="button" id="addScreenComment">Add Screen Comment</button>
++        <div class="composer" id="commentComposer" hidden>
++          <strong id="composerTitle">Add comment</strong>
++          <label>
++            Initials / Name
++            <input id="commentAuthor" type="text" placeholder="NP" />
++          </label>
++          <label>
++            Comment
++            <textarea id="commentText" placeholder="Leave feedback on this screen..."></textarea>
++          </label>
++          <div class="composer-actions">
++            <button type="button" id="saveComment">Save Comment</button>
++            <button type="button" id="cancelComment">Cancel</button>
++          </div>
++          <div class="comment-meta" id="composerError"></div>
++        </div>
++        <div class="comment-list" id="commentList"></div>
++        <button class="comment-button" type="button" id="exportComments">Export Comments</button>
++      </aside>
+     </main>
+ 
+     <script>
+@@ -1604,10 +1907,168 @@
+         profileStatus: "not_started",
+       };
+ 
++      const PROTOTYPE_ID = "ulc-lifeforce";
++      const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
++      let supabaseClient = null;
++      let commentsLoading = false;
++      let commentsError = "";
++      let realtimeChannel = null;
++      let commentMode = false;
++      let commentsPanelOpen = false;
++      let activeScreenId = "dashboard-non-member-no-labs";
++      let activeScreenTitle = "Dashboard · Non-member · No labs";
++      let selectedCommentId = "";
++      let commentTab = "screen";
++      let commentFilter = "open";
++      let pendingComment = null;
++      let commentEventsBound = false;
++      let currentViewMode = "all";
++      let comments = [];
++
+       function icon(name, size = 20) {
+         return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+       }
+ 
++      function escapeHtml(value = "") {
++        return String(value)
++          .replace(/&/g, "&amp;")
++          .replace(/</g, "&lt;")
++          .replace(/>/g, "&gt;")
++          .replace(/"/g, "&quot;")
++          .replace(/'/g, "&#039;");
++      }
++
++      function getSupabaseConfig() {
++        const runtimeConfig = window.ULC_LIFEFORCE_SUPABASE_CONFIG || {};
++        return {
++          url: runtimeConfig.url || window.VITE_SUPABASE_URL || "",
++          anonKey: runtimeConfig.anonKey || window.VITE_SUPABASE_ANON_KEY || "",
++        };
++      }
++
++      function initSupabase() {
++        const config = getSupabaseConfig();
++        if (!config?.url || !config?.anonKey || !window.supabase?.createClient) {
++          commentsError = "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.";
++          return null;
++        }
++        if (!supabaseClient) {
++          supabaseClient = window.supabase.createClient(config.url, config.anonKey);
++        }
++        return supabaseClient;
++      }
++
++      function normalizeComment(row) {
++        return {
++          id: row.id,
++          screenId: row.screen_id,
++          screenTitle: row.screen_title,
++          stateKey: row.state_key || "",
++          route: row.route || "",
++          x: row.x === null || row.x === undefined ? null : Number(row.x),
++          y: row.y === null || row.y === undefined ? null : Number(row.y),
++          author: row.author,
++          text: row.text,
++          resolved: Boolean(row.resolved),
++          createdAt: row.created_at,
++          updatedAt: row.updated_at,
++        };
++      }
++
++      function serializeComment(comment) {
++        return {
++          prototype_id: PROTOTYPE_ID,
++          screen_id: comment.screenId,
++          screen_title: comment.screenTitle,
++          state_key: comment.stateKey || null,
++          route: comment.route || null,
++          x: comment.x ?? null,
++          y: comment.y ?? null,
++          author: comment.author,
++          text: comment.text,
++          resolved: Boolean(comment.resolved),
++        };
++      }
++
++      async function fetchComments() {
++        const client = initSupabase();
++        if (!client) {
++          renderCommentUI();
++          return;
++        }
++        commentsLoading = true;
++        commentsError = "";
++        renderCommentUI();
++        const { data, error } = await client
++          .from("prototype_comments")
++          .select("*")
++          .eq("prototype_id", PROTOTYPE_ID)
++          .order("created_at", { ascending: true });
++        commentsLoading = false;
++        if (error) {
++          commentsError = error.message;
++          renderCommentUI();
++          return;
++        }
++        comments = (data || []).map(normalizeComment);
++        renderPrototype();
++      }
++
++      function subscribeToComments() {
++        const client = initSupabase();
++        if (!client || realtimeChannel) return;
++        realtimeChannel = client
++          .channel("ulc-lifeforce-prototype-comments")
++          .on("postgres_changes", { event: "*", schema: "public", table: "prototype_comments", filter: `prototype_id=eq.${PROTOTYPE_ID}` }, () => fetchComments())
++          .subscribe();
++      }
++
++      function makeId() {
++        return window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : `comment-${Date.now()}-${Math.random().toString(16).slice(2)}`;
++      }
++
++      function screenIdForVariant(v) {
++        const overrides = {
++          member_time_for_next_draw: "dashboard-member-next-draw-due",
++        };
++        return overrides[v.key] || `dashboard-${v.key.replaceAll("_", "-")}`;
++      }
++
++      function screenTitleForVariant(v) {
++        return `Dashboard · ${v.label.replace(/^\d+\s·\s/, "")}`;
++      }
++
++      function variantKeyForScreenId(screenId) {
++        return variants.find((variant) => screenIdForVariant(variant) === screenId)?.key || "";
++      }
++
++      const flowScreenTitles = {
++        "lab-reports-list": "Lab Reports · Listing",
++        "lab-reports-empty": "Lab Reports · Empty State",
++        "lab-report-detail": "Lab Report Detail",
++        "biomarker-detail": "Biomarker Detail",
++        recommendations: "Recommendations",
++        "product-browse": "Product Browse",
++        "product-detail": "Product Detail",
++        "review-order": "Review Order",
++        "labs-processing": "Labs Processing",
++        "recommendations-locked": "Recommendations Locked",
++      };
++
++      function renderCommentPins(screenId) {
++        return `
++          <div class="comment-pin-layer" aria-label="Comment pins">
++            ${comments
++              .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
++              .map((comment) => {
++                const number = comments.findIndex((item) => item.id === comment.id) + 1;
++                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:${comment.x}%;top:${comment.y}%;" title="${escapeHtml(comment.text)}">${number}</button>`;
++              })
++              .join("")}
++          </div>
++        `;
++      }
++
+       function lifeScoreHeart(size = 64) {
+         return `
+           <svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
+@@ -2216,12 +2677,15 @@
+         const showIntroTop =
+           v.key === "non_member_no_labs" ||
+           (v.livePreview && v.userType === "non_member_no_labs");
++        const screenId = screenIdForVariant(v);
++        const screenTitle = screenTitleForVariant(v);
+         return `
+           <article class="variant">
+             <div class="variant-label"><span>${v.label}</span></div>
+-            <div class="phone">
++            <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+-              <div class="screen">
++              <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
++                ${renderCommentPins(screenId)}
+                 ${header(v)}
+                 ${showIntroTop ? contextModule(v) : ""}
+                 ${actionModule(v)}
+@@ -2233,13 +2697,18 @@
+         `;
+       }
+ 
+-      function phoneScreen(label, body) {
++      function phoneScreen(label, body, screenId = "") {
++        const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
++        const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
+         return `
+           <article class="variant">
+             <div class="variant-label"><span>${label}</span></div>
+-            <div class="phone">
++            <div class="phone" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+-              <div class="screen">${body}</div>
++              <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
++                ${renderCommentPins(resolvedScreenId)}
++                ${body}
++              </div>
+               ${bottomNav()}
+             </div>
+           </article>
+@@ -2295,6 +2764,7 @@
+             ${reportCard({ date: "Sep 5, 2025", counts: [10, 4, 1], status: "Reviewed" })}
+             ${reportCard({ date: "May 10, 2025", counts: [0, 0, 0], status: "Processing", muted: true })}
+           `,
++          "lab-reports-list",
+         );
+       }
+ 
+@@ -2313,6 +2783,7 @@
+               </div>
+             </section>
+           `,
++          "lab-reports-empty",
+         );
+       }
+ 
+@@ -2390,6 +2861,7 @@
+             </div>
+             ${grouped}
+           `,
++          "lab-report-detail",
+         );
+       }
+ 
+@@ -2446,6 +2918,7 @@
+               <button class="mini-cta outline">See all recommendations ${icon("arrow-right", 16)}</button>
+             </section>
+           `,
++          "biomarker-detail",
+         );
+       }
+ 
+@@ -2493,6 +2966,7 @@
+               <button class="cta">Add All to Plan</button>
+             </section>
+           `,
++          "recommendations",
+         );
+       }
+ 
+@@ -2539,6 +3013,7 @@
+                 .join("")}
+             </div>
+           `,
++          "product-browse",
+         );
+       }
+ 
+@@ -2581,6 +3056,7 @@
+               <button class="cta">Add to Plan · $32/mo</button>
+             </section>
+           `,
++          "product-detail",
+         );
+       }
+ 
+@@ -2620,6 +3096,7 @@
+               <button class="cta ghost">Keep Browsing</button>
+             </section>
+           `,
++          "review-order",
+         );
+       }
+ 
+@@ -2638,6 +3115,7 @@
+               </div>
+             </section>
+           `,
++          "labs-processing",
+         );
+       }
+ 
+@@ -2657,9 +3135,314 @@
+               </div>
+             </section>
+           `,
++          "recommendations-locked",
+         );
+       }
+ 
++      function setActiveScreen(screenId, screenTitle) {
++        activeScreenId = screenId || activeScreenId;
++        activeScreenTitle = screenTitle || flowScreenTitles[activeScreenId] || activeScreenTitle;
++        renderCommentUI();
++      }
++
++      function filteredComments() {
++        const base = commentTab === "screen" ? comments.filter((comment) => comment.screenId === activeScreenId) : comments;
++        return base.filter((comment) => {
++          if (commentFilter === "open") return !comment.resolved;
++          if (commentFilter === "resolved") return comment.resolved;
++          return true;
++        });
++      }
++
++      function formatDate(value) {
++        return new Date(value).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
++      }
++
++      function renderCommentList() {
++        const list = filteredComments();
++        if (!list.length) {
++          return `<section class="comment-item"><p class="comment-text">No ${commentFilter === "resolved" ? "resolved" : "open"} comments ${commentTab === "screen" ? "on this screen" : "yet"}.</p></section>`;
++        }
++
++        const grouped = commentTab === "all";
++        if (!grouped) {
++          return list.map(renderCommentItem).join("");
++        }
++
++        const groups = list.reduce((acc, comment) => {
++          const key = comment.screenTitle || comment.screenId;
++          acc[key] = acc[key] || [];
++          acc[key].push(comment);
++          return acc;
++        }, {});
++
++        return Object.entries(groups)
++          .map(
++            ([screenTitle, groupComments]) => `
++              <section class="comment-item">
++                <strong>${escapeHtml(screenTitle)}</strong>
++                <div class="comment-list" style="margin-top:10px">${groupComments.map(renderCommentItem).join("")}</div>
++              </section>
++            `,
++          )
++          .join("");
++      }
++
++      function renderCommentItem(comment) {
++        const number = comments.findIndex((item) => item.id === comment.id) + 1;
++        return `
++          <article class="comment-item ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "selected" : ""}">
++            <div class="comment-item-head">
++              <strong>${number}. ${escapeHtml(comment.author)}</strong>
++              <span class="comment-meta">${comment.resolved ? "Resolved" : "Open"}</span>
++            </div>
++            <div class="comment-meta">${escapeHtml(comment.screenTitle)} · ${formatDate(comment.createdAt)}</div>
++            <p class="comment-text">${escapeHtml(comment.text)}</p>
++            <div class="comment-actions">
++              <button type="button" data-comment-jump="${comment.id}">View Screen</button>
++              <button type="button" data-comment-resolve="${comment.id}">${comment.resolved ? "Unresolve" : "Resolve"}</button>
++              <button type="button" class="danger" data-comment-delete="${comment.id}">Delete</button>
++            </div>
++          </article>
++        `;
++      }
++
++      function renderCommentUI() {
++        const openCount = comments.filter((comment) => !comment.resolved).length;
++        const screenCount = comments.filter((comment) => comment.screenId === activeScreenId && !comment.resolved).length;
++        const shell = document.getElementById("commentShell");
++        const status = document.getElementById("commentStatus");
++        const helper = document.getElementById("commentHelper");
++        const modeToggle = document.getElementById("commentModeToggle");
++        const panelToggle = document.getElementById("commentsPanelToggle");
++        const panel = document.getElementById("commentsPanel");
++        if (!shell || !status || !modeToggle || !panelToggle || !panel) return;
++
++        if (document.body) document.body.classList.toggle("comment-mode", commentMode);
++        status.textContent = commentMode ? "Comment Mode On" : "Comment Mode Off";
++        helper.textContent = commentsError
++          ? commentsError
++          : commentsLoading
++            ? "Loading shared comments from Supabase..."
++            : commentMode
++              ? "Comment Mode On — click the screen to leave feedback."
++              : "Turn on comment mode, then click a prototype screen to leave a pinned note.";
++        modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
++        modeToggle.classList.toggle("active", commentMode);
++        modeToggle.setAttribute("aria-pressed", String(commentMode));
++        panelToggle.textContent = `Comments: ${openCount}`;
++        document.getElementById("activeScreenLabel").textContent = `${activeScreenTitle} · ${screenCount} open on this screen`;
++        panel.hidden = !commentsPanelOpen;
++        document.querySelectorAll("[data-comment-tab]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentTab === commentTab)));
++        document.querySelectorAll("[data-comment-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.commentFilter === commentFilter)));
++        document.getElementById("commentList").innerHTML = commentsError ? `<section class="comment-item"><p class="comment-text">${escapeHtml(commentsError)}</p></section>` : renderCommentList();
++      }
++
++      function stateKeyForScreen(screenId) {
++        if (!screenId.startsWith("dashboard-")) return "";
++        return screenId.replace("dashboard-", "").replaceAll("-", "_");
++      }
++
++      function openComposer(screen, x = null, y = null) {
++        pendingComment = {
++          screenId: screen.dataset.screenId,
++          screenTitle: screen.dataset.screenTitle,
++          stateKey: stateKeyForScreen(screen.dataset.screenId),
++          route: currentViewMode,
++          x,
++          y,
++        };
++        selectedCommentId = "";
++        commentsPanelOpen = true;
++        const composer = document.getElementById("commentComposer");
++        composer.hidden = false;
++        document.getElementById("composerTitle").textContent = `Add comment · ${pendingComment.screenTitle}`;
++        document.getElementById("commentAuthor").value = localStorage.getItem(COMMENT_AUTHOR_KEY) || "";
++        document.getElementById("commentText").value = "";
++        document.getElementById("composerError").textContent = "";
++        setActiveScreen(pendingComment.screenId, pendingComment.screenTitle);
++        setTimeout(() => document.getElementById("commentText").focus(), 0);
++      }
++
++      function closeComposer() {
++        pendingComment = null;
++        document.getElementById("commentComposer").hidden = true;
++        document.getElementById("composerError").textContent = "";
++      }
++
++      async function addCommentFromComposer() {
++        const author = document.getElementById("commentAuthor").value.trim();
++        const text = document.getElementById("commentText").value.trim();
++        const error = document.getElementById("composerError");
++        if (!author || !text || !pendingComment) {
++          error.textContent = "Please add your initials/name and a comment.";
++          return;
++        }
++        localStorage.setItem(COMMENT_AUTHOR_KEY, author);
++        const nextComment = {
++          ...pendingComment,
++          author,
++          text,
++          createdAt: new Date().toISOString(),
++          resolved: false,
++        };
++        const client = initSupabase();
++        if (!client) {
++          error.textContent = commentsError || "Supabase is not configured.";
++          return;
++        }
++        const { error: insertError } = await client.from("prototype_comments").insert(serializeComment(nextComment));
++        if (insertError) {
++          error.textContent = insertError.message;
++          return;
++        }
++        closeComposer();
++        await fetchComments();
++      }
++
++      function exportCommentsText() {
++        const groups = comments.reduce((acc, comment) => {
++          const key = comment.screenTitle || comment.screenId;
++          acc[key] = acc[key] || [];
++          acc[key].push(comment);
++          return acc;
++        }, {});
++        const lines = ["ULC x Lifeforce Prototype Comments", ""];
++        Object.entries(groups).forEach(([screen, group]) => {
++          lines.push(screen);
++          group.forEach((comment) => lines.push(`- ${comment.author}: ${comment.text}${comment.resolved ? " [Resolved]" : ""}`));
++          lines.push("");
++        });
++        return lines.join("\n").trim();
++      }
++
++      function jumpToComment(comment) {
++        selectedCommentId = comment.id;
++        setActiveScreen(comment.screenId, comment.screenTitle);
++        const dashboardKey = comment.screenId.startsWith("dashboard-") ? variantKeyForScreenId(comment.screenId) : "";
++        if (dashboardKey && variants.some((variant) => variant.key === dashboardKey)) {
++          previewState.userType = dashboardKey;
++          renderInteractivePreview();
++          setViewMode("dynamic");
++        } else {
++          setViewMode("all");
++        }
++        renderPrototype();
++        setTimeout(() => {
++          const target = document.querySelector(`[data-screen-id="${comment.screenId}"]`);
++          if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
++        }, 0);
++      }
++
++      function setupCommentEvents() {
++        if (commentEventsBound) return;
++        commentEventsBound = true;
++
++        document.getElementById("commentModeToggle").addEventListener("click", () => {
++          commentMode = !commentMode;
++          renderCommentUI();
++        });
++        document.getElementById("commentsPanelToggle").addEventListener("click", () => {
++          commentsPanelOpen = !commentsPanelOpen;
++          renderCommentUI();
++        });
++        document.getElementById("closeCommentsPanel").addEventListener("click", () => {
++          commentsPanelOpen = false;
++          renderCommentUI();
++        });
++        document.getElementById("saveComment").addEventListener("click", addCommentFromComposer);
++        document.getElementById("cancelComment").addEventListener("click", closeComposer);
++        document.getElementById("addScreenComment").addEventListener("click", () => {
++          const screen = document.querySelector(`.screen[data-screen-id="${activeScreenId}"]`) || document.querySelector(".screen[data-screen-id]");
++          if (screen) openComposer(screen, null, null);
++        });
++        document.getElementById("exportComments").addEventListener("click", async () => {
++          const text = exportCommentsText();
++          if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
++          else window.prompt("Copy comments", text);
++        });
++        document.getElementById("stateControls").addEventListener("click", (event) => {
++          const button = event.target.closest("[data-control]");
++          if (!button) return;
++          previewState[button.dataset.control] = button.dataset.value;
++          const preview = derivePreviewVariant();
++          setActiveScreen(screenIdForVariant(preview), screenTitleForVariant(preview));
++          renderInteractivePreview();
++        });
++        document.getElementById("viewToggle").addEventListener("click", (event) => {
++          const button = event.target.closest("[data-view]");
++          if (!button) return;
++          setViewMode(button.dataset.view);
++        });
++
++        document.addEventListener("click", async (event) => {
++          const tab = event.target.closest("[data-comment-tab]");
++          if (tab) {
++            commentTab = tab.dataset.commentTab;
++            renderCommentUI();
++            return;
++          }
++          const filter = event.target.closest("[data-comment-filter]");
++          if (filter) {
++            commentFilter = filter.dataset.commentFilter;
++            renderCommentUI();
++            return;
++          }
++          const pin = event.target.closest("[data-comment-pin]");
++          if (pin) {
++            event.preventDefault();
++            event.stopPropagation();
++            const comment = comments.find((item) => item.id === pin.dataset.commentPin);
++            if (comment) {
++              selectedCommentId = comment.id;
++              commentsPanelOpen = true;
++              setActiveScreen(comment.screenId, comment.screenTitle);
++              renderPrototype();
++            }
++            return;
++          }
++          const jump = event.target.closest("[data-comment-jump]");
++          if (jump) {
++            const comment = comments.find((item) => item.id === jump.dataset.commentJump);
++            if (comment) jumpToComment(comment);
++            return;
++          }
++          const resolve = event.target.closest("[data-comment-resolve]");
++          if (resolve) {
++            const comment = comments.find((item) => item.id === resolve.dataset.commentResolve);
++            if (comment) {
++              const client = initSupabase();
++              if (client) {
++                await client.from("prototype_comments").update({ resolved: !comment.resolved, updated_at: new Date().toISOString() }).eq("id", comment.id).eq("prototype_id", PROTOTYPE_ID);
++                await fetchComments();
++              }
++            }
++            return;
++          }
++          const deleteButton = event.target.closest("[data-comment-delete]");
++          if (deleteButton) {
++            const client = initSupabase();
++            if (client) {
++              await client.from("prototype_comments").delete().eq("id", deleteButton.dataset.commentDelete).eq("prototype_id", PROTOTYPE_ID);
++              await fetchComments();
++            }
++            return;
++          }
++          const screen = event.target.closest(".screen[data-screen-id]");
++          if (screen) {
++            setActiveScreen(screen.dataset.screenId, screen.dataset.screenTitle);
++            if (commentMode) {
++              event.preventDefault();
++              event.stopPropagation();
++              const rect = screen.getBoundingClientRect();
++              const x = ((event.clientX - rect.left) / rect.width) * 100;
++              const y = ((event.clientY - rect.top) / rect.height) * 100;
++              openComposer(screen, Math.max(0, Math.min(100, x)), Math.max(0, Math.min(100, y)));
++            }
++          }
++        });
++      }
++
+       function renderControls() {
+         document.getElementById("stateControls").innerHTML = previewControls
+           .map(
+@@ -2703,9 +3486,11 @@
+         renderControls();
+         document.getElementById("livePreview").innerHTML = renderVariant(derivePreviewVariant());
+         hydrateIcons();
++        renderCommentUI();
+       }
+ 
+       function setViewMode(mode) {
++        currentViewMode = mode;
+         const showAll = mode === "all";
+         document.getElementById("interactiveView").hidden = showAll;
+         document.getElementById("allScreensView").hidden = !showAll;
+@@ -2741,23 +3526,14 @@
+         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
+           .map((state) => profileBanner(state))
+           .join("");
+-        document.getElementById("stateControls").addEventListener("click", (event) => {
+-          const button = event.target.closest("[data-control]");
+-          if (!button) return;
+-          previewState[button.dataset.control] = button.dataset.value;
+-          renderInteractivePreview();
+-        });
+-
+-        document.getElementById("viewToggle").addEventListener("click", (event) => {
+-          const button = event.target.closest("[data-view]");
+-          if (!button) return;
+-          setViewMode(button.dataset.view);
+-        });
+-        setViewMode("all");
++        setupCommentEvents();
++        setViewMode(currentViewMode);
++        renderCommentUI();
+         hydrateIcons();
+       }
+ 
+       renderPrototype();
++      fetchComments().then(() => subscribeToComments());
+     </script>
+   </body>
+ </html>
+diff --git a/supabase-comments.sql b/supabase-comments.sql
+new file mode 100644
+index 0000000..079c114
+--- /dev/null
++++ b/supabase-comments.sql
+@@ -0,0 +1,46 @@
++create table if not exists prototype_comments (
++  id uuid primary key default gen_random_uuid(),
++  prototype_id text not null default 'ulc-lifeforce',
++  screen_id text not null,
++  screen_title text not null,
++  state_key text,
++  route text,
++  x numeric,
++  y numeric,
++  author text not null,
++  text text not null,
++  resolved boolean not null default false,
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++alter table prototype_comments enable row level security;
++
++drop policy if exists "Allow anonymous read" on prototype_comments;
++create policy "Allow anonymous read"
++on prototype_comments
++for select
++to anon
++using (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous insert" on prototype_comments;
++create policy "Allow anonymous insert"
++on prototype_comments
++for insert
++to anon
++with check (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous update" on prototype_comments;
++create policy "Allow anonymous update"
++on prototype_comments
++for update
++to anon
++using (prototype_id = 'ulc-lifeforce')
++with check (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous delete" on prototype_comments;
++create policy "Allow anonymous delete"
++on prototype_comments
++for delete
++to anon
++using (prototype_id = 'ulc-lifeforce');
+-- 
+2.39.5 (Apple Git-154)
+
+From d872ce8f549f850294498adf3305954e5ca9ecc8 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Sun, 17 May 2026 22:31:04 -0700
+Subject: [PATCH] Update supabase-comments.sql
+
+---
+ supabase-comments.sql | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/supabase-comments.sql b/supabase-comments.sql
+index 079c114..97592e5 100644
+--- a/supabase-comments.sql
++++ b/supabase-comments.sql
+@@ -16,6 +16,9 @@ create table if not exists prototype_comments (
+ 
+ alter table prototype_comments enable row level security;
+ 
++grant usage on schema public to anon;
++grant select, insert, update, delete on table prototype_comments to anon;
++
+ drop policy if exists "Allow anonymous read" on prototype_comments;
+ create policy "Allow anonymous read"
+ on prototype_comments
+-- 
+2.39.5 (Apple Git-154)
+
+From c3ce0790ecc831814054e0e1d9595bf910904415 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 11:22:18 -0700
+Subject: [PATCH] Add v0.2 prototype change tracking
+
+---
+ CHANGELOG.md                         |  26 ++++
+ docs/lifeforce-ulc-prototype-spec.md | 170 +++++++++++++++++++++++++++
+ index.html                           |  89 ++++++++++++++
+ 3 files changed, 285 insertions(+)
+ create mode 100644 CHANGELOG.md
+ create mode 100644 docs/lifeforce-ulc-prototype-spec.md
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+new file mode 100644
+index 0000000..126ac13
+--- /dev/null
++++ b/CHANGELOG.md
+@@ -0,0 +1,26 @@
++# ULC x LifeForce Prototype Changelog
++
++## v0.2 · Pre-MVP state update snapshot
++
++Date: May 18, 2026
++
++Summary:
++- Captures the prototype before the May 15 meeting-driven state model changes.
++- Includes current dashboard states, reports/results flow, recommendations/products flow, and collaborative comments feature.
++- Use this as the revert point if the next round of changes goes in the wrong direction.
++
++User states affected:
++- No production state model changes in this entry.
++- Snapshot preserves the current pre-MVP dashboard and flow structure.
++
++Known open questions:
++- Which non-member primary CTA should lead: Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?
++- What is included in labs-no-member / one-off labs?
++- Can one-off labs users receive LifeScore, recommendations, or clinician visits?
++- Are supplement recommendations purchasable in-app, in-store only, or deferred until after clinician review?
++- Which ULC services can be recommended before a clinician visit?
++- What blood draw booking status/date data can LifeForce receive from ULC/Kite?
++
++Risky changes or assumptions:
++- This entry intentionally does not rework the operational state model yet.
++- The next iteration should remove unsupported states and speculative modules before MVP review.
+diff --git a/docs/lifeforce-ulc-prototype-spec.md b/docs/lifeforce-ulc-prototype-spec.md
+new file mode 100644
+index 0000000..8ad8c35
+--- /dev/null
++++ b/docs/lifeforce-ulc-prototype-spec.md
+@@ -0,0 +1,170 @@
++# ULC x LifeForce Prototype Spec
++
++## Purpose
++
++This coded prototype explores how the LifeForce experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of state-based dashboard logic, lab reports, result detail, recommendations, products, and collaborative feedback.
++
++This file records the current pre-MVP baseline before the May 15 meeting-driven state model rework.
++
++## Snapshot Baseline
++
++Snapshot label: v0.2 · Pre-MVP state update
++
++Recoverable checkpoint: snapshot-before-mvp-state-rework
++
++Use this snapshot as the revert point if the next round of MVP state-model changes goes in the wrong direction.
++
++## Current Supported Prototype States
++
++Current dashboard states in the pre-MVP prototype:
++
++- Non-member · No labs
++- Member · No labs
++- Member · Labs processing
++- Results back · Questionnaire incomplete
++- Results back · Questionnaire complete
++- Care plan active
++- Time for next draw
++
++Current supporting flows:
++
++- Lab reports listing
++- Lab reports empty state
++- Lab report detail
++- Biomarker detail
++- Processing labs state
++- Recommendations
++- Product browse
++- Product detail
++- Review order
++- Recommendations locked
++- Reusable Health Questionnaire states
++
++## Current Product Decisions
++
++- The LifeForce area is framed as a broader ULC longevity journey rather than only a Labs tab.
++- The bottom nav remains ULC-native: Home, Book, Schedule, Labs, Account.
++- The prototype includes collaborative comments through Supabase.
++- Comments are shared across users/devices and do not require login.
++- Comment author initials/name are remembered locally, but comment content is stored in Supabase.
++- The current pre-MVP state model still includes states and modules that may be removed or renamed in the next pass.
++
++## May 15 MVP Direction To Apply Next
++
++The next round of design changes should simplify the LifeForce section around the operational journey:
++
++Orient -> Schedule blood draw -> Complete Health Questionnaire -> View results -> Schedule clinician visit -> Review recommendations / care plan
++
++Planned state model:
++
++- Non-member · No labs
++- Labs · No member / one-off labs
++- Member · No labs · blood draw not scheduled
++- Member · Blood draw booked · draw not completed
++- Member · Labs processing · questionnaire incomplete
++- Member · Labs processing · questionnaire complete
++- Member · Results back · questionnaire incomplete
++- Member · Results back · questionnaire complete
++- Member · Post-clinician visit / care plan active
++
++Planned removals or de-emphasis:
++
++- Time for next blood draw
++- Questionnaire update required
++- Questionnaire update recommended
++- View questionnaire answers
++- Membership management inside the embedded LifeForce view
++- Future blood draw cadence / eligibility logic
++
++## Key Open Questions
++
++LifeForce positioning:
++
++- What is the approved copy for introducing LifeForce inside ULC?
++- How should the non-member/no-labs page merchandise LifeForce?
++- Is Your Longevity Journey / Powered by LifeForce still the preferred header?
++
++Non-member primary action:
++
++- Should non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?
++- How important is Longevity Assessment for launch?
++
++One-off labs / labs-no-member:
++
++- What exactly can labs-no-member users do?
++- Do they receive LifeScore?
++- Do they receive recommendations?
++- Do they schedule a clinician visit?
++- Is this V0 or later?
++
++Health Questionnaire:
++
++- Should the questionnaire be hidden completely until blood draw is booked?
++- What should a completed state show if users cannot view answers?
++
++Blood draw booking:
++
++- What exact status can LifeForce receive after the draw is booked?
++- Can the prototype show dates and expected draw timing, or only "booked"?
++- What is the deep-link destination for manage booking?
++
++Supplements:
++
++- Are supplements purchasable in-app?
++- Are supplements in-store only?
++- Should supplement recommendations show before clinician visit?
++- If in-store only, should supplement recommendations wait until the in-center clinician visit?
++
++ULC service recommendations:
++
++- Which ULC services/modalities will be recommended?
++- Are any safe to recommend automatically from biomarker thresholds before clinician visit?
++- Which biomarkers map to which services?
++
++Rx recommendations:
++
++- Which Rx products should appear in the post-clinician care plan?
++- What is the correct CTA/deep link for purchase?
++
++Membership management:
++
++- Where exactly in the ULC app is clinical membership displayed or managed?
++- Should the LifeForce section link to it at all, or avoid it entirely?
++
++Future blood draws:
++
++- How will ULC lifecycle communications prompt next draw?
++- Can LifeForce ever know eligibility/cadence?
++- Should LifeForce show a future draw module, or only previous/in-progress draws?
++
++## Supabase Collaborative Comments
++
++Comments use Supabase table: prototype_comments
++
++Frontend environment variables:
++
++- VITE_SUPABASE_URL
++- VITE_SUPABASE_ANON_KEY
++
++Persistence rules:
++
++- Comments are stored in Supabase.
++- localStorage is used only for the last-entered reviewer initials/name.
++
++Supported comment actions:
++
++- Add comment
++- View comments grouped by screen
++- View screen from comment
++- Resolve/unresolve
++- Delete
++- Export all comments
++- Drag pinned comment markers to update location
++
++## Changelog Process
++
++After each meaningful round of changes, update:
++
++- CHANGELOG.md
++- The visible collapsed changelog at the bottom of the All Screens page
++- This spec, if product decisions or supported states change
+diff --git a/index.html b/index.html
+index 05304b4..76d0526 100644
+--- a/index.html
++++ b/index.html
+@@ -82,6 +82,20 @@
+         letter-spacing: -0.06em;
+       }
+ 
++      .version-pill {
++        display: inline-flex;
++        align-items: center;
++        min-height: 32px;
++        padding: 0 12px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: rgba(255, 255, 255, 0.72);
++        color: var(--muted);
++        font-size: 12px;
++        font-weight: 850;
++        letter-spacing: 0.02em;
++      }
++
+       h1 {
+         margin: 0;
+         font-size: clamp(34px, 4vw, 62px);
+@@ -1389,6 +1403,57 @@
+         gap: 12px;
+       }
+ 
++      .prototype-changelog {
++        max-width: 1440px;
++        margin: 28px auto 0;
++        padding: 14px 16px;
++        border: 1px solid var(--line);
++        border-radius: 18px;
++        background: rgba(255, 255, 255, 0.62);
++        color: var(--muted);
++        font-size: 13px;
++        line-height: 1.45;
++      }
++
++      .prototype-changelog summary {
++        cursor: pointer;
++        color: var(--ink);
++        font-size: 13px;
++        font-weight: 900;
++        letter-spacing: 0.03em;
++      }
++
++      .prototype-changelog h2,
++      .prototype-changelog h3 {
++        margin: 14px 0 6px;
++        color: var(--ink);
++        letter-spacing: -0.02em;
++      }
++
++      .prototype-changelog h2 {
++        font-size: 17px;
++      }
++
++      .prototype-changelog h3 {
++        font-size: 14px;
++      }
++
++      .prototype-changelog ul {
++        margin: 6px 0 0;
++        padding-left: 18px;
++      }
++
++      .prototype-changelog li + li {
++        margin-top: 3px;
++      }
++
++      .changelog-updated {
++        margin: 10px 0 0;
++        color: var(--soft);
++        font-size: 11px;
++        font-weight: 800;
++      }
++
+       .comments-panel {
+         position: fixed;
+         top: 18px;
+@@ -1642,6 +1707,7 @@
+       <section class="hero">
+         <div class="board-header">
+           <h1 class="board-title">ULC x Lifeforce Experience</h1>
++          <span class="version-pill">v0.2 · Pre-MVP state update</span>
+           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
+             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
+             <button type="button" data-view="all" aria-pressed="true">All screens</button>
+@@ -1691,6 +1757,29 @@
+           <h2>Reusable Health Questionnaire States</h2>
+           <div class="state-grid" id="profileStates"></div>
+         </section>
++
++        <details class="prototype-changelog">
++          <summary>Change log · v0.2</summary>
++          <h2>Prototype changelog</h2>
++          <h3>v0.2 · Pre-MVP state update snapshot</h3>
++          <ul>
++            <li>Snapshot created before May 15 meeting-driven state model changes.</li>
++            <li>Current prototype includes dashboard states, reports/results, recommendations/products, and collaborative comments.</li>
++            <li>This is the baseline to revert to if the next round of changes goes in the wrong direction.</li>
++          </ul>
++          <h3>Upcoming / in progress</h3>
++          <ul>
++            <li>Update state model based on May 15 review.</li>
++            <li>Rework non-member/no-labs flow.</li>
++            <li>Add labs/no-member or one-off labs state.</li>
++            <li>Revise Health Questionnaire logic.</li>
++            <li>Remove unsupported questionnaire states.</li>
++            <li>Remove membership management from LifeForce embedded view.</li>
++            <li>Add LifeScore gating logic.</li>
++            <li>Revisit recommendations and product purchase flow.</li>
++          </ul>
++          <p class="changelog-updated">Last updated May 18, 2026.</p>
++        </details>
+       </section>
+ 
+       <aside class="comments-panel" id="commentsPanel" hidden>
+-- 
+2.39.5 (Apple Git-154)
+
+From 6724f7743f3df1b64400bb4de91ddd2bfe308cab Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 12:38:59 -0700
+Subject: [PATCH] Refine comment mode interaction
+
+---
+ CHANGELOG.md                         |  28 ++++-
+ docs/lifeforce-ulc-prototype-spec.md |  13 +-
+ index.html                           | 174 +++++++++++++++++++++++++--
+ 3 files changed, 203 insertions(+), 12 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 9376cbf..439bdbd 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,29 @@
+ # ULC x LifeForce Prototype Changelog
+ 
++## v0.5 · Comment mode refinement
++
++Date: May 18, 2026
++
++Summary:
++- Reintroduces Comment Mode so reviewers can choose between normal prototype interaction and click-to-comment placement.
++- Keeps the simplified comments panel with all comments grouped by screen.
++- Adds a visible Comment Mode banner, screen outline, hover affordance, and crosshair cursor while placement mode is on.
++- Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
++- Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
++- Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
++
++User states affected:
++- Prototype shell / collaborative comments
++- All dashboard and flow screens that can receive comment pins
++
++Known open questions:
++- Should pinned comment placement remain enabled for all screen groups, or only the active dynamic preview?
++- Should Comment Mode auto-turn off after saving a comment, or stay on for rapid review passes?
++
++Risky changes or assumptions:
++- Comment Mode stays on after saving so reviewers can quickly add multiple pinned comments.
++- The composer remains in the comments panel rather than floating beside the pin to keep implementation stable.
++
+ ## v0.4 · Care plan refinement
+ 
+ Date: May 18, 2026
+@@ -13,7 +37,7 @@ Summary:
+ - Updates the labs/no-member card to use user-facing biomarker testing language and removes TBD chips from the mobile UI.
+ 
+ User states affected:
+-- Labs · No member / one-off labs
++- Non-member · one-off labs
+ - Post-clinician visit · Care plan active
+ 
+ Known open questions:
+@@ -42,7 +66,7 @@ Summary:
+ 
+ User states affected:
+ - Non-member · No labs
+-- Labs · No member / one-off labs
++- Non-member · one-off labs
+ - Member · No labs · draw not scheduled
+ - Member · Blood draw booked · draw not completed
+ - Labs processing · questionnaire incomplete
+diff --git a/docs/lifeforce-ulc-prototype-spec.md b/docs/lifeforce-ulc-prototype-spec.md
+index 886924c..0a51b71 100644
+--- a/docs/lifeforce-ulc-prototype-spec.md
++++ b/docs/lifeforce-ulc-prototype-spec.md
+@@ -19,7 +19,7 @@ Use this snapshot as the revert point if the next round of MVP state-model chang
+ Current dashboard states after the v0.3 MVP state model pass:
+ 
+ - Non-member · No labs
+-- Labs · No member / one-off labs
++- Non-member · one-off labs
+ - Member · No labs · draw not scheduled
+ - Member · Blood draw booked · draw not completed
+ - Member · Labs processing · questionnaire incomplete
+@@ -49,6 +49,7 @@ Current supporting flows:
+ - The prototype includes collaborative comments through Supabase.
+ - Comments are shared across users/devices and do not require login.
+ - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
++- Comment Mode is intentionally retained: off allows normal prototype interaction, on allows click-to-place pinned comments.
+ - The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
+ - Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
+ - The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
+@@ -158,6 +159,8 @@ Persistence rules:
+ Supported comment actions:
+ 
+ - Add comment
++- Toggle Comment Mode for click-to-place pinned comments
++- Add general unpinned comment
+ - View comments grouped by screen
+ - View screen from comment
+ - Resolve/unresolve
+@@ -165,6 +168,14 @@ Supported comment actions:
+ - Export all comments
+ - Drag pinned comment markers to update location
+ 
++Comment interaction rules:
++
++- Comment Mode off: prototype buttons, screen controls, and navigation work normally.
++- Comment Mode on: clicking a visible mobile screen places a temporary pin and opens the composer.
++- Canceling the composer removes the temporary pin.
++- Saving the composer persists the comment in Supabase and keeps the pin visible.
++- Add general comment attaches feedback to the active screen without x/y coordinates.
++
+ ## Changelog Process
+ 
+ After each meaningful round of changes, update:
+diff --git a/index.html b/index.html
+index 4d2053e..7a5d732 100644
+--- a/index.html
++++ b/index.html
+@@ -306,6 +306,36 @@
+         line-height: 1.3;
+       }
+ 
++      .comment-mode-banner {
++        display: none;
++        max-width: 1440px;
++        margin: 12px auto 0;
++        padding: 11px 14px;
++        border: 1px solid rgba(31, 122, 255, 0.28);
++        border-radius: 16px;
++        background: rgba(31, 122, 255, 0.1);
++        color: #0b55ce;
++        font-size: 13px;
++        font-weight: 850;
++      }
++
++      .comment-mode-banner button {
++        float: right;
++        margin-left: 12px;
++        border: 0;
++        background: transparent;
++        color: #0b55ce;
++        cursor: pointer;
++        font-size: 13px;
++        font-weight: 900;
++        text-decoration: underline;
++        text-underline-offset: 3px;
++      }
++
++      .comment-mode .comment-mode-banner {
++        display: block;
++      }
++
+       .view-panel[hidden] {
+         display: none;
+       }
+@@ -338,6 +368,23 @@
+         text-transform: uppercase;
+       }
+ 
++      .screen-comment-badge {
++        display: inline-flex;
++        align-items: center;
++        justify-content: center;
++        min-width: 24px;
++        height: 24px;
++        padding: 0 8px;
++        border-radius: 999px;
++        background: #1f7aff;
++        color: #fff;
++        font-size: 11px;
++        font-weight: 900;
++        letter-spacing: 0;
++        text-transform: none;
++        box-shadow: 0 8px 18px rgba(31, 122, 255, 0.24);
++      }
++
+       .phone {
+         position: relative;
+         width: 100%;
+@@ -383,6 +430,18 @@
+         scrollbar-width: none;
+       }
+ 
++      .comment-mode .screen {
++        outline: 2px solid rgba(31, 122, 255, 0.4);
++        outline-offset: -2px;
++        cursor: crosshair;
++      }
++
++      .comment-mode .screen:hover {
++        background:
++          radial-gradient(circle at var(--comment-x, 50%) var(--comment-y, 50%), rgba(31, 122, 255, 0.08), transparent 80px),
++          var(--wash-2);
++      }
++
+       .comment-pin-layer {
+         position: absolute;
+         inset: 0;
+@@ -428,6 +487,20 @@
+         opacity: 0.88;
+       }
+ 
++      .comment-pin.pending {
++        animation: pinPulse 1.1s ease-in-out infinite;
++      }
++
++      @keyframes pinPulse {
++        0%,
++        100% {
++          box-shadow: 0 0 0 4px rgba(31, 122, 255, 0.16), 0 10px 20px rgba(31, 122, 255, 0.3);
++        }
++        50% {
++          box-shadow: 0 0 0 10px rgba(31, 122, 255, 0.08), 0 10px 20px rgba(31, 122, 255, 0.3);
++        }
++      }
++
+       .screen-titlebar {
+         display: flex;
+         align-items: center;
+@@ -1699,7 +1772,7 @@
+       <section class="hero">
+         <div class="board-header">
+           <h1 class="board-title">ULC x Lifeforce Experience</h1>
+-          <span class="version-pill">v0.4 · Care plan refinement</span>
++          <span class="version-pill">v0.5 · Comment mode refinement</span>
+           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
+             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
+             <button type="button" data-view="all" aria-pressed="true">All screens</button>
+@@ -1714,6 +1787,10 @@
+             <button class="comment-button primary" type="button" id="commentsPanelToggle">Comments (0)</button>
+           </div>
+         </div>
++        <div class="comment-mode-banner" id="commentModeBanner">
++          Comment Mode On — click anywhere on a screen to leave a comment.
++          <button type="button" id="commentModeDone">Done</button>
++        </div>
+       </section>
+ 
+       <section class="interactive-preview view-panel" id="interactiveView" aria-label="Dynamic prototype preview" hidden>
+@@ -1773,8 +1850,16 @@
+         </details>
+ 
+         <details class="prototype-changelog">
+-          <summary>Change log · v0.4</summary>
++          <summary>Change log · v0.5</summary>
+           <h2>Prototype changelog</h2>
++          <h3>v0.5 · Comment mode refinement</h3>
++          <ul>
++            <li>Reintroduced Comment Mode so normal prototype interactions still work when commenting is off.</li>
++            <li>Clicking Add comment now turns on placement mode with a clear banner and screen hover affordance.</li>
++            <li>Clicking a screen in Comment Mode places a temporary pin and opens the comment composer.</li>
++            <li>Canceling removes the temporary pin; saving keeps the pin and highlights the new comment.</li>
++            <li>Added screen-level comment badges and kept Add general comment as a fallback for unpinned feedback.</li>
++          </ul>
+           <h3>v0.4 · Care plan refinement</h3>
+           <ul>
+             <li>Simplified the post-clinician care plan state to avoid repeated recommendation CTAs.</li>
+@@ -1818,7 +1903,9 @@
+           <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
+         </div>
+         <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
++        <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
+         <button class="comment-button primary" type="button" id="addScreenComment">Add comment</button>
++        <button class="comment-export-link" type="button" id="addGeneralComment">Add general comment</button>
+         <div class="panel-filters">
+           <span class="filter-label">Filter:</span>
+           <button type="button" data-comment-filter="open" aria-pressed="true">Open</button>
+@@ -1886,7 +1973,7 @@
+         },
+         {
+           key: "labs_no_member",
+-          label: "02 · Labs · No member / one-off labs",
++          label: "02 · Non-member · one-off labs",
+           title: "Your Longevity Journey",
+           subtitle: "Powered by Lifeforce",
+           compactContext: true,
+@@ -2066,7 +2153,7 @@
+           label: "Preview as:",
+           options: [
+             ["non_member_no_labs", "Non-member · No labs"],
+-            ["labs_no_member", "Labs · No member / one-off labs"],
++            ["labs_no_member", "Non-member · one-off labs"],
+             ["member_no_labs_not_scheduled", "Member · No labs · draw not scheduled"],
+             ["member_blood_draw_booked", "Member · Blood draw booked"],
+             ["member_labs_processing_questionnaire_incomplete", "Labs processing · questionnaire incomplete"],
+@@ -2088,6 +2175,7 @@
+       let commentsLoading = false;
+       let commentsError = "";
+       let realtimeChannel = null;
++      let commentMode = false;
+       let commentsPanelOpen = false;
+       let activeScreenId = "dashboard-non-member-no-labs";
+       let activeScreenTitle = "Dashboard · Non-member · No labs";
+@@ -2096,6 +2184,7 @@
+       let pendingComment = null;
+       let commentEventsBound = false;
+       let suppressNextPinClick = false;
++      let pendingPin = null;
+       let currentViewMode = "all";
+       let comments = [];
+ 
+@@ -2227,6 +2316,10 @@
+       };
+ 
+       function renderCommentPins(screenId) {
++        const pending =
++          pendingPin && pendingPin.screenId === screenId && typeof pendingPin.x === "number" && typeof pendingPin.y === "number"
++            ? `<button class="comment-pin pending active" type="button" data-pending-comment-pin style="left:clamp(16px, ${pendingPin.x}%, calc(100% - 16px));top:clamp(16px, ${pendingPin.y}%, calc(100% - 16px));" title="New comment">+</button>`
++            : "";
+         return `
+           <div class="comment-pin-layer" aria-label="Comment pins">
+             ${comments
+@@ -2236,10 +2329,16 @@
+                 return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="${escapeHtml(comment.text)}">${number}</button>`;
+               })
+               .join("")}
++            ${pending}
+           </div>
+         `;
+       }
+ 
++      function screenCommentBadge(screenId) {
++        const count = comments.filter((comment) => comment.screenId === screenId && !comment.resolved).length;
++        return count ? `<span class="screen-comment-badge" title="${count} open comments">${count}</span>` : "";
++      }
++
+       function lifeScoreHeart(size = 64) {
+         return `
+           <svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
+@@ -2868,7 +2967,7 @@
+         const screenTitle = screenTitleForVariant(v);
+         return `
+           <article class="variant">
+-            <div class="variant-label"><span>${v.label}</span></div>
++            <div class="variant-label"><span>${v.label}</span>${screenCommentBadge(screenId)}</div>
+             <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+               <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+@@ -2889,7 +2988,7 @@
+         const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
+         return `
+           <article class="variant">
+-            <div class="variant-label"><span>${label}</span></div>
++            <div class="variant-label"><span>${label}</span>${screenCommentBadge(resolvedScreenId)}</div>
+             <div class="phone" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+               <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+@@ -3392,16 +3491,25 @@
+         const shell = document.getElementById("commentShell");
+         const status = document.getElementById("commentStatus");
+         const helper = document.getElementById("commentHelper");
++        const modeToggle = document.getElementById("commentModeToggle");
+         const panelToggle = document.getElementById("commentsPanelToggle");
+         const panel = document.getElementById("commentsPanel");
+         if (!shell || !status || !panelToggle || !panel) return;
+ 
+-        status.textContent = "Collaborative review";
++        document.body.classList.toggle("comment-mode", commentMode);
++        status.textContent = commentMode ? "Comment Mode On" : "Collaborative review";
+         helper.textContent = commentsError
+           ? commentsError
+           : commentsLoading
+             ? "Loading shared comments from Supabase..."
+-            : `Shared comments for this prototype. ${screenCount} open on the current screen.`;
++            : commentMode
++              ? "Click anywhere on a screen to leave feedback. Turn Comment Mode off to interact normally."
++              : `Turn on Comment Mode to click on a screen and leave feedback. ${screenCount} open on the current screen.`;
++        if (modeToggle) {
++          modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
++          modeToggle.classList.toggle("active", commentMode);
++          modeToggle.setAttribute("aria-pressed", String(commentMode));
++        }
+         panelToggle.textContent = `Comments (${openCount})`;
+         document.getElementById("activeScreenLabel").textContent = `${openCount} open comments`;
+         panel.hidden = !commentsPanelOpen;
+@@ -3415,6 +3523,7 @@
+       }
+ 
+       function openComposer(screen, x = null, y = null) {
++        pendingPin = typeof x === "number" && typeof y === "number" ? { screenId: screen.dataset.screenId, x, y } : null;
+         pendingComment = {
+           screenId: screen.dataset.screenId,
+           screenTitle: screen.dataset.screenTitle,
+@@ -3432,13 +3541,26 @@
+         document.getElementById("commentText").value = "";
+         document.getElementById("composerError").textContent = "";
+         setActiveScreen(pendingComment.screenId, pendingComment.screenTitle);
++        renderPrototype();
+         setTimeout(() => document.getElementById("commentText").focus(), 0);
+       }
+ 
+       function closeComposer() {
+         pendingComment = null;
++        pendingPin = null;
+         document.getElementById("commentComposer").hidden = true;
+         document.getElementById("composerError").textContent = "";
++        renderPrototype();
++      }
++
++      function setCommentMode(enabled) {
++        commentMode = enabled;
++        if (!enabled && pendingPin) {
++          closeComposer();
++          return;
++        }
++        if (!enabled) pendingPin = null;
++        renderPrototype();
+       }
+ 
+       async function addCommentFromComposer() {
+@@ -3462,11 +3584,13 @@
+           error.textContent = commentsError || "Supabase is not configured.";
+           return;
+         }
+-        const { error: insertError } = await client.from("prototype_comments").insert(serializeComment(nextComment));
++        const { data: insertedComment, error: insertError } = await client.from("prototype_comments").insert(serializeComment(nextComment)).select("*").single();
+         if (insertError) {
+           error.textContent = insertError.message;
+           return;
+         }
++        selectedCommentId = insertedComment?.id || "";
++        pendingPin = null;
+         closeComposer();
+         await fetchComments();
+       }
+@@ -3573,9 +3697,19 @@
+           commentsPanelOpen = false;
+           renderCommentUI();
+         });
++        document.getElementById("commentModeToggle").addEventListener("click", () => {
++          setCommentMode(!commentMode);
++        });
++        document.getElementById("commentModeDone").addEventListener("click", () => {
++          setCommentMode(false);
++        });
+         document.getElementById("saveComment").addEventListener("click", addCommentFromComposer);
+         document.getElementById("cancelComment").addEventListener("click", closeComposer);
+         document.getElementById("addScreenComment").addEventListener("click", () => {
++          commentsPanelOpen = true;
++          setCommentMode(true);
++        });
++        document.getElementById("addGeneralComment").addEventListener("click", () => {
+           const screen = document.querySelector(`.screen[data-screen-id="${activeScreenId}"]`) || document.querySelector(".screen[data-screen-id]");
+           if (screen) openComposer(screen, null, null);
+         });
+@@ -3601,6 +3735,14 @@
+           const pin = event.target.closest("[data-comment-pin]");
+           if (pin) beginPinDrag(event, pin);
+         });
++        document.addEventListener("pointermove", (event) => {
++          if (!commentMode) return;
++          const screen = event.target.closest(".screen[data-screen-id]");
++          if (!screen) return;
++          const { x, y } = pinPositionFromEvent(event, screen);
++          screen.style.setProperty("--comment-x", `${x}%`);
++          screen.style.setProperty("--comment-y", `${y}%`);
++        });
+ 
+         document.addEventListener("click", async (event) => {
+           const filter = event.target.closest("[data-comment-filter]");
+@@ -3626,6 +3768,13 @@
+             }
+             return;
+           }
++          if (event.target.closest("[data-pending-comment-pin]")) {
++            event.preventDefault();
++            event.stopPropagation();
++            commentsPanelOpen = true;
++            renderPrototype();
++            return;
++          }
+           const jump = event.target.closest("[data-comment-jump]");
+           if (jump) {
+             const comment = comments.find((item) => item.id === jump.dataset.commentJump);
+@@ -3656,6 +3805,13 @@
+           const screen = event.target.closest(".screen[data-screen-id]");
+           if (screen) {
+             setActiveScreen(screen.dataset.screenId, screen.dataset.screenTitle);
++            if (commentMode) {
++              event.preventDefault();
++              event.stopPropagation();
++              const { x, y } = pinPositionFromEvent(event, screen);
++              openComposer(screen, x, y);
++              return;
++            }
+           }
+         });
+       }
+-- 
+2.39.5 (Apple Git-154)
+
+From 0df492b976d128027484ad46e9266154c0988977 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 12:47:20 -0700
+Subject: [PATCH] Restore comment pin dragging
+
+---
+ CHANGELOG.md |  1 +
+ index.html   | 89 +++++++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 61 insertions(+), 29 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 439bdbd..ec61f78 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -11,6 +11,7 @@ Summary:
+ - Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
+ - Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
+ - Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
++- Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
+ 
+ User states affected:
+ - Prototype shell / collaborative comments
+diff --git a/index.html b/index.html
+index 7a5d732..5ea546a 100644
+--- a/index.html
++++ b/index.html
+@@ -469,6 +469,12 @@
+         user-select: none;
+       }
+ 
++      .comment-mode .comment-pin:hover {
++        width: 30px;
++        height: 30px;
++        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 12px 24px rgba(31, 122, 255, 0.34);
++      }
++
+       .comment-pin.resolved {
+         background: #8c8983;
+         box-shadow: none;
+@@ -1857,6 +1863,7 @@
+             <li>Reintroduced Comment Mode so normal prototype interactions still work when commenting is off.</li>
+             <li>Clicking Add comment now turns on placement mode with a clear banner and screen hover affordance.</li>
+             <li>Clicking a screen in Comment Mode places a temporary pin and opens the comment composer.</li>
++            <li>Saved pins can be dragged to a new location in Comment Mode and persist updated coordinates to Supabase.</li>
+             <li>Canceling removes the temporary pin; saving keeps the pin and highlights the new comment.</li>
+             <li>Added screen-level comment badges and kept Add general comment as a fallback for unpinned feedback.</li>
+           </ul>
+@@ -2184,6 +2191,7 @@
+       let pendingComment = null;
+       let commentEventsBound = false;
+       let suppressNextPinClick = false;
++      let activePinDrag = null;
+       let pendingPin = null;
+       let currentViewMode = "all";
+       let comments = [];
+@@ -2326,7 +2334,7 @@
+               .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
+               .map((comment) => {
+                 const number = comments.findIndex((item) => item.id === comment.id) + 1;
+-                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="${escapeHtml(comment.text)}">${number}</button>`;
++                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${number}</button>`;
+               })
+               .join("")}
+             ${pending}
+@@ -3500,10 +3508,10 @@
+         status.textContent = commentMode ? "Comment Mode On" : "Collaborative review";
+         helper.textContent = commentsError
+           ? commentsError
+-          : commentsLoading
+-            ? "Loading shared comments from Supabase..."
++            : commentsLoading
++              ? "Loading shared comments from Supabase..."
+             : commentMode
+-              ? "Click anywhere on a screen to leave feedback. Turn Comment Mode off to interact normally."
++              ? "Click to add comments. Drag pins to reposition. Turn Comment Mode off to interact normally."
+               : `Turn on Comment Mode to click on a screen and leave feedback. ${screenCount} open on the current screen.`;
+         if (modeToggle) {
+           modeToggle.textContent = commentMode ? "Comment Mode: On" : "Comment Mode: Off";
+@@ -3651,38 +3659,54 @@
+       }
+ 
+       function beginPinDrag(event, pin) {
++        if (!commentMode) return;
+         const commentId = pin.dataset.commentPin;
+         const screen = pin.closest(".screen[data-screen-id]");
+         if (!screen) return;
+-        let moved = false;
++        event.preventDefault();
++        event.stopPropagation();
++        selectedCommentId = commentId;
++        commentsPanelOpen = true;
+         pin.classList.add("dragging");
+         pin.setPointerCapture?.(event.pointerId);
+-
+-        const movePin = (moveEvent) => {
+-          moved = true;
+-          const { x, y } = pinPositionFromEvent(moveEvent, screen);
+-          pin.style.left = `clamp(16px, ${x}%, calc(100% - 16px))`;
+-          pin.style.top = `clamp(16px, ${y}%, calc(100% - 16px))`;
+-          pin.dataset.dragX = String(x);
+-          pin.dataset.dragY = String(y);
+-        };
+-
+-        const endPinDrag = async (upEvent) => {
+-          pin.classList.remove("dragging");
+-          pin.releasePointerCapture?.(event.pointerId);
+-          pin.removeEventListener("pointermove", movePin);
+-          pin.removeEventListener("pointerup", endPinDrag);
+-          pin.removeEventListener("pointercancel", endPinDrag);
+-          if (!moved) return;
+-          upEvent.preventDefault();
+-          upEvent.stopPropagation();
+-          suppressNextPinClick = true;
+-          await updateCommentPosition(commentId, Number(pin.dataset.dragX), Number(pin.dataset.dragY));
++        activePinDrag = {
++          commentId,
++          pin,
++          pointerId: event.pointerId,
++          screen,
++          moved: false,
++          startX: event.clientX,
++          startY: event.clientY,
+         };
++        renderCommentUI();
++      }
+ 
+-        pin.addEventListener("pointermove", movePin);
+-        pin.addEventListener("pointerup", endPinDrag);
+-        pin.addEventListener("pointercancel", endPinDrag);
++      function moveActivePinDrag(event) {
++        if (!activePinDrag || event.pointerId !== activePinDrag.pointerId) return false;
++        event.preventDefault();
++        event.stopPropagation();
++        const distance = Math.hypot(event.clientX - activePinDrag.startX, event.clientY - activePinDrag.startY);
++        if (distance > 2) activePinDrag.moved = true;
++        const { x, y } = pinPositionFromEvent(event, activePinDrag.screen);
++        activePinDrag.pin.style.left = `clamp(16px, ${x}%, calc(100% - 16px))`;
++        activePinDrag.pin.style.top = `clamp(16px, ${y}%, calc(100% - 16px))`;
++        activePinDrag.x = x;
++        activePinDrag.y = y;
++        return true;
++      }
++
++      async function endActivePinDrag(event) {
++        if (!activePinDrag || event.pointerId !== activePinDrag.pointerId) return false;
++        event.preventDefault();
++        event.stopPropagation();
++        const drag = activePinDrag;
++        activePinDrag = null;
++        drag.pin.classList.remove("dragging");
++        drag.pin.releasePointerCapture?.(event.pointerId);
++        if (!drag.moved) return true;
++        suppressNextPinClick = true;
++        await updateCommentPosition(drag.commentId, Number(drag.x), Number(drag.y));
++        return true;
+       }
+ 
+       function setupCommentEvents() {
+@@ -3736,6 +3760,7 @@
+           if (pin) beginPinDrag(event, pin);
+         });
+         document.addEventListener("pointermove", (event) => {
++          if (moveActivePinDrag(event)) return;
+           if (!commentMode) return;
+           const screen = event.target.closest(".screen[data-screen-id]");
+           if (!screen) return;
+@@ -3743,6 +3768,12 @@
+           screen.style.setProperty("--comment-x", `${x}%`);
+           screen.style.setProperty("--comment-y", `${y}%`);
+         });
++        document.addEventListener("pointerup", (event) => {
++          endActivePinDrag(event);
++        });
++        document.addEventListener("pointercancel", (event) => {
++          endActivePinDrag(event);
++        });
+ 
+         document.addEventListener("click", async (event) => {
+           const filter = event.target.closest("[data-comment-filter]");
+-- 
+2.39.5 (Apple Git-154)
+
+From 0ec0d1e3a2cac5c8aa83261e93ffacada23e5721 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 12:50:44 -0700
+Subject: [PATCH] Fix comment overlay filtering
+
+---
+ CHANGELOG.md |  1 +
+ index.html   | 39 ++++++++++++++++++++++++++++-----------
+ 2 files changed, 29 insertions(+), 11 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index ec61f78..380b03b 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -12,6 +12,7 @@ Summary:
+ - Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
+ - Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
+ - Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
++- Fixes screen overlay filtering so only open comments for the exact screen/state render as badges or pins.
+ 
+ User states affected:
+ - Prototype shell / collaborative comments
+diff --git a/index.html b/index.html
+index 5ea546a..839a0ca 100644
+--- a/index.html
++++ b/index.html
+@@ -385,6 +385,10 @@
+         box-shadow: 0 8px 18px rgba(31, 122, 255, 0.24);
+       }
+ 
++      .screen-comment-badge.active {
++        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 8px 18px rgba(31, 122, 255, 0.24);
++      }
++
+       .phone {
+         position: relative;
+         width: 100%;
+@@ -2328,23 +2332,36 @@
+           pendingPin && pendingPin.screenId === screenId && typeof pendingPin.x === "number" && typeof pendingPin.y === "number"
+             ? `<button class="comment-pin pending active" type="button" data-pending-comment-pin style="left:clamp(16px, ${pendingPin.x}%, calc(100% - 16px));top:clamp(16px, ${pendingPin.y}%, calc(100% - 16px));" title="New comment">+</button>`
+             : "";
++        const pinnedComments = openPinnedCommentsForScreen(screenId);
+         return `
+           <div class="comment-pin-layer" aria-label="Comment pins">
+-            ${comments
+-              .filter((comment) => comment.screenId === screenId && typeof comment.x === "number" && typeof comment.y === "number")
+-              .map((comment) => {
+-                const number = comments.findIndex((item) => item.id === comment.id) + 1;
+-                return `<button class="comment-pin ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${number}</button>`;
+-              })
++            ${pinnedComments
++              .map(
++                (comment, index) =>
++                  `<button class="comment-pin ${selectedCommentId === comment.id ? "active" : ""}" type="button" data-comment-pin="${comment.id}" style="left:clamp(16px, ${comment.x}%, calc(100% - 16px));top:clamp(16px, ${comment.y}%, calc(100% - 16px));" title="Drag to move · ${escapeHtml(comment.text)}">${index + 1}</button>`,
++              )
+               .join("")}
+             ${pending}
+           </div>
+         `;
+       }
+ 
++      function hasValidPinCoordinates(comment) {
++        return Number.isFinite(comment.x) && Number.isFinite(comment.y);
++      }
++
++      function openCommentsForScreen(screenId) {
++        return comments.filter((comment) => comment.screenId === screenId && !comment.resolved);
++      }
++
++      function openPinnedCommentsForScreen(screenId) {
++        return openCommentsForScreen(screenId).filter(hasValidPinCoordinates);
++      }
++
+       function screenCommentBadge(screenId) {
+-        const count = comments.filter((comment) => comment.screenId === screenId && !comment.resolved).length;
+-        return count ? `<span class="screen-comment-badge" title="${count} open comments">${count}</span>` : "";
++        const count = openCommentsForScreen(screenId).length;
++        const isSelected = Boolean(selectedCommentId && openCommentsForScreen(screenId).some((comment) => comment.id === selectedCommentId));
++        return count ? `<span class="screen-comment-badge ${isSelected ? "active" : ""}" title="${count} open comments">${count}</span>` : "";
+       }
+ 
+       function lifeScoreHeart(size = 64) {
+@@ -3462,20 +3479,20 @@
+           return acc;
+         }, {});
+ 
++        const displayNumbers = new Map(list.map((comment, index) => [comment.id, index + 1]));
+         return Object.entries(groups)
+           .map(
+             ([screenTitle, groupComments]) => `
+               <section class="comment-group">
+                 <div class="comment-group-title">${escapeHtml(screenTitle)}</div>
+-                <div>${groupComments.map(renderCommentItem).join("")}</div>
++                <div>${groupComments.map((comment) => renderCommentItem(comment, displayNumbers.get(comment.id))).join("")}</div>
+               </section>
+             `,
+           )
+           .join("");
+       }
+ 
+-      function renderCommentItem(comment) {
+-        const number = comments.findIndex((item) => item.id === comment.id) + 1;
++      function renderCommentItem(comment, number) {
+         return `
+           <article class="comment-item ${comment.resolved ? "resolved" : ""} ${selectedCommentId === comment.id ? "selected" : ""}">
+             <div class="comment-item-head">
+-- 
+2.39.5 (Apple Git-154)
+
+From 92150a5a52b3ea480e1d953281da0c3ecef68b97 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 13:17:02 -0700
+Subject: [PATCH] Add collaborative open questions
+
+---
+ CHANGELOG.md                         |  23 ++
+ docs/lifeforce-ulc-prototype-spec.md |  13 +
+ index.html                           | 420 +++++++++++++++++++++++++--
+ supabase-comments.sql                |  72 +++++
+ 4 files changed, 507 insertions(+), 21 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 734c5fa..520423f 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,28 @@
+ # ULC x LifeForce Prototype Changelog
+ 
++## v0.7 · Collaborative open questions
++
++Date: May 18, 2026
++
++Summary:
++- Makes the Open Questions section collaborative and editable with Supabase.
++- Adds an Add open question form with initials/name, category, and question text.
++- Groups questions by category and supports Open / Resolved / All filters.
++- Adds resolve, unresolve, and confirmed delete actions.
++- Adds SQL seed rows for the existing MVP open questions with fixed IDs to avoid duplicates.
++- Adds SQL setup for the prototype_open_questions table and anonymous RLS policies.
++
++User states affected:
++- Prototype shell / Open Questions section
++
++Known open questions:
++- Should seeded questions be protected from deletion, or should reviewers be able to fully curate the shared list?
++- Should open questions support owners or target decision dates later?
++
++Risky changes or assumptions:
++- Seeded questions are inserted by the SQL setup with fixed IDs; if reviewers delete them later, the frontend will not recreate them.
++- The Supabase table must be created with the updated SQL before this works in production.
++
+ ## v0.6 · Sticky CTA cleanup
+ 
+ Date: May 18, 2026
+diff --git a/docs/lifeforce-ulc-prototype-spec.md b/docs/lifeforce-ulc-prototype-spec.md
+index 0a51b71..141bebe 100644
+--- a/docs/lifeforce-ulc-prototype-spec.md
++++ b/docs/lifeforce-ulc-prototype-spec.md
+@@ -50,6 +50,7 @@ Current supporting flows:
+ - Comments are shared across users/devices and do not require login.
+ - Comment author initials/name are remembered locally, but comment content is stored in Supabase.
+ - Comment Mode is intentionally retained: off allows normal prototype interaction, on allows click-to-place pinned comments.
++- Open Questions are also collaborative through Supabase and can be added, resolved, unresolved, and deleted by reviewers.
+ - The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
+ - Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
+ - The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
+@@ -146,6 +147,8 @@ Future blood draws:
+ 
+ Comments use Supabase table: prototype_comments
+ 
++Open Questions use Supabase table: prototype_open_questions
++
+ Frontend environment variables:
+ 
+ - VITE_SUPABASE_URL
+@@ -154,6 +157,7 @@ Frontend environment variables:
+ Persistence rules:
+ 
+ - Comments are stored in Supabase.
++- Open Questions are stored in Supabase.
+ - localStorage is used only for the last-entered reviewer initials/name.
+ 
+ Supported comment actions:
+@@ -176,6 +180,15 @@ Comment interaction rules:
+ - Saving the composer persists the comment in Supabase and keeps the pin visible.
+ - Add general comment attaches feedback to the active screen without x/y coordinates.
+ 
++Supported open question actions:
++
++- Add open question with initials/name, category, and text
++- View questions grouped by category
++- Filter by Open / Resolved / All
++- Resolve/unresolve
++- Confirmed delete
++- Seed the existing MVP open questions through the SQL setup with fixed IDs
++
+ ## Changelog Process
+ 
+ After each meaningful round of changes, update:
+diff --git a/index.html b/index.html
+index 87498c0..f9de245 100644
+--- a/index.html
++++ b/index.html
+@@ -1541,6 +1541,130 @@
+         margin-top: 3px;
+       }
+ 
++      .open-question-tools,
++      .open-question-actions {
++        display: flex;
++        flex-wrap: wrap;
++        gap: 8px;
++        align-items: center;
++        margin-top: 10px;
++      }
++
++      .open-question-filter {
++        display: inline-flex;
++        gap: 4px;
++        align-items: center;
++        padding: 3px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: rgba(255, 255, 255, 0.7);
++      }
++
++      .open-question-filter button,
++      .open-question-link,
++      .open-question-button {
++        border: 0;
++        background: transparent;
++        color: var(--muted);
++        cursor: pointer;
++        font-size: 12px;
++        font-weight: 850;
++      }
++
++      .open-question-filter button {
++        min-height: 26px;
++        padding: 0 10px;
++        border-radius: 999px;
++      }
++
++      .open-question-filter button[aria-pressed="true"] {
++        background: var(--brown);
++        color: #fff;
++      }
++
++      .open-question-button {
++        min-height: 32px;
++        padding: 0 12px;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        background: #fff;
++        color: var(--brown);
++      }
++
++      .open-question-form {
++        display: grid;
++        gap: 10px;
++        margin-top: 12px;
++        padding: 12px;
++        border: 1px solid var(--line);
++        border-radius: 14px;
++        background: rgba(255, 255, 255, 0.72);
++      }
++
++      .open-question-form[hidden] {
++        display: none;
++      }
++
++      .open-question-form label {
++        display: grid;
++        gap: 5px;
++        color: var(--muted);
++        font-size: 12px;
++        font-weight: 850;
++      }
++
++      .open-question-form input,
++      .open-question-form select,
++      .open-question-form textarea {
++        width: 100%;
++        border: 1px solid var(--line);
++        border-radius: 12px;
++        padding: 10px;
++        background: #fff;
++        color: var(--ink);
++        font: inherit;
++      }
++
++      .open-question-form textarea {
++        min-height: 86px;
++        resize: vertical;
++      }
++
++      .open-question-group {
++        margin-top: 12px;
++      }
++
++      .open-question-list {
++        display: grid;
++        gap: 8px;
++        margin: 8px 0 0;
++        padding: 0;
++        list-style: none;
++      }
++
++      .open-question-item {
++        padding: 10px 0;
++        border-top: 1px solid #ece8e2;
++      }
++
++      .open-question-item.resolved {
++        opacity: 0.62;
++      }
++
++      .open-question-text {
++        margin: 0;
++        color: var(--ink);
++        font-size: 13px;
++        line-height: 1.4;
++      }
++
++      .open-question-meta {
++        margin-top: 4px;
++        color: var(--soft);
++        font-size: 11px;
++        font-weight: 800;
++      }
++
+       .changelog-updated {
+         margin: 10px 0 0;
+         color: var(--soft);
+@@ -1801,7 +1925,7 @@
+       <section class="hero">
+         <div class="board-header">
+           <h1 class="board-title">ULC x Lifeforce Experience</h1>
+-          <span class="version-pill">v0.6 · Sticky CTA cleanup</span>
++          <span class="version-pill">v0.7 · Collaborative open questions</span>
+           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
+             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
+             <button type="button" data-view="all" aria-pressed="true">All screens</button>
+@@ -1856,31 +1980,50 @@
+           <div class="state-grid" id="profileStates"></div>
+         </section>
+ 
+-        <details class="prototype-changelog">
+-          <summary>Open questions · MVP state model</summary>
++        <details class="prototype-changelog" id="openQuestionsDetails">
++          <summary id="openQuestionsSummary">Open questions · MVP state model</summary>
+           <h2>Open questions</h2>
+-          <h3>Non-member and one-off labs</h3>
+-          <ul>
+-            <li>Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?</li>
+-            <li>What exactly is included for labs-no-member / one-off labs users?</li>
+-            <li>Do one-off labs users receive LifeScore, recommendations, or a clinician visit?</li>
+-          </ul>
+-          <h3>Products, supplements, and services</h3>
+-          <ul>
+-            <li>Are supplements purchasable in-app or in-store only?</li>
+-            <li>Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?</li>
+-            <li>Which ULC services can be recommended before clinician review, and which biomarkers trigger them?</li>
+-          </ul>
+-          <h3>Blood draw and questionnaire data</h3>
+-          <ul>
+-            <li>What blood draw booking status/date data can Lifeforce receive from ULC/Kite?</li>
+-            <li>Should the completed Health Questionnaire state be shown, or should it disappear after completion?</li>
+-          </ul>
++          <p class="comment-meta">Shared product and design questions for this prototype. Add your initials so we know who raised the question.</p>
++          <div class="open-question-tools">
++            <button class="open-question-button" type="button" id="addOpenQuestion">Add open question</button>
++            <div class="open-question-filter" aria-label="Open question filter">
++              <button type="button" data-question-filter="open" aria-pressed="true">Open</button>
++              <button type="button" data-question-filter="resolved" aria-pressed="false">Resolved</button>
++              <button type="button" data-question-filter="all" aria-pressed="false">All</button>
++            </div>
++          </div>
++          <form class="open-question-form" id="openQuestionForm" hidden>
++            <label>
++              Your initials
++              <input id="openQuestionAuthor" type="text" placeholder="NP" />
++            </label>
++            <label>
++              Category
++              <select id="openQuestionCategory"></select>
++            </label>
++            <label>
++              Question
++              <textarea id="openQuestionText" placeholder="Add an unresolved product or design question..."></textarea>
++            </label>
++            <div class="open-question-actions">
++              <button class="open-question-button" type="submit">Add question</button>
++              <button class="open-question-link" type="button" id="cancelOpenQuestion">Cancel</button>
++            </div>
++            <div class="comment-meta" id="openQuestionError"></div>
++          </form>
++          <div id="openQuestionsList"></div>
+         </details>
+ 
+         <details class="prototype-changelog">
+-          <summary>Change log · v0.6</summary>
++          <summary>Change log · v0.7</summary>
+           <h2>Prototype changelog</h2>
++          <h3>v0.7 · Collaborative open questions</h3>
++          <ul>
++            <li>Made Open Questions collaborative and editable through Supabase.</li>
++            <li>Added Add open question form with initials, category, and question text.</li>
++            <li>Added Open / Resolved / All filters plus resolve, unresolve, and delete actions.</li>
++            <li>Added SQL seed rows for the existing MVP questions with fixed IDs.</li>
++          </ul>
+           <h3>v0.6 · Sticky CTA cleanup</h3>
+           <ul>
+             <li>Moved recommendations, product, and order purchase CTAs out of the scroll content and into phone-level bottom bars.</li>
+@@ -2207,10 +2350,22 @@
+ 
+       const PROTOTYPE_ID = "ulc-lifeforce";
+       const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
++      const QUESTION_AUTHOR_KEY = "ulc_lifeforce_open_question_author";
++      const OPEN_QUESTION_CATEGORIES = [
++        "Non-member and one-off labs",
++        "Products, supplements, and services",
++        "Blood draw and questionnaire data",
++        "Recommendations and care plan",
++        "Membership / packaging",
++        "Other",
++      ];
+       let supabaseClient = null;
+       let commentsLoading = false;
+       let commentsError = "";
++      let openQuestionsLoading = false;
++      let openQuestionsError = "";
+       let realtimeChannel = null;
++      let openQuestionsRealtimeChannel = null;
+       let commentMode = false;
+       let commentsPanelOpen = false;
+       let activeScreenId = "dashboard-non-member-no-labs";
+@@ -2224,6 +2379,9 @@
+       let pendingPin = null;
+       let currentViewMode = "all";
+       let comments = [];
++      let openQuestions = [];
++      let openQuestionFilter = "open";
++      let openQuestionEventsBound = false;
+ 
+       function icon(name, size = 20) {
+         return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+@@ -2323,6 +2481,40 @@
+           .subscribe();
+       }
+ 
++      async function fetchOpenQuestions() {
++        const client = initSupabase();
++        if (!client) {
++          openQuestionsError = commentsError || "Supabase is not configured.";
++          renderOpenQuestions();
++          return;
++        }
++        openQuestionsLoading = true;
++        openQuestionsError = "";
++        renderOpenQuestions();
++        const { data, error } = await client
++          .from("prototype_open_questions")
++          .select("*")
++          .eq("prototype_id", PROTOTYPE_ID)
++          .order("created_at", { ascending: true });
++        openQuestionsLoading = false;
++        if (error) {
++          openQuestionsError = error.message;
++          renderOpenQuestions();
++          return;
++        }
++        openQuestions = (data || []).map(normalizeOpenQuestion);
++        renderOpenQuestions();
++      }
++
++      function subscribeToOpenQuestions() {
++        const client = initSupabase();
++        if (!client || openQuestionsRealtimeChannel) return;
++        openQuestionsRealtimeChannel = client
++          .channel("ulc-lifeforce-prototype-open-questions")
++          .on("postgres_changes", { event: "*", schema: "public", table: "prototype_open_questions", filter: `prototype_id=eq.${PROTOTYPE_ID}` }, () => fetchOpenQuestions())
++          .subscribe();
++      }
++
+       function makeId() {
+         return window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : `comment-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+       }
+@@ -3499,6 +3691,101 @@
+         return new Date(value).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+       }
+ 
++      function normalizeOpenQuestion(row) {
++        return {
++          id: row.id,
++          category: row.category,
++          author: row.author,
++          text: row.text,
++          resolved: Boolean(row.resolved),
++          createdAt: row.created_at,
++          updatedAt: row.updated_at,
++        };
++      }
++
++      function serializeOpenQuestion(question) {
++        return {
++          prototype_id: PROTOTYPE_ID,
++          category: question.category,
++          author: question.author,
++          text: question.text,
++          resolved: Boolean(question.resolved),
++        };
++      }
++
++      function filteredOpenQuestions() {
++        return openQuestions.filter((question) => {
++          if (openQuestionFilter === "open") return !question.resolved;
++          if (openQuestionFilter === "resolved") return question.resolved;
++          return true;
++        });
++      }
++
++      function openQuestionCount() {
++        return openQuestions.filter((question) => !question.resolved).length;
++      }
++
++      function renderOpenQuestionItem(question) {
++        return `
++          <li class="open-question-item ${question.resolved ? "resolved" : ""}">
++            <p class="open-question-text"><strong>${escapeHtml(question.author)}:</strong> ${escapeHtml(question.text)}</p>
++            <div class="open-question-meta">${question.resolved ? "Resolved" : "Open"} · Added ${formatDate(question.createdAt)}</div>
++            <div class="open-question-actions">
++              <button class="open-question-link" type="button" data-question-resolve="${question.id}">${question.resolved ? "Unresolve" : "Resolve"}</button>
++              <button class="open-question-link" type="button" data-question-delete="${question.id}">Delete</button>
++            </div>
++          </li>
++        `;
++      }
++
++      function renderOpenQuestions() {
++        const summary = document.getElementById("openQuestionsSummary");
++        const list = document.getElementById("openQuestionsList");
++        if (!summary || !list) return;
++
++        const count = openQuestionCount();
++        summary.textContent = `Open questions · MVP state model · ${count} open`;
++        document.querySelectorAll("[data-question-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.questionFilter === openQuestionFilter)));
++        const select = document.getElementById("openQuestionCategory");
++        if (select && !select.options.length) {
++          select.innerHTML = OPEN_QUESTION_CATEGORIES.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
++        }
++
++        if (openQuestionsError) {
++          list.innerHTML = `<p class="comment-meta">${escapeHtml(openQuestionsError)}</p>`;
++          return;
++        }
++        if (openQuestionsLoading) {
++          list.innerHTML = `<p class="comment-meta">Loading shared open questions from Supabase...</p>`;
++          return;
++        }
++
++        const visible = filteredOpenQuestions();
++        if (!visible.length) {
++          list.innerHTML = `<p class="comment-meta">No ${openQuestionFilter === "resolved" ? "resolved" : "open"} questions yet.</p>`;
++          return;
++        }
++
++        const grouped = OPEN_QUESTION_CATEGORIES.reduce((acc, category) => {
++          const group = visible.filter((question) => question.category === category);
++          if (group.length) acc.push([category, group]);
++          return acc;
++        }, []);
++        const uncategorized = visible.filter((question) => !OPEN_QUESTION_CATEGORIES.includes(question.category));
++        if (uncategorized.length) grouped.push(["Other", uncategorized]);
++
++        list.innerHTML = grouped
++          .map(
++            ([category, questions]) => `
++              <section class="open-question-group">
++                <h3>${escapeHtml(category)}</h3>
++                <ul class="open-question-list">${questions.map(renderOpenQuestionItem).join("")}</ul>
++              </section>
++            `,
++          )
++          .join("");
++      }
++
+       function renderCommentList() {
+         const list = filteredComments();
+         if (!list.length) {
+@@ -3897,6 +4184,94 @@
+         });
+       }
+ 
++      function setupOpenQuestionEvents() {
++        if (openQuestionEventsBound) return;
++        openQuestionEventsBound = true;
++
++        document.getElementById("addOpenQuestion").addEventListener("click", () => {
++          document.getElementById("openQuestionsDetails").open = true;
++          document.getElementById("openQuestionForm").hidden = false;
++          document.getElementById("openQuestionAuthor").value = localStorage.getItem(QUESTION_AUTHOR_KEY) || localStorage.getItem(COMMENT_AUTHOR_KEY) || "";
++          document.getElementById("openQuestionText").value = "";
++          document.getElementById("openQuestionError").textContent = "";
++          document.getElementById("openQuestionText").focus();
++        });
++
++        document.getElementById("cancelOpenQuestion").addEventListener("click", () => {
++          document.getElementById("openQuestionForm").hidden = true;
++          document.getElementById("openQuestionError").textContent = "";
++        });
++
++        document.getElementById("openQuestionForm").addEventListener("submit", async (event) => {
++          event.preventDefault();
++          const author = document.getElementById("openQuestionAuthor").value.trim();
++          const category = document.getElementById("openQuestionCategory").value;
++          const text = document.getElementById("openQuestionText").value.trim();
++          const error = document.getElementById("openQuestionError");
++          if (!author || !category || !text) {
++            error.textContent = "Please add your initials, category, and question.";
++            return;
++          }
++          const client = initSupabase();
++          if (!client) {
++            error.textContent = openQuestionsError || commentsError || "Supabase is not configured.";
++            return;
++          }
++          localStorage.setItem(QUESTION_AUTHOR_KEY, author);
++          localStorage.setItem(COMMENT_AUTHOR_KEY, author);
++          const { error: insertError } = await client.from("prototype_open_questions").insert(
++            serializeOpenQuestion({
++              author,
++              category,
++              text,
++              resolved: false,
++            }),
++          );
++          if (insertError) {
++            error.textContent = insertError.message;
++            return;
++          }
++          document.getElementById("openQuestionForm").hidden = true;
++          openQuestionFilter = "open";
++          await fetchOpenQuestions();
++        });
++
++        document.addEventListener("click", async (event) => {
++          const filter = event.target.closest("[data-question-filter]");
++          if (filter) {
++            openQuestionFilter = filter.dataset.questionFilter;
++            renderOpenQuestions();
++            return;
++          }
++
++          const resolve = event.target.closest("[data-question-resolve]");
++          if (resolve) {
++            const question = openQuestions.find((item) => item.id === resolve.dataset.questionResolve);
++            const client = initSupabase();
++            if (question && client) {
++              await client
++                .from("prototype_open_questions")
++                .update({ resolved: !question.resolved, updated_at: new Date().toISOString() })
++                .eq("id", question.id)
++                .eq("prototype_id", PROTOTYPE_ID);
++              await fetchOpenQuestions();
++            }
++            return;
++          }
++
++          const deleteButton = event.target.closest("[data-question-delete]");
++          if (deleteButton) {
++            const confirmed = window.confirm("Delete this open question?\nThis will remove it for everyone reviewing the prototype.");
++            if (!confirmed) return;
++            const client = initSupabase();
++            if (client) {
++              await client.from("prototype_open_questions").delete().eq("id", deleteButton.dataset.questionDelete).eq("prototype_id", PROTOTYPE_ID);
++              await fetchOpenQuestions();
++            }
++          }
++        });
++      }
++
+       function renderControls() {
+         document.getElementById("stateControls").innerHTML = previewControls
+           .map(
+@@ -3981,13 +4356,16 @@
+           .map((state) => profileBanner(state))
+           .join("");
+         setupCommentEvents();
++        setupOpenQuestionEvents();
+         setViewMode(currentViewMode);
+         renderCommentUI();
++        renderOpenQuestions();
+         hydrateIcons();
+       }
+ 
+       renderPrototype();
+       fetchComments().then(() => subscribeToComments());
++      fetchOpenQuestions().then(() => subscribeToOpenQuestions());
+     </script>
+   </body>
+ </html>
+diff --git a/supabase-comments.sql b/supabase-comments.sql
+index 97592e5..3917929 100644
+--- a/supabase-comments.sql
++++ b/supabase-comments.sql
+@@ -47,3 +47,75 @@ on prototype_comments
+ for delete
+ to anon
+ using (prototype_id = 'ulc-lifeforce');
++
++create or replace function public.set_updated_at()
++returns trigger
++language plpgsql
++as $$
++begin
++  new.updated_at = now();
++  return new;
++end;
++$$;
++
++create table if not exists public.prototype_open_questions (
++  id uuid primary key default gen_random_uuid(),
++  prototype_id text not null default 'ulc-lifeforce',
++  category text not null,
++  author text not null,
++  text text not null,
++  resolved boolean not null default false,
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++alter table public.prototype_open_questions enable row level security;
++
++grant select, insert, update, delete on table public.prototype_open_questions to anon;
++
++drop policy if exists "Allow anonymous read open questions" on public.prototype_open_questions;
++create policy "Allow anonymous read open questions"
++on public.prototype_open_questions
++for select
++to anon
++using (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous insert open questions" on public.prototype_open_questions;
++create policy "Allow anonymous insert open questions"
++on public.prototype_open_questions
++for insert
++to anon
++with check (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous update open questions" on public.prototype_open_questions;
++create policy "Allow anonymous update open questions"
++on public.prototype_open_questions
++for update
++to anon
++using (prototype_id = 'ulc-lifeforce')
++with check (prototype_id = 'ulc-lifeforce');
++
++drop policy if exists "Allow anonymous delete open questions" on public.prototype_open_questions;
++create policy "Allow anonymous delete open questions"
++on public.prototype_open_questions
++for delete
++to anon
++using (prototype_id = 'ulc-lifeforce');
++
++drop trigger if exists set_prototype_open_questions_updated_at on public.prototype_open_questions;
++create trigger set_prototype_open_questions_updated_at
++before update on public.prototype_open_questions
++for each row
++execute function public.set_updated_at();
++
++insert into public.prototype_open_questions (id, prototype_id, category, author, text)
++values
++  ('00000000-0000-4000-8000-000000000001', 'ulc-lifeforce', 'Non-member and one-off labs', 'ULC', 'Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?'),
++  ('00000000-0000-4000-8000-000000000002', 'ulc-lifeforce', 'Non-member and one-off labs', 'ULC', 'What exactly is included for labs-no-member / one-off labs users?'),
++  ('00000000-0000-4000-8000-000000000003', 'ulc-lifeforce', 'Non-member and one-off labs', 'ULC', 'Do one-off labs users receive LifeScore, recommendations, or a clinician visit?'),
++  ('00000000-0000-4000-8000-000000000004', 'ulc-lifeforce', 'Products, supplements, and services', 'ULC', 'Are supplements purchasable in-app or in-store only?'),
++  ('00000000-0000-4000-8000-000000000005', 'ulc-lifeforce', 'Products, supplements, and services', 'ULC', 'Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?'),
++  ('00000000-0000-4000-8000-000000000006', 'ulc-lifeforce', 'Products, supplements, and services', 'ULC', 'Which ULC services can be recommended before clinician review, and which biomarkers trigger them?'),
++  ('00000000-0000-4000-8000-000000000007', 'ulc-lifeforce', 'Blood draw and questionnaire data', 'ULC', 'What blood draw booking status/date data can Lifeforce receive from ULC/Kite?'),
++  ('00000000-0000-4000-8000-000000000008', 'ulc-lifeforce', 'Blood draw and questionnaire data', 'ULC', 'Should the completed Health Questionnaire state be shown, or should it disappear after completion?')
++on conflict (id) do nothing;
+-- 
+2.39.5 (Apple Git-154)
+
+From cf378916b2da46ab594a03c8a26e7463b1f7e92e Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 13:25:57 -0700
+Subject: [PATCH] Remove screen label comment badges
+
+---
+ index.html | 31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
+
+diff --git a/index.html b/index.html
+index f9de245..c3c50da 100644
+--- a/index.html
++++ b/index.html
+@@ -368,27 +368,6 @@
+         text-transform: uppercase;
+       }
+ 
+-      .screen-comment-badge {
+-        display: inline-flex;
+-        align-items: center;
+-        justify-content: center;
+-        min-width: 24px;
+-        height: 24px;
+-        padding: 0 8px;
+-        border-radius: 999px;
+-        background: #1f7aff;
+-        color: #fff;
+-        font-size: 11px;
+-        font-weight: 900;
+-        letter-spacing: 0;
+-        text-transform: none;
+-        box-shadow: 0 8px 18px rgba(31, 122, 255, 0.24);
+-      }
+-
+-      .screen-comment-badge.active {
+-        box-shadow: 0 0 0 5px rgba(31, 122, 255, 0.16), 0 8px 18px rgba(31, 122, 255, 0.24);
+-      }
+-
+       .phone {
+         position: relative;
+         width: 100%;
+@@ -2575,12 +2554,6 @@
+         return openCommentsForScreen(screenId).filter(hasValidPinCoordinates);
+       }
+ 
+-      function screenCommentBadge(screenId) {
+-        const count = openCommentsForScreen(screenId).length;
+-        const isSelected = Boolean(selectedCommentId && openCommentsForScreen(screenId).some((comment) => comment.id === selectedCommentId));
+-        return count ? `<span class="screen-comment-badge ${isSelected ? "active" : ""}" title="${count} open comments">${count}</span>` : "";
+-      }
+-
+       function lifeScoreHeart(size = 64) {
+         return `
+           <svg width="${size}" height="${size}" viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false">
+@@ -3209,7 +3182,7 @@
+         const screenTitle = screenTitleForVariant(v);
+         return `
+           <article class="variant">
+-            <div class="variant-label"><span>${v.label}</span>${screenCommentBadge(screenId)}</div>
++            <div class="variant-label"><span>${v.label}</span></div>
+             <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+               <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+@@ -3231,7 +3204,7 @@
+         const hasStickyAction = Boolean(stickyAction);
+         return `
+           <article class="variant">
+-            <div class="variant-label"><span>${label}</span>${screenCommentBadge(resolvedScreenId)}</div>
++            <div class="variant-label"><span>${label}</span></div>
+             <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+               ${statusBar()}
+               <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+-- 
+2.39.5 (Apple Git-154)
+
+From 55aa94a6b39c928446d8bcb10d8bd795245c52b2 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 13:30:00 -0700
+Subject: [PATCH] Add open questions setup fallback
+
+---
+ index.html | 66 ++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 57 insertions(+), 9 deletions(-)
+
+diff --git a/index.html b/index.html
+index c3c50da..6904c5a 100644
+--- a/index.html
++++ b/index.html
+@@ -1570,6 +1570,11 @@
+         color: var(--brown);
+       }
+ 
++      .open-question-button:disabled {
++        cursor: not-allowed;
++        opacity: 0.5;
++      }
++
+       .open-question-form {
+         display: grid;
+         gap: 10px;
+@@ -2338,6 +2343,16 @@
+         "Membership / packaging",
+         "Other",
+       ];
++      const OPEN_QUESTION_SEEDS = [
++        ["Non-member and one-off labs", "Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?"],
++        ["Non-member and one-off labs", "What exactly is included for labs-no-member / one-off labs users?"],
++        ["Non-member and one-off labs", "Do one-off labs users receive LifeScore, recommendations, or a clinician visit?"],
++        ["Products, supplements, and services", "Are supplements purchasable in-app or in-store only?"],
++        ["Products, supplements, and services", "Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?"],
++        ["Products, supplements, and services", "Which ULC services can be recommended before clinician review, and which biomarkers trigger them?"],
++        ["Blood draw and questionnaire data", "What blood draw booking status/date data can Lifeforce receive from ULC/Kite?"],
++        ["Blood draw and questionnaire data", "Should the completed Health Questionnaire state be shown, or should it disappear after completion?"],
++      ];
+       let supabaseClient = null;
+       let commentsLoading = false;
+       let commentsError = "";
+@@ -2361,6 +2376,7 @@
+       let openQuestions = [];
+       let openQuestionFilter = "open";
+       let openQuestionEventsBound = false;
++      let openQuestionsUsingFallback = false;
+ 
+       function icon(name, size = 20) {
+         return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+@@ -2463,12 +2479,15 @@
+       async function fetchOpenQuestions() {
+         const client = initSupabase();
+         if (!client) {
+-          openQuestionsError = commentsError || "Supabase is not configured.";
++          openQuestions = fallbackOpenQuestions();
++          openQuestionsUsingFallback = true;
++          openQuestionsError = commentsError || "Supabase is not configured. Showing default open questions until setup is complete.";
+           renderOpenQuestions();
+           return;
+         }
+         openQuestionsLoading = true;
+         openQuestionsError = "";
++        openQuestionsUsingFallback = false;
+         renderOpenQuestions();
+         const { data, error } = await client
+           .from("prototype_open_questions")
+@@ -2477,11 +2496,14 @@
+           .order("created_at", { ascending: true });
+         openQuestionsLoading = false;
+         if (error) {
+-          openQuestionsError = error.message;
++          openQuestions = fallbackOpenQuestions();
++          openQuestionsUsingFallback = true;
++          openQuestionsError = "Open questions are showing default read-only items. Run the updated Supabase SQL to enable shared editing.";
+           renderOpenQuestions();
+           return;
+         }
+         openQuestions = (data || []).map(normalizeOpenQuestion);
++        openQuestionsUsingFallback = false;
+         renderOpenQuestions();
+       }
+ 
+@@ -3686,6 +3708,19 @@
+         };
+       }
+ 
++      function fallbackOpenQuestions() {
++        return OPEN_QUESTION_SEEDS.map(([category, text], index) => ({
++          id: `fallback-open-question-${index + 1}`,
++          category,
++          author: "ULC",
++          text,
++          resolved: false,
++          createdAt: "2026-05-18T00:00:00.000Z",
++          updatedAt: "2026-05-18T00:00:00.000Z",
++          readOnly: true,
++        }));
++      }
++
+       function filteredOpenQuestions() {
+         return openQuestions.filter((question) => {
+           if (openQuestionFilter === "open") return !question.resolved;
+@@ -3702,11 +3737,15 @@
+         return `
+           <li class="open-question-item ${question.resolved ? "resolved" : ""}">
+             <p class="open-question-text"><strong>${escapeHtml(question.author)}:</strong> ${escapeHtml(question.text)}</p>
+-            <div class="open-question-meta">${question.resolved ? "Resolved" : "Open"} · Added ${formatDate(question.createdAt)}</div>
+-            <div class="open-question-actions">
+-              <button class="open-question-link" type="button" data-question-resolve="${question.id}">${question.resolved ? "Unresolve" : "Resolve"}</button>
+-              <button class="open-question-link" type="button" data-question-delete="${question.id}">Delete</button>
+-            </div>
++            <div class="open-question-meta">${question.readOnly ? "Default question · setup required for editing" : `${question.resolved ? "Resolved" : "Open"} · Added ${formatDate(question.createdAt)}`}</div>
++            ${
++              question.readOnly
++                ? ""
++                : `<div class="open-question-actions">
++                    <button class="open-question-link" type="button" data-question-resolve="${question.id}">${question.resolved ? "Unresolve" : "Resolve"}</button>
++                    <button class="open-question-link" type="button" data-question-delete="${question.id}">Delete</button>
++                  </div>`
++            }
+           </li>
+         `;
+       }
+@@ -3718,13 +3757,18 @@
+ 
+         const count = openQuestionCount();
+         summary.textContent = `Open questions · MVP state model · ${count} open`;
++        const addButton = document.getElementById("addOpenQuestion");
++        if (addButton) {
++          addButton.disabled = openQuestionsUsingFallback;
++          addButton.title = openQuestionsUsingFallback ? "Run the Supabase SQL setup to enable shared editing." : "";
++        }
+         document.querySelectorAll("[data-question-filter]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.questionFilter === openQuestionFilter)));
+         const select = document.getElementById("openQuestionCategory");
+         if (select && !select.options.length) {
+           select.innerHTML = OPEN_QUESTION_CATEGORIES.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
+         }
+ 
+-        if (openQuestionsError) {
++        if (openQuestionsError && !openQuestions.length) {
+           list.innerHTML = `<p class="comment-meta">${escapeHtml(openQuestionsError)}</p>`;
+           return;
+         }
+@@ -3747,7 +3791,10 @@
+         const uncategorized = visible.filter((question) => !OPEN_QUESTION_CATEGORIES.includes(question.category));
+         if (uncategorized.length) grouped.push(["Other", uncategorized]);
+ 
+-        list.innerHTML = grouped
++        const notice = openQuestionsError ? `<p class="comment-meta">${escapeHtml(openQuestionsError)}</p>` : "";
++        list.innerHTML =
++          notice +
++          grouped
+           .map(
+             ([category, questions]) => `
+               <section class="open-question-group">
+@@ -4162,6 +4209,7 @@
+         openQuestionEventsBound = true;
+ 
+         document.getElementById("addOpenQuestion").addEventListener("click", () => {
++          if (openQuestionsUsingFallback) return;
+           document.getElementById("openQuestionsDetails").open = true;
+           document.getElementById("openQuestionForm").hidden = false;
+           document.getElementById("openQuestionAuthor").value = localStorage.getItem(QUESTION_AUTHOR_KEY) || localStorage.getItem(COMMENT_AUTHOR_KEY) || "";
+-- 
+2.39.5 (Apple Git-154)
+
+From aad881c21aaf40fb6c8ecd1f1f40d3e955ee17e8 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 13:32:32 -0700
+Subject: [PATCH] Keep changelog focused on prototype changes
+
+---
+ CHANGELOG.md | 51 +--------------------------------------------------
+ index.html   | 22 +++-------------------
+ 2 files changed, 4 insertions(+), 69 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 520423f..d5d72bb 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,28 +1,5 @@
+ # ULC x LifeForce Prototype Changelog
+ 
+-## v0.7 · Collaborative open questions
+-
+-Date: May 18, 2026
+-
+-Summary:
+-- Makes the Open Questions section collaborative and editable with Supabase.
+-- Adds an Add open question form with initials/name, category, and question text.
+-- Groups questions by category and supports Open / Resolved / All filters.
+-- Adds resolve, unresolve, and confirmed delete actions.
+-- Adds SQL seed rows for the existing MVP open questions with fixed IDs to avoid duplicates.
+-- Adds SQL setup for the prototype_open_questions table and anonymous RLS policies.
+-
+-User states affected:
+-- Prototype shell / Open Questions section
+-
+-Known open questions:
+-- Should seeded questions be protected from deletion, or should reviewers be able to fully curate the shared list?
+-- Should open questions support owners or target decision dates later?
+-
+-Risky changes or assumptions:
+-- Seeded questions are inserted by the SQL setup with fixed IDs; if reviewers delete them later, the frontend will not recreate them.
+-- The Supabase table must be created with the updated SQL before this works in production.
+-
+ ## v0.6 · Sticky CTA cleanup
+ 
+ Date: May 18, 2026
+@@ -44,32 +21,6 @@ Known open questions:
+ Risky changes or assumptions:
+ - Purchase bars are treated as prototype shell/mobile viewport overlays for these screens, not inline content cards.
+ 
+-## v0.5 · Comment mode refinement
+-
+-Date: May 18, 2026
+-
+-Summary:
+-- Reintroduces Comment Mode so reviewers can choose between normal prototype interaction and click-to-comment placement.
+-- Keeps the simplified comments panel with all comments grouped by screen.
+-- Adds a visible Comment Mode banner, screen outline, hover affordance, and crosshair cursor while placement mode is on.
+-- Clicking a screen in Comment Mode now creates a temporary pin and opens the composer for that exact location.
+-- Canceling removes the temporary pin; saving persists the pinned comment and highlights it in the comments panel.
+-- Adds screen-level open comment count badges and preserves Add general comment for unpinned feedback.
+-- Restores drag-and-drop repositioning for saved pins while Comment Mode is on.
+-- Fixes screen overlay filtering so only open comments for the exact screen/state render as badges or pins.
+-
+-User states affected:
+-- Prototype shell / collaborative comments
+-- All dashboard and flow screens that can receive comment pins
+-
+-Known open questions:
+-- Should pinned comment placement remain enabled for all screen groups, or only the active dynamic preview?
+-- Should Comment Mode auto-turn off after saving a comment, or stay on for rapid review passes?
+-
+-Risky changes or assumptions:
+-- Comment Mode stays on after saving so reviewers can quickly add multiple pinned comments.
+-- The composer remains in the comments panel rather than floating beside the pin to keep implementation stable.
+-
+ ## v0.4 · Care plan refinement
+ 
+ Date: May 18, 2026
+@@ -140,7 +91,7 @@ Date: May 18, 2026
+ 
+ Summary:
+ - Captures the prototype before the May 15 meeting-driven state model changes.
+-- Includes current dashboard states, reports/results flow, recommendations/products flow, and collaborative comments feature.
++- Includes current dashboard states, reports/results flow, and recommendations/products flow.
+ - Use this as the revert point if the next round of changes goes in the wrong direction.
+ 
+ User states affected:
+diff --git a/index.html b/index.html
+index 6904c5a..eeff5ee 100644
+--- a/index.html
++++ b/index.html
+@@ -1909,7 +1909,7 @@
+       <section class="hero">
+         <div class="board-header">
+           <h1 class="board-title">ULC x Lifeforce Experience</h1>
+-          <span class="version-pill">v0.7 · Collaborative open questions</span>
++          <span class="version-pill">v0.6 · Sticky CTA cleanup</span>
+           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
+             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
+             <button type="button" data-view="all" aria-pressed="true">All screens</button>
+@@ -1999,30 +1999,14 @@
+         </details>
+ 
+         <details class="prototype-changelog">
+-          <summary>Change log · v0.7</summary>
++          <summary>Change log · v0.6</summary>
+           <h2>Prototype changelog</h2>
+-          <h3>v0.7 · Collaborative open questions</h3>
+-          <ul>
+-            <li>Made Open Questions collaborative and editable through Supabase.</li>
+-            <li>Added Add open question form with initials, category, and question text.</li>
+-            <li>Added Open / Resolved / All filters plus resolve, unresolve, and delete actions.</li>
+-            <li>Added SQL seed rows for the existing MVP questions with fixed IDs.</li>
+-          </ul>
+           <h3>v0.6 · Sticky CTA cleanup</h3>
+           <ul>
+             <li>Moved recommendations, product, and order purchase CTAs out of the scroll content and into phone-level bottom bars.</li>
+             <li>Anchored purchase bars above the bottom navigation so they feel intentional and consistent.</li>
+             <li>Added extra scroll padding on purchase screens so page content can clear the bottom action area.</li>
+           </ul>
+-          <h3>v0.5 · Comment mode refinement</h3>
+-          <ul>
+-            <li>Reintroduced Comment Mode so normal prototype interactions still work when commenting is off.</li>
+-            <li>Clicking Add comment now turns on placement mode with a clear banner and screen hover affordance.</li>
+-            <li>Clicking a screen in Comment Mode places a temporary pin and opens the comment composer.</li>
+-            <li>Saved pins can be dragged to a new location in Comment Mode and persist updated coordinates to Supabase.</li>
+-            <li>Canceling removes the temporary pin; saving keeps the pin and highlights the new comment.</li>
+-            <li>Added screen-level comment badges and kept Add general comment as a fallback for unpinned feedback.</li>
+-          </ul>
+           <h3>v0.4 · Care plan refinement</h3>
+           <ul>
+             <li>Simplified the post-clinician care plan state to avoid repeated recommendation CTAs.</li>
+@@ -2043,7 +2027,7 @@
+           <h3>v0.2 · Pre-MVP state update snapshot</h3>
+           <ul>
+             <li>Snapshot created before May 15 meeting-driven state model changes.</li>
+-            <li>Current prototype includes dashboard states, reports/results, recommendations/products, and collaborative comments.</li>
++            <li>Current prototype includes dashboard states, reports/results, and recommendations/products.</li>
+             <li>This is the baseline to revert to if the next round of changes goes in the wrong direction.</li>
+           </ul>
+           <h3>Upcoming / in progress</h3>
+-- 
+2.39.5 (Apple Git-154)
+
+From 0e23db3983f8c882b5502551535aee6062e14685 Mon Sep 17 00:00:00 2001
+From: Natasha Pecor <natasha.pecor@gmail.com>
+Date: Mon, 18 May 2026 13:35:14 -0700
+Subject: [PATCH] Default comment mode on
+
+---
+ index.html | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/index.html b/index.html
+index eeff5ee..a3fb869 100644
+--- a/index.html
++++ b/index.html
+@@ -1917,8 +1917,8 @@
+         </div>
+         <div class="comment-shell" id="commentShell">
+           <div>
+-            <div class="comment-status" id="commentStatus">Collaborative review</div>
+-            <div class="comment-helper" id="commentHelper">Shared comments for this prototype.</div>
++            <div class="comment-status" id="commentStatus">Comment Mode On</div>
++            <div class="comment-helper" id="commentHelper">Click to add comments. Drag pins to reposition. Turn Comment Mode off to interact normally.</div>
+           </div>
+           <div class="comment-tools">
+             <button class="comment-button primary" type="button" id="commentsPanelToggle">Comments (0)</button>
+@@ -2050,7 +2050,7 @@
+           <button class="comment-button" type="button" id="closeCommentsPanel">Close</button>
+         </div>
+         <p class="comment-meta">Comments are shared with anyone who can access this prototype. Add your initials so we know who left the note.</p>
+-        <button class="comment-button" type="button" id="commentModeToggle" aria-pressed="false">Comment Mode: Off</button>
++        <button class="comment-button active" type="button" id="commentModeToggle" aria-pressed="true">Comment Mode: On</button>
+         <button class="comment-button primary" type="button" id="addScreenComment">Add comment</button>
+         <button class="comment-export-link" type="button" id="addGeneralComment">Add general comment</button>
+         <div class="panel-filters">
+@@ -2344,7 +2344,7 @@
+       let openQuestionsError = "";
+       let realtimeChannel = null;
+       let openQuestionsRealtimeChannel = null;
+-      let commentMode = false;
++      let commentMode = true;
+       let commentsPanelOpen = false;
+       let activeScreenId = "dashboard-non-member-no-labs";
+       let activeScreenTitle = "Dashboard · Non-member · No labs";
+-- 
+2.39.5 (Apple Git-154)
+
