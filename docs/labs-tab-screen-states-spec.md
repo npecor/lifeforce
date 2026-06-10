@@ -385,21 +385,18 @@ State logic:
 
 ## Open Questions
 
-### CTA destinations / deep linking
+### Questions for SprintFWD
 
-- Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows, and can we deep link into specific services/products or only top-level tabs?
+- Deep linking / routing: Which ULC/Kite destinations can LifeForce link into from the Labs tab? Specifically, can we route to Schedule Blood Draw / Manage Booking, Book Longevity Assessment, Schedule Clinician Visit, prescription product detail / cart / checkout, and specific service booking pages like Hyperbaric Oxygen Therapy or Red Light Therapy? For each, can we deep link to the specific item/flow, or only to a top-level tab like Book, Schedule, Shop, or Membership?
+- Membership status + language: What user status data can ULC/Kite pass to LifeForce? For example: member vs non-member, active subscription, lab purchase, and available lab credits. Also confirm how we should refer to membership inside the ULC app, if at all.
+- Prescription + supplement purchase flow: What should happen when a user taps Buy on a prescription recommendation? Are supplements purchasable in the app, available for pickup at ULC, or only purchased in-person at launch?
+- Recommended services: Which ULC services can appear as clinician recommendations? Are those services bookable from the app?
+- Product / service imagery: Will ULC/Kite provide product and service images/icons for recommendations? Examples: Red Light Therapy, Hyperbaric Oxygen Therapy, Vitamin D, and Peak Healthspan.
+- Parking lot: What blood draw booking, appointment, lab processing, and questionnaire status data can LifeForce receive from ULC/Kite?
 
-### Membership / state logic
+### Internal LifeForce Questions
 
-- Will Lifeforce receive membership, subscription, or purchase status, and should member/non-member/no-labs users see different screens?
-- How should we refer to membership inside the ULC app?
-
-### Supplements / products / services
-
-- What will the supplement and prescription purchase flow look like at launch vs later?
-- Which ULC services and supplements can appear as clinician recommendations, and which require clinician review?
-- Will ULC/Kite provide product and service images?
-
-### Parking lot
-
-- What blood draw booking, appointment, lab processing, and questionnaire status data can Lifeforce receive from ULC/Kite?
+- Should completed Health Questionnaire status remain visible after submission, or disappear once complete?
+- Should repeat lab cycles use Follow-up Questionnaire everywhere instead of Health Questionnaire?
+- Should the standalone recommendation support screens remain in the prototype as reference only, or be removed from the main review path?
+- What level of detail should the LifeScore detail screen include for V0?

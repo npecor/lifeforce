@@ -12,7 +12,7 @@ Summary:
 - Reorders results-back states so Health Questionnaire, View Results, Schedule Clinician Visit, and LifeScore follow the requested priority.
 - Adds clinical rationale lines to prescription, supplement, and service recommendations.
 - Keeps Documents lower priority after recommendations, LifeScore, and lab reports.
-- Updates CTA destination annotations so assumptions remain visible and uncertain ULC/Kite deep links are marked Needs Ashley.
+- Updates CTA destination annotations so assumptions remain visible and uncertain ULC/Kite deep links are marked Needs SprintFWD input.
 
 User states affected:
 - No Blood Draw Performed
@@ -31,7 +31,7 @@ Known open questions:
 
 Risky changes or assumptions:
 - Browse Products is de-emphasized in the active dashboard states until its role and destination are confirmed.
-- Schedule Clinician Visit remains visible with Needs Ashley routing status.
+- Schedule Clinician Visit remains visible with Needs SprintFWD input routing status.
 - Prescription Buy and service Book CTAs are prototype assumptions pending ULC/Kite confirmation.
 
 ## v0.8 · June 09 review refinements

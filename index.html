@@ -432,7 +432,7 @@
         letter-spacing: 0.02em;
       }
 
-      .cta-status.needs-ashley {
+      .cta-status.needs-sprintfwd-input {
         background: rgba(200, 148, 30, 0.14);
         color: #9a6a12;
       }
@@ -2569,40 +2569,49 @@
       const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
       const QUESTION_AUTHOR_KEY = "ulc_lifeforce_open_question_author";
       const OPEN_QUESTION_CATEGORIES = [
-        "CTA destinations / deep linking",
-        "Membership / state logic",
-        "Supplements / products / services",
-        "Blood draw and questionnaire data",
-        "Other",
+        "Questions for SprintFWD",
+        "Internal LifeForce Questions",
       ];
       const OPEN_QUESTION_SEEDS = [
         [
-          "CTA destinations / deep linking",
-          "Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows, and can we deep link into specific services/products or only top-level tabs?",
+          "Questions for SprintFWD",
+          "Deep linking / routing: Which ULC/Kite destinations can LifeForce link into from the Labs tab? Specifically, can we route to Schedule Blood Draw / Manage Booking, Book Longevity Assessment, Schedule Clinician Visit, prescription product detail / cart / checkout, and specific service booking pages like Hyperbaric Oxygen Therapy or Red Light Therapy? For each, can we deep link to the specific item/flow, or only to a top-level tab like Book, Schedule, Shop, or Membership?",
         ],
         [
-          "Membership / state logic",
-          "Will Lifeforce receive membership, subscription, or purchase status, and should member/non-member/no-labs users see different screens?",
+          "Questions for SprintFWD",
+          "Membership status + language: What user status data can ULC/Kite pass to LifeForce? For example: member vs non-member, active subscription, lab purchase, and available lab credits. Also confirm how we should refer to membership inside the ULC app, if at all.",
         ],
         [
-          "Membership / state logic",
-          "How should we refer to membership inside the ULC app?",
+          "Questions for SprintFWD",
+          "Prescription + supplement purchase flow: What should happen when a user taps Buy on a prescription recommendation? Are supplements purchasable in the app, available for pickup at ULC, or only purchased in-person at launch?",
         ],
         [
-          "Supplements / products / services",
-          "What will the supplement and prescription purchase flow look like at launch vs later?",
+          "Questions for SprintFWD",
+          "Recommended services: Which ULC services can appear as clinician recommendations? Are those services bookable from the app?",
         ],
         [
-          "Supplements / products / services",
-          "Which ULC services and supplements can appear as clinician recommendations, and which require clinician review?",
+          "Questions for SprintFWD",
+          "Product / service imagery: Will ULC/Kite provide product and service images/icons for recommendations? Examples: Red Light Therapy, Hyperbaric Oxygen Therapy, Vitamin D, and Peak Healthspan.",
         ],
         [
-          "Supplements / products / services",
-          "Will ULC/Kite provide product and service images?",
+          "Questions for SprintFWD",
+          "Parking lot: What blood draw booking, appointment, lab processing, and questionnaire status data can LifeForce receive from ULC/Kite?",
         ],
         [
-          "Blood draw and questionnaire data",
-          "What blood draw booking, appointment, lab processing, and questionnaire status data can Lifeforce receive from ULC/Kite?",
+          "Internal LifeForce Questions",
+          "Should completed Health Questionnaire status remain visible after submission, or disappear once complete?",
+        ],
+        [
+          "Internal LifeForce Questions",
+          "Should repeat lab cycles use Follow-up Questionnaire everywhere instead of Health Questionnaire?",
+        ],
+        [
+          "Internal LifeForce Questions",
+          "Should the standalone recommendation support screens remain in the prototype as reference only, or be removed from the main review path?",
+        ],
+        [
+          "Internal LifeForce Questions",
+          "What level of detail should the LifeScore detail screen include for V0?",
         ],
       ];
       const CURRENT_OPEN_QUESTION_SEED_TEXTS = new Set(OPEN_QUESTION_SEEDS.map(([, text]) => text));
@@ -2640,6 +2649,19 @@
         "ULC/Kite: What will the supplement and prescription purchase flow look like at launch vs later? Clarify what can be bought in-app, what is in-store only, what is BOPUS/future, and whether prescription shipments can be batched.",
         "ULC/Product: Which ULC services and supplements can appear as clinician recommendations, and will ULC provide product/service images? Include examples like Hyperbaric Oxygen Therapy, Red Light Therapy, Vitamin D, Peak Healthspan, and any ULC-owned services/products.",
         "Lifeforce/ULC: What blood draw booking and questionnaire status data can Lifeforce receive? Include scheduled/not scheduled, appointment date/time, draw completed, labs processing, questionnaire not started/in progress/complete, and follow-up questionnaire support.",
+        "Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows, and can we deep link into specific services/products or only top-level tabs?",
+        "Will Lifeforce receive membership, subscription, or purchase status, and should member/non-member/no-labs users see different screens?",
+        "How should we refer to membership inside the ULC app?",
+        "What will the supplement and prescription purchase flow look like at launch vs later?",
+        "Which ULC services and supplements can appear as clinician recommendations, and which require clinician review?",
+        "Will ULC/Kite provide product and service images?",
+        "What blood draw booking, appointment, lab processing, and questionnaire status data can Lifeforce receive from ULC/Kite?",
+        "Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?",
+        "What exactly is included for labs-no-member / one-off labs users?",
+        "Do one-off labs users receive LifeScore, recommendations, or a clinician visit?",
+        "Are supplements purchasable in-app or in-store only?",
+        "Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?",
+        "Which ULC services can be recommended before clinician review, and which biomarkers trigger them?",
       ]);
       let supabaseClient = null;
       let commentsLoading = false;
@@ -2800,7 +2822,7 @@
             .order("created_at", { ascending: true });
           if (!refreshError) rows = refreshedData || [];
         }
-        rows = rows.filter((row) => !(row.author === "ULC" && LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text)));
+        rows = rows.filter((row) => !LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text));
         openQuestions = rows.map(normalizeOpenQuestion);
         openQuestionsUsingFallback = false;
         renderOpenQuestions();
@@ -2808,7 +2830,7 @@
 
       async function syncOpenQuestionAgendaSeeds(client, rows = []) {
         const legacySeedIds = rows
-          .filter((row) => row.author === "ULC" && LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text))
+          .filter((row) => LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text))
           .map((row) => row.id)
           .filter(Boolean);
         const existingSeedTexts = new Set(
@@ -2873,34 +2895,34 @@
 
       const ctaDestinationAnnotations = {
         "dashboard-non-member-no-labs": [
-          ["Schedule Blood Draw", "ULC/Kite blood draw booking flow", "Needs Ashley"],
-          ["Book Assessment", "ULC Longevity Assessment booking flow", "Needs Ashley"],
+          ["Schedule Blood Draw", "ULC/Kite blood draw booking flow", "Needs SprintFWD input"],
+          ["Book Assessment", "ULC Longevity Assessment booking flow", "Needs SprintFWD input"],
         ],
         "dashboard-member-blood-draw-booked": [
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
-          ["Manage Booking", "ULC/Kite booking detail", "Needs Ashley"],
+          ["Manage Booking", "ULC/Kite booking detail", "Needs SprintFWD input"],
         ],
         "dashboard-member-labs-processing-questionnaire-incomplete": [
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
         ],
         "dashboard-member-results-questionnaire-incomplete": [
-          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
+          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs SprintFWD input"],
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
           ["View Results", "Lab Report Detail", "Lifeforce-owned"],
           ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
           ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
         "dashboard-member-results-questionnaire-complete": [
-          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
+          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs SprintFWD input"],
           ["View Results", "Lab Report Detail", "Lifeforce-owned"],
           ["Dive Deeper", "LifeScore Detail", "Lifeforce-owned"],
           ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
           ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
         "dashboard-member-care-plan-active": [
-          ["Buy", "prescription product detail/cart/checkout", "Needs Ashley"],
+          ["Buy", "prescription product detail/cart/checkout", "Needs SprintFWD input"],
           ["Available at ULC", "No tap action; informational supplement availability callout", "Informational"],
-          ["Book", "ULC service booking flow", "Needs Ashley"],
+          ["Book", "ULC service booking flow", "Needs SprintFWD input"],
           ["Dive Deeper", "LifeScore Detail", "Lifeforce-owned"],
           ["View Results", "Lab Report Detail", "Lifeforce-owned"],
           ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
@@ -2928,11 +2950,11 @@
         ],
         "product-detail": [
           ["Back", "Return to recommendation source", "Lifeforce-owned"],
-          ["Buy", "prescription product detail/cart/checkout", "Needs Ashley"],
+          ["Buy", "prescription product detail/cart/checkout", "Needs SprintFWD input"],
         ],
         "review-order": [
           ["Back", "Return to prescription detail", "Lifeforce-owned"],
-          ["Place Order", "ULC/Kite prescription checkout/order placement", "Needs Ashley"],
+          ["Place Order", "ULC/Kite prescription checkout/order placement", "Needs SprintFWD input"],
           ["Back to Labs", "Return to recommendation source on Labs home", "Lifeforce-owned"],
         ],
       };
