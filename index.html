@@ -2895,7 +2895,7 @@
                 ? "Your clinician visit can be scheduled now. Completing your Health Questionnaire first helps your clinician prepare."
                 : "Review your LifeScore, latest results, and next steps with a clinician."
             }</p>
-            <button class="cta ghost">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
+            <button class="cta">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
           </section>
         `;
       }
@@ -2931,15 +2931,16 @@
         `;
       }
 
-      function actionModule(v) {
+      function actionModule(v, options = {}) {
         if (!v.actionTitle) return "";
         const early = v.journeyState === "no_labs_performed" || (v.livePreview && v.userType === "non_member_no_labs");
+        const ctaClass = options.subtleCta ? "cta ghost" : "cta";
         return `
           <section class="card module action ${early ? "early-action" : ""}">
             <h3 class="module-title">${v.actionTitle}</h3>
             <p class="module-copy">${v.actionCopy}</p>
             ${early ? `<div class="chip-row"><span class="chip">Blood draw</span><span class="chip">Biomarker results</span><span class="chip">Clinician review when eligible</span></div>` : ""}
-            ${v.cta ? `<button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>` : ""}
+            ${v.cta ? `<button class="${ctaClass}">${icon(v.ctaIcon, 18)} ${v.cta}</button>` : ""}
             ${early && v.secondaryCta ? `<button class="cta ghost">${v.secondaryCta}</button>` : ""}
           </section>
         `;
@@ -3341,17 +3342,18 @@
 
         if (state === "results_questionnaire_incomplete") {
           return `
-            ${labReportsHub(v)}
             ${clinicianVisitPrompt({ questionnaireIncomplete: true })}
+            ${actionModule(v, { subtleCta: true })}
+            ${labReportsHub(v)}
             ${documentCard()}
           `;
         }
 
         if (state === "results_questionnaire_complete") {
           return `
+            ${clinicianVisitPrompt()}
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
-            ${clinicianVisitPrompt()}
             ${documentCard()}
           `;
         }
@@ -3380,6 +3382,7 @@
         const showIntroTop =
           v.key === "non_member_no_labs" ||
           (v.livePreview && v.userType === "non_member_no_labs");
+        const skipTopAction = ["results_questionnaire_incomplete", "results_questionnaire_complete"].includes(v.journeyState);
         const screenId = screenIdForVariant(v);
         const screenTitle = screenTitleForVariant(v);
         return `
@@ -3390,7 +3393,7 @@
               <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
                 ${renderCommentPins(screenId)}
                 ${header(v)}
-                ${actionModule(v)}
+                ${skipTopAction ? "" : actionModule(v)}
                 ${showIntroTop ? contextModule(v) : ""}
                 ${lowerContent(v)}
               </div>
