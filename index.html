@@ -1142,9 +1142,30 @@
 
       .metric {
         padding: 12px 6px;
+        border: 1px solid transparent;
         border-radius: 12px;
         background: #f2f0eb;
+        color: inherit;
+        font: inherit;
         text-align: center;
+      }
+
+      button.metric {
+        cursor: pointer;
+        transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease,
+          transform 0.18s ease;
+      }
+
+      button.metric:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(48, 38, 28, 0.1);
+      }
+
+      button.metric[aria-pressed="true"] {
+        border-color: rgba(15, 15, 15, 0.34);
+        box-shadow: inset 0 0 0 1px rgba(15, 15, 15, 0.08);
       }
 
       .metric strong {
@@ -1501,6 +1522,31 @@
 
       .bio-section {
         margin-bottom: 16px;
+      }
+
+      .biomarker-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 4px 0 14px;
+      }
+
+      .biomarker-filter-chip {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--muted);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 850;
+        cursor: pointer;
+      }
+
+      .biomarker-filter-chip[aria-pressed="true"] {
+        border-color: var(--brown);
+        background: var(--brown);
+        color: #fff;
       }
 
       .bio-row {
@@ -2983,7 +3029,7 @@
         "lab-report-detail": [
           ["Back", "Return to previous dashboard or lab reports list", "Lifeforce-owned"],
           ["Read full note", "Expanded clinician note/write-up", "Lifeforce-owned"],
-          ["See all biomarkers", "Biomarker list on current lab report", "Lifeforce-owned"],
+          ["Result summary tiles", "Filter biomarker list by status", "Lifeforce-owned"],
           ["Biomarker rows", "Biomarker detail screen", "Lifeforce-owned"],
         ],
         "biomarker-detail": [
@@ -3887,6 +3933,26 @@
         { group: "Key Risk Factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Attention · High", tone: "red", pos: "90%", marker: "#b84f36" },
         { group: "Organ Health", name: "Creatinine", value: "0.82", unit: "mg/dL", status: "Optimal", tone: "green", pos: "48%", marker: "#4d8f45" },
       ];
+      const biomarkerStatusGroups = [
+        ["attention", "Attention"],
+        ["monitor", "Monitor"],
+        ["optimal", "Optimal"],
+      ];
+      const biomarkerStatusRank = { attention: 0, monitor: 1, optimal: 2 };
+
+      function biomarkerStatusKey(b) {
+        if (b.tone === "red" || b.status.startsWith("Attention")) return "attention";
+        if (b.tone === "gold" || b.status === "Monitor") return "monitor";
+        return "optimal";
+      }
+
+      function orderedBiomarkers() {
+        return [...biomarkers].sort((a, b) => {
+          const rankDelta = biomarkerStatusRank[biomarkerStatusKey(a)] - biomarkerStatusRank[biomarkerStatusKey(b)];
+          if (rankDelta) return rankDelta;
+          return a.name.localeCompare(b.name);
+        });
+      }
 
       function rangeBar(b) {
         return `
@@ -3897,12 +3963,13 @@
       }
 
       function biomarkerRow(b) {
+        const statusKey = biomarkerStatusKey(b);
         return `
-          <section class="card bio-row">
+          <section class="card bio-row" data-biomarker-status="${statusKey}">
             <div class="bio-row-head">
               <div>
                 <h4 class="row-title">${b.name}</h4>
-                <p class="row-copy">${b.value} ${b.unit}</p>
+                <p class="row-copy">${b.group} · ${b.value} ${b.unit}</p>
               </div>
               <span class="chip ${b.tone}">${b.status}</span>
             </div>
@@ -3911,18 +3978,38 @@
         `;
       }
 
-      function labReportDetail() {
-        const grouped = ["Hormone Balance", "Critical Nutrients", "Metabolic Health", "Key Risk Factors", "Organ Health"]
-          .map(
-            (group) => `
-              <div class="bio-section">
-                <div class="section-title"><span>${group}</span></div>
-                ${biomarkers.filter((b) => b.group === group).map(biomarkerRow).join("")}
-              </div>
-            `,
-          )
-          .join("");
+      function biomarkerFilterButton(key, label, active = false, className = "biomarker-filter-chip", source = "") {
+        return `<button class="${className}" type="button" data-biomarker-filter="${key}"${source ? ` data-biomarker-filter-source="${source}"` : ""} aria-pressed="${active}">${label}</button>`;
+      }
 
+      function biomarkerFilterBar() {
+        return `
+          <div class="biomarker-filter-bar" aria-label="Filter biomarkers by status">
+            ${biomarkerFilterButton("all", "All", true)}
+            ${biomarkerFilterButton("attention", "Attention")}
+            ${biomarkerFilterButton("monitor", "Monitor")}
+            ${biomarkerFilterButton("optimal", "Optimal")}
+          </div>
+        `;
+      }
+
+      function biomarkerListByStatus() {
+        const ordered = orderedBiomarkers();
+        return biomarkerStatusGroups
+          .map(([key, label]) => {
+            const rows = ordered.filter((b) => biomarkerStatusKey(b) === key);
+            if (!rows.length) return "";
+            return `
+              <div class="bio-section" data-biomarker-section="${key}">
+                <div class="section-title"><span>${label}</span></div>
+                ${rows.map(biomarkerRow).join("")}
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function labReportDetail() {
         return phoneScreen(
           "09 · Lab Report Detail",
           `
@@ -3945,13 +4032,16 @@
               <h3 class="module-title">Result Summary</h3>
               <p class="result-summary-line">For this test, <strong>63%</strong> of your biomarkers were optimized.</p>
               <div class="metrics">
-                <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
-                <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
-                <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+                ${biomarkerFilterButton("optimal", "<strong>12</strong><span>Optimal</span>", false, "metric optimal", "summary")}
+                ${biomarkerFilterButton("monitor", "<strong>5</strong><span>Monitor</span>", false, "metric monitor", "summary")}
+                ${biomarkerFilterButton("attention", "<strong>2</strong><span>Attention</span>", false, "metric attention", "summary")}
               </div>
-              <button class="cta">See all biomarkers</button>
             </section>
-            ${grouped}
+            <section class="card module" data-biomarker-list>
+              <h3 class="module-title">Biomarkers</h3>
+              ${biomarkerFilterBar()}
+              ${biomarkerListByStatus()}
+            </section>
           `,
           "lab-report-detail",
         );
@@ -4167,6 +4257,20 @@
         activeScreenId = screenId || activeScreenId;
         activeScreenTitle = screenTitle || flowScreenTitles[activeScreenId] || activeScreenTitle;
         renderCommentUI();
+      }
+
+      function applyBiomarkerFilter(button) {
+        const screen = button.closest(".screen") || document;
+        const filter = button.dataset.biomarkerFilter || "all";
+        screen.querySelectorAll("[data-biomarker-filter]").forEach((filterButton) => {
+          filterButton.setAttribute("aria-pressed", String(filterButton.dataset.biomarkerFilter === filter));
+        });
+        screen.querySelectorAll("[data-biomarker-section]").forEach((section) => {
+          section.hidden = filter !== "all" && section.dataset.biomarkerSection !== filter;
+        });
+        if (button.dataset.biomarkerFilterSource === "summary") {
+          screen.querySelector("[data-biomarker-list]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
 
       function filteredComments() {
@@ -4670,6 +4774,13 @@
           if (filter) {
             commentFilter = filter.dataset.commentFilter;
             renderCommentUI();
+            return;
+          }
+          const biomarkerFilter = event.target.closest("[data-biomarker-filter]");
+          if (biomarkerFilter && !commentMode) {
+            event.preventDefault();
+            event.stopPropagation();
+            applyBiomarkerFilter(biomarkerFilter);
             return;
           }
           const pin = event.target.closest("[data-comment-pin]");
