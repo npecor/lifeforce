@@ -6,7 +6,7 @@ This spec defines the simplified V0 screen-state model for the ULC Labs tab with
 
 The V0 experience should be organized around blood draw and results status rather than member vs non-member status. Lifeforce may not receive reliable membership state from ULC/Kite at launch, so the safest model is:
 
-No labs yet -> blood draw scheduled or processing -> results back -> clinician visit -> post-clinician recommendations.
+No blood draw performed -> blood draw scheduled or processing -> results back -> clinician visit -> post-clinician recommendations.
 
 ## V0 Principles
 
@@ -21,8 +21,8 @@ No labs yet -> blood draw scheduled or processing -> results back -> clinician v
 
 ## V0 State Model
 
-1. No Labs Performed
-2. Blood Draw Scheduled / Not Completed
+1. No Blood Draw Performed
+2. Blood Draw Scheduled · Questionnaire Not Started
 3. Labs Processing · Questionnaire Incomplete
 4. Labs Processing · Questionnaire Complete
 5. Results Back · Questionnaire Incomplete
@@ -31,12 +31,12 @@ No labs yet -> blood draw scheduled or processing -> results back -> clinician v
 
 Optional or unresolved:
 
-- One-off labs may collapse into No Labs Performed until purchase/status data is available.
+- One-off labs may collapse into No Blood Draw Performed until purchase/status data is available.
 - Membership segmentation should remain deferred unless ULC/Kite passes status to Lifeforce.
 
 ## State Details
 
-### 1. No Labs Performed
+### 1. No Blood Draw Performed
 
 Purpose:
 
@@ -75,7 +75,7 @@ Get your biomarkers tested
 
 Begin with a Lifeforce blood panel. Clinical membership unlocks LifeScore, clinician review, and personalized recommendations.
 
-### 2. Blood Draw Scheduled / Not Completed
+### 2. Blood Draw Scheduled · Questionnaire Not Started
 
 Purpose:
 
@@ -102,7 +102,7 @@ Secondary CTA:
 
 Notes:
 
-- Do not say "in the ULC app."
+- Avoid referencing implementation boundaries around the ULC app.
 - Do not show date/time unless Lifeforce receives reliable scheduling details.
 
 ### 3. Labs Processing · Questionnaire Incomplete
@@ -227,9 +227,9 @@ Do not use a generic top-level care-plan CTA because the screen is the care plan
 
 Recommendation sections:
 
-- Prescription recommendations
-- Supplement recommendations
-- ULC services and modalities
+- Prescription Recommendations
+- Supplement Recommendations
+- Recommended Services
 
 Prescription examples:
 
@@ -238,16 +238,15 @@ Prescription examples:
 
 Prescription CTA options pending deep-link support:
 
-- Subscribe
+- Buy
 - Add to Cart
 - Order
 - View Details
 
 Supplement examples:
 
-- Vitamin D
-- Omega-3
-- Magnesium
+- Vitamin D + K
+- Peak Healthspan
 
 Supplement language:
 
@@ -260,7 +259,7 @@ Avoid plan-based supplement CTAs or in-app purchase language unless supplement p
 Service/modality examples:
 
 - Red light therapy
-- Hyperbaric
+- Hyperbaric Oxygen Therapy
 - Dry plunge
 - IV / infusion / injectable
 
@@ -300,7 +299,10 @@ LifeScore detail can be simple in V0:
 
 - Score
 - What it means
-- Key components such as quality of life, longevity risk, and biological age when content is available
+- Quality of Life
+- Longevity Risk
+- Biological Age
+- Explanation of how LifeScore is calculated
 
 ### Documents
 
@@ -320,6 +322,16 @@ Broad product browsing is deferred for V0.
 
 Keep focus on recommendation-driven products and services, not a duplicate product catalog.
 
+### Follow-up Health Questionnaire
+
+For repeat blood draws, distinguish the shorter follow-up task from the initial questionnaire:
+
+- Follow-up Health Questionnaire
+- Update your health information before your next results review.
+- CTA: Complete Follow-up Questionnaire
+
+This is captured as a future/returning-user variation, not a core V0 dashboard state.
+
 ## Deep-Link Inventory
 
 Booking / scheduling:
@@ -335,7 +347,7 @@ Products / commerce:
 
 - Prescription product detail
 - Add prescription product to cart
-- Subscribe to prescription product
+- Buy / order prescription product
 - Checkout
 - Supplement detail, if any
 - Supplement purchase / BOPUS, if supported
@@ -378,37 +390,43 @@ State logic:
 
 Deep linking:
 
-- Which ULC/Kite destinations can be deep-linked from the embedded view?
-- Can deep links target specific service booking, product detail, cart, checkout, documents, and LifeScore detail?
-- Are only top-level tabs deep-linkable, or can destinations include specific flows?
+- Which CTAs are deep-linkable from the Lifeforce embedded view?
+- Can we deep link into specific services, or only the Book tab?
+- Can we deep link to Schedule Blood Draw?
+- Can we deep link to Manage Booking?
+- Can we deep link to Schedule Clinician Visit?
+- Can we deep link to prescription product detail / cart / checkout?
+- Can we deep link to specific ULC services like Hyperbaric Oxygen Therapy?
 
 Membership / state logic:
 
-- Is membership status available to Lifeforce through API?
-- Can status be inferred through purchase or subscription webhooks?
-- Does V0 need to distinguish member vs non-member at all?
-- What should one-off labs users see?
-- Do one-off labs users receive LifeScore, recommendations, or clinician visit?
+- Does it make sense to mention Lifeforce membership in the embedded view?
+- Will Lifeforce have access to ULC membership status?
+- If not, can membership be inferred from purchase/subscription webhooks?
+- Should no-labs member and no-labs non-member be the same V0 screen?
 
 Recommendations:
 
 - Which prescription recommendations should appear post-clinician visit?
-- Should CTAs be Subscribe, Add to Cart, Order, or View Details?
+- Should CTAs be Buy, Add to Cart, Order, or View Details?
 - Can recommended prescription shipments be batched?
 
 Supplements:
 
-- Are supplements purchasable in-app at launch?
-- Are supplements BOPUS / buy-online-pickup-in-store?
-- If not purchasable, should they display as available at your local ULC?
-- Will ULC provide product data/images?
+- What will the supplement buying process look like near-term?
+- Are supplements purchasable in-app, BOPUS, or in-store only?
+- Should supplements display as Buy at ULC?
+- Should we show recommended supplements pre-clinician, post-clinician only, or both?
+- Which Lifeforce supplements should be recommended vs ULC-owned SKUs?
 
 Services / modalities:
 
 - Which ULC services can be recommended by clinicians?
+- Which biomarkers trigger service recommendations?
 - Which are bookable in-app?
 - Can deep links target a specific service booking flow?
-- Can any service recommendations appear pre-clinician based on biomarkers?
+- Do we need images for services like red light therapy, hyperbaric, dry plunge, etc.?
+- Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?
 
 Documents:
 

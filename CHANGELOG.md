@@ -1,5 +1,47 @@
 # ULC x Lifeforce Prototype Changelog
 
+## v0.8 · June 09 review refinements
+
+Date: June 09, 2026
+
+Summary:
+- Renames the first dashboard state to No Blood Draw Performed and clarifies Blood Draw Scheduled · Questionnaire Not Started.
+- Removes standalone processing and broad catalog screens from the core all-screens flow.
+- Adds dedicated LifeScore and Documents detail screens based on the supplied references.
+- Expands LifeScore cards with Quality of Life, Longevity Risk, and Biological Age.
+- Updates post-clinician recommendations to separate Prescription Recommendations, Supplement Recommendations, and Recommended Services.
+- Changes prescription recommendation CTAs to Buy.
+- Changes supplement recommendations to in-center / Buy at ULC language instead of in-app purchase buttons.
+- Adds Documents modules to results-back and post-clinician dashboard states.
+- Updates lab report dates and keeps report history in reverse chronological order.
+- Adds a reusable Follow-up Health Questionnaire state for repeat blood draws.
+
+User states affected:
+- No Blood Draw Performed
+- Blood Draw Scheduled · Questionnaire Not Started
+- Labs Processing · Questionnaire Incomplete
+- Labs Processing · Questionnaire Complete
+- Results Back · Questionnaire Incomplete
+- Results Back · Questionnaire Complete
+- Post-Clinician Visit · Care Plan Active
+- Lab Reports
+- LifeScore
+- Documents
+- Recommendations / Products · Needs review
+
+Known open questions:
+- Which CTAs and destinations are deep-linkable from the embedded Lifeforce view?
+- Can ULC/Kite deep link to specific services, prescription product detail, cart, and checkout?
+- Will Lifeforce have access to ULC membership or purchase status?
+- Are supplements in-app, BOPUS, or in-store only?
+- Which ULC services/modalities and imagery are available for recommendations?
+- Should Documents upload and LifeScore detail be included in V0?
+
+Risky changes or assumptions:
+- Supplement recommendations assume an in-center fallback until purchase handling is clarified.
+- Prescription, supplement, and service examples are placeholders pending ULC/Kite catalog and clinical review.
+- Products/commerce screens are labeled Needs review because deep-link and checkout behavior is still unresolved.
+
 ## v0.7 · V0 state simplification
 
 Date: June 09, 2026

@@ -4,7 +4,7 @@
 
 This coded prototype explores how the Lifeforce-powered Labs experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of the Labs tab dashboard, blood draw status states, lab reports, LifeScore, recommendations, documents, and review feedback.
 
-The current prototype direction is v0.7: a simplified V0 state model based on blood draw and results status rather than member vs non-member segmentation.
+The current prototype direction is v0.8: a simplified V0 state model with June 09 review refinements for LifeScore, Documents, recommendations, and screen numbering.
 
 Detailed screen-state requirements live in:
 
@@ -14,24 +14,26 @@ Detailed screen-state requirements live in:
 
 Visible prototype label:
 
-- v0.7 · V0 state simplification
+- v0.8 · June 09 review refinements
 
 Current design direction:
 
-- Collapse early member/non-member/one-off-labs states into a universal No Labs Performed state.
+- Collapse early member/non-member/one-off-labs states into a universal No Blood Draw Performed state.
 - Use Schedule Blood Draw as the primary blood draw terminology.
 - Hide Health Questionnaire until a blood draw is scheduled.
 - Allow View Results when results are back even if Health Questionnaire is incomplete.
 - Show LifeScore only when results are back and Health Questionnaire is complete.
 - Make Schedule Clinician Visit the primary post-results action.
 - Treat post-clinician recommendations as the active care plan.
-- Split post-clinician recommendations into prescriptions, supplements, and ULC services/modalities.
+- Split post-clinician recommendations into prescriptions, supplements, and recommended ULC services.
+- Make LifeScore cards more substantive with Quality of Life, Longevity Risk, and Biological Age.
+- Add dedicated LifeScore and Documents screens.
 - Put broad product browsing on hold for V0.
 
 ## Current Dashboard States
 
-1. No Labs Performed
-2. Blood Draw Scheduled / Not Completed
+1. No Blood Draw Performed
+2. Blood Draw Scheduled · Questionnaire Not Started
 3. Labs Processing · Questionnaire Incomplete
 4. Labs Processing · Questionnaire Complete
 5. Results Back · Questionnaire Incomplete
@@ -41,29 +43,30 @@ Current design direction:
 ## Supporting Screens
 
 - Lab reports listing
-- Lab reports empty state
 - Lab report detail
 - Biomarker detail
-- Processing status
-- Clinician recommendations
-- Prescription detail
-- Review order
-- Recommendations locked
+- LifeScore detail
+- Documents
+- Recommendations / Products · Needs review
+- Prescription detail · Needs review
+- Review order · Needs review
+- Recommendations locked · Needs review
 - Reusable Health Questionnaire states
 
 ## Key Product Decisions
 
 - The Labs tab should be organized around operational status: no draw, draw scheduled, labs processing, results back, post-clinician recommendations.
 - Lifeforce may not receive ULC/Kite membership status in V0, so membership-dependent screen branching is deferred.
-- The no-labs screen should stay minimal and avoid unsupported membership, IV/injectable, documents, and product catalog modules.
+- The no-blood-draw screen should stay minimal and avoid unsupported membership, IV/injectable, documents, and product catalog modules.
 - Health Questionnaire should only appear after a blood draw is scheduled because it needs a DX order ID.
 - Results should not be blocked by an incomplete Health Questionnaire.
 - LifeScore is gated behind results back plus Health Questionnaire complete.
 - The post-clinician state should prioritize recommendations at the top.
-- Prescription recommendations may deep link to product/detail/cart/subscription if supported.
+- Prescription recommendations use Buy in the prototype while product/detail/cart/checkout deep links are reviewed.
 - Supplement recommendations should use in-center language unless in-app purchase or BOPUS is confirmed.
 - ULC services/modalities should use Book CTAs and deep link into service booking if supported.
 - Documents are lower-priority utility content and should not compete with recommendations, LifeScore, or lab reports.
+- Follow-up Health Questionnaire is captured as a reusable future/returning-user state for repeat blood draws.
 
 ## Deep-Link Dependency
 
