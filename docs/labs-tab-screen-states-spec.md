@@ -205,7 +205,7 @@ Primary CTA:
 
 Secondary CTAs:
 
-- View LifeScore
+- Dive Deeper
 - View Results
 - View Lab History
 
@@ -385,56 +385,21 @@ State logic:
 
 ## Open Questions
 
-Deep linking:
+### CTA destinations / deep linking
 
-- Which CTAs are deep-linkable from the Lifeforce embedded view?
-- Can we deep link into specific services, or only the Book tab?
-- Can we deep link to Schedule Blood Draw?
-- Can we deep link to Manage Booking?
-- Can we deep link to Schedule Clinician Visit?
-- Can we deep link to prescription product detail / cart / checkout?
-- Can we deep link to specific ULC services like Hyperbaric Oxygen Therapy?
+- Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows, and can we deep link into specific services/products or only top-level tabs?
 
-Membership / state logic:
+### Membership / state logic
 
-- Does it make sense to mention Lifeforce membership in the embedded view?
-- Will Lifeforce have access to ULC membership status?
-- If not, can membership be inferred from purchase/subscription webhooks?
-- Should no-labs member and no-labs non-member be the same V0 screen?
+- Will Lifeforce receive membership, subscription, or purchase status, and should member/non-member/no-labs users see different screens?
+- How should we refer to membership inside the ULC app?
 
-Recommendations:
+### Supplements / products / services
 
-- Do we have a formal Care Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?
-- Which prescription recommendations should appear post-clinician visit?
-- Should CTAs be Buy, Add to Cart, Order, or View Details?
-- Can recommended prescription shipments be batched?
+- What will the supplement and prescription purchase flow look like at launch vs later?
+- Which ULC services and supplements can appear as clinician recommendations, and which require clinician review?
+- Will ULC/Kite provide product and service images?
 
-Supplements:
+### Parking lot
 
-- What will the supplement buying process look like near-term?
-- Are supplements purchasable in-app, BOPUS, or in-store only?
-- Should supplements display as Available at ULC?
-- Should we show recommended supplements pre-clinician, post-clinician only, or both?
-- Which Lifeforce supplements should be recommended vs ULC-owned SKUs?
-
-Services / modalities:
-
-- Which ULC services can be recommended by clinicians?
-- Which biomarkers trigger service recommendations?
-- Which are bookable in-app?
-- Can deep links target a specific service booking flow?
-- Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?
-- Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?
-
-Documents:
-
-- Should Documents be part of V0?
-- Which documents should appear?
-- Is upload supported?
-- Should lab PDFs and clinician notes appear there?
-
-LifeScore:
-
-- Should LifeScore have a dedicated detail page in V0?
-- What explanatory content should be shown?
-- Should biological age, quality of life, and longevity risk be included?
+- What blood draw booking, appointment, lab processing, and questionnaire status data can Lifeforce receive from ULC/Kite?

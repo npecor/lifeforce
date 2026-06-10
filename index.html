@@ -450,22 +450,12 @@
       .variant-label {
         display: grid;
         align-items: start;
-        gap: 4px;
         min-height: 34px;
         color: var(--muted);
         font-size: 13px;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-      }
-
-      .variant-label-note {
-        color: var(--soft);
-        font-size: 11px;
-        font-weight: 750;
-        letter-spacing: 0;
-        line-height: 1.25;
-        text-transform: none;
       }
 
       .phone {
@@ -1487,19 +1477,6 @@
         background: linear-gradient(transparent, #fff);
       }
 
-      .filter-bar {
-        display: flex;
-        gap: 8px;
-        overflow-x: auto;
-        margin: 0 -22px 14px;
-        padding: 0 22px 4px;
-        scrollbar-width: none;
-      }
-
-      .filter-bar::-webkit-scrollbar {
-        display: none;
-      }
-
       .bio-section {
         margin-bottom: 16px;
       }
@@ -2257,8 +2234,7 @@
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
         <section class="hero" style="margin-top: 44px">
-          <p class="eyebrow">Recommendation Support Screens</p>
-          <h1>Details + Ordering</h1>
+          <h1>13 · Recommendation Support Screens · Needs review</h1>
         </section>
 
         <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendation support screens"></section>
@@ -2269,8 +2245,8 @@
         </section>
 
         <details class="prototype-changelog" id="openQuestionsDetails">
-          <summary id="openQuestionsSummary">Open questions · MVP state model</summary>
-          <h2>Open questions</h2>
+          <summary id="openQuestionsSummary">14 · Open Questions</summary>
+          <h2>Open Questions</h2>
           <p class="comment-meta">Shared product and design questions for this prototype. Add your initials so we know who raised the question.</p>
           <div class="open-question-tools">
             <button class="open-question-button" type="button" id="addOpenQuestion">Add open question</button>
@@ -2303,7 +2279,7 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.9</summary>
+          <summary>15 · Changelog</summary>
           <h2>Prototype changelog</h2>
           <h3>v0.9 · UX hierarchy cleanup</h3>
           <ul>
@@ -2434,7 +2410,7 @@
       const variants = [
         {
           key: "non_member_no_labs",
-          label: "01 · No blood draw performed (Member & Non-Member)",
+          label: "01 · No blood draw performed",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2449,7 +2425,7 @@
         },
         {
           key: "member_blood_draw_booked",
-          label: "02 · Blood draw scheduled · questionnaire not started",
+          label: "02 · Blood draw scheduled",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2464,7 +2440,7 @@
         },
         {
           key: "member_labs_processing_questionnaire_incomplete",
-          label: "03 · Labs processing · questionnaire incomplete",
+          label: "03 · Labs processing · Questionnaire incomplete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2479,7 +2455,7 @@
         },
         {
           key: "member_labs_processing_questionnaire_complete",
-          label: "04 · Labs processing · questionnaire complete",
+          label: "04 · Labs processing · Questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2490,7 +2466,7 @@
         },
         {
           key: "member_results_questionnaire_incomplete",
-          label: "05 · Results back · questionnaire incomplete",
+          label: "05 · Results back · Questionnaire incomplete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2504,7 +2480,7 @@
         },
         {
           key: "member_results_questionnaire_complete",
-          label: "06 · Results back · questionnaire complete",
+          label: "06 · Results back · Questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
@@ -2543,9 +2519,9 @@
         },
         in_progress: {
           tag: "In Progress",
-          title: "Complete your Health Questionnaire",
+          title: "Health Questionnaire in progress",
           copy: "A few questions to prepare for your consult.",
-          progressLabel: "3 of 8 sections complete",
+          progressLabel: "38% complete",
           button: "Continue Health Questionnaire",
           tagClass: "green",
           progress: true,
@@ -2573,10 +2549,10 @@
           id: "userType",
           label: "Preview as:",
           options: [
-            ["non_member_no_labs", "No blood draw performed (Member & Non-Member)"],
-            ["member_blood_draw_booked", "Blood draw scheduled · questionnaire not started"],
-            ["member_labs_processing_questionnaire_incomplete", "Labs processing · questionnaire incomplete"],
-            ["member_labs_processing_questionnaire_complete", "Labs processing · questionnaire complete"],
+            ["non_member_no_labs", "No blood draw performed"],
+            ["member_blood_draw_booked", "Blood draw scheduled"],
+            ["member_labs_processing_questionnaire_incomplete", "Labs processing · Questionnaire incomplete"],
+            ["member_labs_processing_questionnaire_complete", "Labs processing · Questionnaire complete"],
             ["member_results_questionnaire_incomplete", "Results back · Questionnaire incomplete"],
             ["member_results_questionnaire_complete", "Results back · Questionnaire complete"],
             ["member_care_plan_active", "Post-clinician visit · Recommendations active"],
@@ -2593,44 +2569,78 @@
       const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
       const QUESTION_AUTHOR_KEY = "ulc_lifeforce_open_question_author";
       const OPEN_QUESTION_CATEGORIES = [
-        "Deep linking",
+        "CTA destinations / deep linking",
         "Membership / state logic",
-        "Products / supplements",
-        "Services / modalities",
-        "Recommendations and next steps",
+        "Supplements / products / services",
         "Blood draw and questionnaire data",
-        "Documents",
-        "LifeScore",
         "Other",
       ];
       const OPEN_QUESTION_SEEDS = [
-        ["Deep linking", "Which CTAs are deep-linkable from the Lifeforce embedded view?"],
-        ["Deep linking", "Can we deep link into specific services, or only the Book tab?"],
-        ["Deep linking", "Can we deep link to Schedule Blood Draw, Manage Booking, and Schedule Clinician Visit?"],
-        ["Deep linking", "Can we deep link to prescription product detail, cart, or checkout?"],
-        ["Deep linking", "Can we deep link to specific ULC services like Hyperbaric Oxygen Therapy?"],
-        ["Membership / state logic", "Does it make sense to mention Lifeforce membership in the embedded view?"],
-        ["Membership / state logic", "Will Lifeforce have access to ULC membership status?"],
-        ["Membership / state logic", "If membership status is unavailable, can it be inferred from purchase or subscription webhooks?"],
-        ["Membership / state logic", "Should no-labs member and no-labs non-member use the same V0 screen?"],
-        ["Products / supplements", "What will the supplement buying process look like near-term?"],
-        ["Products / supplements", "Are supplements purchasable in-app, BOPUS, or in-store only?"],
-        ["Products / supplements", "Should supplements display as Available at ULC?"],
-        ["Products / supplements", "Should recommended supplements appear pre-clinician, post-clinician only, or both?"],
-        ["Products / supplements", "Which Lifeforce supplements should be recommended vs ULC-owned SKUs?"],
-        ["Recommendations and next steps", "Do we have a formal Care Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?"],
-        ["Services / modalities", "Which ULC services can be recommended?"],
-        ["Services / modalities", "Which biomarkers trigger service recommendations?"],
-        ["Services / modalities", "Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?"],
-        ["Services / modalities", "Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?"],
-        ["Blood draw and questionnaire data", "What scheduled, processing, or completed blood draw status data can Lifeforce receive from ULC/Kite?"],
-        ["Blood draw and questionnaire data", "Can the embedded view receive blood draw date/time, or only a booked/scheduled status?"],
-        ["Documents", "Should Documents be included in V0?"],
-        ["Documents", "Does upload belong in V0?"],
-        ["Documents", "Which documents should be shown: lab PDFs, requisitions, clinician notes, or upload requests?"],
-        ["LifeScore", "What should be shown on the LifeScore detail page for V0?"],
-        ["LifeScore", "Should we include biological age, quality of life, and longevity risk in the dashboard card?"],
+        [
+          "CTA destinations / deep linking",
+          "Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows, and can we deep link into specific services/products or only top-level tabs?",
+        ],
+        [
+          "Membership / state logic",
+          "Will Lifeforce receive membership, subscription, or purchase status, and should member/non-member/no-labs users see different screens?",
+        ],
+        [
+          "Membership / state logic",
+          "How should we refer to membership inside the ULC app?",
+        ],
+        [
+          "Supplements / products / services",
+          "What will the supplement and prescription purchase flow look like at launch vs later?",
+        ],
+        [
+          "Supplements / products / services",
+          "Which ULC services and supplements can appear as clinician recommendations, and which require clinician review?",
+        ],
+        [
+          "Supplements / products / services",
+          "Will ULC/Kite provide product and service images?",
+        ],
+        [
+          "Blood draw and questionnaire data",
+          "What blood draw booking, appointment, lab processing, and questionnaire status data can Lifeforce receive from ULC/Kite?",
+        ],
       ];
+      const CURRENT_OPEN_QUESTION_SEED_TEXTS = new Set(OPEN_QUESTION_SEEDS.map(([, text]) => text));
+      const LEGACY_OPEN_QUESTION_SEED_TEXTS = new Set([
+        "Which CTAs are deep-linkable from the Lifeforce embedded view?",
+        "Can we deep link into specific services, or only the Book tab?",
+        "Can we deep link to Schedule Blood Draw, Manage Booking, and Schedule Clinician Visit?",
+        "Can we deep link to prescription product detail, cart, or checkout?",
+        "Can we deep link to specific ULC services like Hyperbaric Oxygen Therapy?",
+        "Does it make sense to mention Lifeforce membership in the embedded view?",
+        "Will Lifeforce have access to ULC membership status?",
+        "If membership status is unavailable, can it be inferred from purchase or subscription webhooks?",
+        "Should no-labs member and no-labs non-member use the same V0 screen?",
+        "What will the supplement buying process look like near-term?",
+        "Are supplements purchasable in-app, BOPUS, or in-store only?",
+        "Should supplements display as Available at ULC?",
+        "Should recommended supplements appear pre-clinician, post-clinician only, or both?",
+        "Which Lifeforce supplements should be recommended vs ULC-owned SKUs?",
+        "Do we have a formal Care " + "Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?",
+        "Which ULC services can be recommended?",
+        "Which biomarkers trigger service " + "recommendations?",
+        "Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?",
+        "Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?",
+        "What scheduled, processing, or completed blood draw status data can Lifeforce receive from ULC/Kite?",
+        "Can the embedded view receive blood draw date/time, or only a booked/scheduled status?",
+        "Should Documents be included in V0?",
+        "Does upload belong in V0?",
+        "Which documents should be shown: lab PDFs, requisitions, clinician notes, or upload requests?",
+        "What should be shown on the LifeScore detail page for V0?",
+        "Should we include biological age, quality of life, and longevity risk in the dashboard card?",
+        "ULC/Kite: Which CTAs can deep link from the Lifeforce Labs tab into ULC/Kite flows? Include: Schedule Blood Draw, Manage Booking, Book Assessment, Schedule Clinician Visit, prescription Buy, service Book, and any product/service detail pages.",
+        "ULC/Kite: Can we deep link into specific services/products, or only into top-level tabs like Book, Shop, or Membership?",
+        "ULC/Kite: Will Lifeforce receive membership status or subscription/purchase status? This determines whether we can distinguish member, non-member, and one-off labs states, or whether V0 should keep one unified No blood draw performed state.",
+        "ULC/Product: How should we refer to membership inside the ULC app? Confirm whether to say Lifeforce membership, ULC clinical membership, clinical membership, or avoid membership language entirely.",
+        "ULC/Kite: What will the supplement and prescription purchase flow look like at launch vs later? Clarify what can be bought in-app, what is in-store only, what is BOPUS/future, and whether prescription shipments can be batched.",
+        "ULC/Product: Which ULC services and supplements can appear as clinician recommendations, and will ULC provide product/service images? Include examples like Hyperbaric Oxygen Therapy, Red Light Therapy, Vitamin D, Peak Healthspan, and any ULC-owned services/products.",
+        "Lifeforce/ULC: What blood draw booking and questionnaire status data can Lifeforce receive? Include scheduled/not scheduled, appointment date/time, draw completed, labs processing, questionnaire not started/in progress/complete, and follow-up questionnaire support.",
+      ]);
       let supabaseClient = null;
       let commentsLoading = false;
       let commentsError = "";
@@ -2780,9 +2790,50 @@
           renderOpenQuestions();
           return;
         }
-        openQuestions = (data || []).map(normalizeOpenQuestion);
+        let rows = data || [];
+        const seedsChanged = await syncOpenQuestionAgendaSeeds(client, rows);
+        if (seedsChanged) {
+          const { data: refreshedData, error: refreshError } = await client
+            .from("prototype_open_questions")
+            .select("*")
+            .eq("prototype_id", PROTOTYPE_ID)
+            .order("created_at", { ascending: true });
+          if (!refreshError) rows = refreshedData || [];
+        }
+        rows = rows.filter((row) => !(row.author === "ULC" && LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text)));
+        openQuestions = rows.map(normalizeOpenQuestion);
         openQuestionsUsingFallback = false;
         renderOpenQuestions();
+      }
+
+      async function syncOpenQuestionAgendaSeeds(client, rows = []) {
+        const legacySeedIds = rows
+          .filter((row) => row.author === "ULC" && LEGACY_OPEN_QUESTION_SEED_TEXTS.has(row.text))
+          .map((row) => row.id)
+          .filter(Boolean);
+        const existingSeedTexts = new Set(
+          rows
+            .filter((row) => row.author === "ULC" && CURRENT_OPEN_QUESTION_SEED_TEXTS.has(row.text))
+            .map((row) => row.text),
+        );
+        const missingSeeds = OPEN_QUESTION_SEEDS.filter(([, text]) => !existingSeedTexts.has(text)).map(([category, text]) => ({
+          prototype_id: PROTOTYPE_ID,
+          category,
+          author: "ULC",
+          text,
+          resolved: false,
+        }));
+
+        let changed = false;
+        if (legacySeedIds.length) {
+          const { error } = await client.from("prototype_open_questions").delete().eq("prototype_id", PROTOTYPE_ID).in("id", legacySeedIds);
+          if (!error) changed = true;
+        }
+        if (missingSeeds.length) {
+          const { error } = await client.from("prototype_open_questions").insert(missingSeeds);
+          if (!error) changed = true;
+        }
+        return changed;
       }
 
       function subscribeToOpenQuestions() {
@@ -2811,23 +2862,13 @@
       }
 
       const flowScreenTitles = {
-        "lab-reports-list": "Lab Reports · Listing",
+        "lab-reports-list": "Lab Reports",
         "lab-report-detail": "Lab Report Detail",
         "biomarker-detail": "Biomarker Detail",
-        "lifescore-detail": "LifeScore Detail",
+        "lifescore-detail": "LifeScore",
         documents: "Documents",
         "product-detail": "Product Detail",
         "review-order": "Review Order",
-      };
-
-      const flowArrivalNotes = {
-        "lab-reports-list": "Arrives from: View Lab History under the dashboard Lab Reports module.",
-        "lab-report-detail": "Arrives from: View Results on dashboard results cards or selecting a report from Lab Reports.",
-        "biomarker-detail": "Arrives from: tapping a biomarker row inside Lab Report Detail.",
-        "lifescore-detail": "Arrives from: View LifeScore on the LifeScore module.",
-        documents: "Arrives from: View Documents on results or post-clinician dashboard screens.",
-        "product-detail": "Arrives from: selecting a prescription recommendation.",
-        "review-order": "Arrives from: Buy on a prescription detail or recommendation.",
       };
 
       const ctaDestinationAnnotations = {
@@ -2842,9 +2883,6 @@
         "dashboard-member-labs-processing-questionnaire-incomplete": [
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
         ],
-        "dashboard-member-labs-processing-questionnaire-complete": [
-          ["No major CTA", "Quiet processing status; no user action required", "Informational"],
-        ],
         "dashboard-member-results-questionnaire-incomplete": [
           ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
@@ -2855,7 +2893,7 @@
         "dashboard-member-results-questionnaire-complete": [
           ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
           ["View Results", "Lab Report Detail", "Lifeforce-owned"],
-          ["View LifeScore", "LifeScore Detail", "Lifeforce-owned"],
+          ["Dive Deeper", "LifeScore Detail", "Lifeforce-owned"],
           ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
           ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
@@ -2863,7 +2901,7 @@
           ["Buy", "prescription product detail/cart/checkout", "Needs Ashley"],
           ["Available at ULC", "No tap action; informational supplement availability callout", "Informational"],
           ["Book", "ULC service booking flow", "Needs Ashley"],
-          ["View LifeScore", "LifeScore Detail", "Lifeforce-owned"],
+          ["Dive Deeper", "LifeScore Detail", "Lifeforce-owned"],
           ["View Results", "Lab Report Detail", "Lifeforce-owned"],
           ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
           ["View Documents", "Documents screen", "Lifeforce-owned"],
@@ -2895,7 +2933,7 @@
         "review-order": [
           ["Back", "Return to prescription detail", "Lifeforce-owned"],
           ["Place Order", "ULC/Kite prescription checkout/order placement", "Needs Ashley"],
-          ["Back to Recommendations", "Return to recommendation source on Labs home", "Lifeforce-owned"],
+          ["Back to Labs", "Return to recommendation source on Labs home", "Lifeforce-owned"],
         ],
       };
 
@@ -2926,11 +2964,10 @@
         `;
       }
 
-      function renderVariantLabel(label, note = "") {
+      function renderVariantLabel(label) {
         return `
           <div class="variant-label">
             <span>${escapeHtml(label)}</span>
-            ${note ? `<span class="variant-label-note">${escapeHtml(note)}</span>` : ""}
           </div>
         `;
       }
@@ -3173,7 +3210,7 @@
             ${
               locked
                 ? `<div class="lifescore-locked-row"><span class="lifescore-heart">${lifeScoreHeart(58)}</span><p class="module-copy">Complete your Health Questionnaire to view your LifeScore.</p></div><button class="cta">Complete Health Questionnaire</button>`
-                : `<div class="lifescore-hero"><span class="lifescore-heart">${lifeScoreHeart(74)}</span><div><p class="title" style="font-size:44px;margin:0">80<span class="subtitle">/100</span></p><p class="module-copy">Based on your latest bloodwork and completed Health Questionnaire.</p></div></div>${lifeScoreSupportingMetrics()}<button class="mini-cta outline">View LifeScore</button>`
+                : `<div class="lifescore-hero"><span class="lifescore-heart">${lifeScoreHeart(74)}</span><div><p class="title" style="font-size:44px;margin:0">80<span class="subtitle">/100</span></p><p class="module-copy">Based on your latest bloodwork and completed Health Questionnaire.</p></div></div>${lifeScoreSupportingMetrics()}<button class="mini-cta outline">Dive Deeper</button>`
             }
           </section>
         `;
@@ -3545,7 +3582,7 @@
               <button class="mini-cta">Buy</button>
             </div>
             <div class="section-title"><span>Supplement Recommendations</span></div>
-            <p class="module-copy">Recommended by your clinician. Available at your local ULC.</p>
+            <p class="module-copy">Recommended by your clinician. Available at ULC.</p>
             <div class="rec-row">
               <span class="icon-bubble">${icon("sun", 19)}</span>
               <div>
@@ -3685,13 +3722,12 @@
       function phoneScreen(label, body, screenId = "", stickyAction = "", options = {}) {
         const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
-        const arrivalNote = flowArrivalNotes[resolvedScreenId] || "";
         const hasStickyAction = Boolean(stickyAction);
         const annotations = (options.showDestinations ?? showReviewerCtaDestinations) ? renderCtaDestinations(resolvedScreenId) : "";
         return `
           <article class="variant ${annotations ? "with-cta-destinations" : ""}">
             <div class="variant-phone-column">
-              ${renderVariantLabel(label, arrivalNote)}
+              ${options.hideLabel ? "" : renderVariantLabel(label)}
               <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
                 ${statusBar()}
                 <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
@@ -3746,7 +3782,7 @@
 
       function labReportsListing() {
         return phoneScreen(
-          "08 · Lab reports listing",
+          "08 · Lab Reports",
           `
             ${titleBar("Lab Reports", "Lifeforce Blood Panels", "plus")}
             ${reportCard({ date: "Jun 9, 2026", latest: true, counts: [12, 5, 2], status: "Reviewed" })}
@@ -3801,7 +3837,7 @@
           .join("");
 
         return phoneScreen(
-          "09 · Lab report detail",
+          "09 · Lab Report Detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Lifeforce Lab Results", "June 9, 2026").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
@@ -3828,9 +3864,6 @@
               </div>
               <button class="cta">See all biomarkers</button>
             </section>
-            <div class="filter-bar">
-              <span class="chip active">All</span><span class="chip">Needs Attention</span><span class="chip">Optimal</span><span class="chip">By Category</span>
-            </div>
             ${grouped}
           `,
           "lab-report-detail",
@@ -3840,7 +3873,7 @@
       function biomarkerDetail() {
         const b = biomarkers.find((item) => item.name === "LDL Cholesterol");
         return phoneScreen(
-          "10 · Biomarker detail",
+          "10 · Biomarker Detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LDL Cholesterol", "Key Risk Factors · Cardiovascular").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card hero-value">
@@ -3877,7 +3910,7 @@
 
       function lifeScoreDetailPage() {
         return phoneScreen(
-          "11 · LifeScore detail",
+          "11 · LifeScore",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Sarah’s LifeScore", "Calculated Apr 14, 2026").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card lifescore-detail-hero">
@@ -3965,7 +3998,7 @@
 
       function productDetailPage() {
         return phoneScreen(
-          "13 · Prescription detail · Needs review",
+          "Recommendation support · Prescription detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Prescription Detail", "Estradiol Patch").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card shop-card">
@@ -4000,12 +4033,13 @@
               <button class="cta">Buy · $110/mo</button>
             </section>
           `,
+          { hideLabel: true },
         );
       }
 
       function orderReviewPage() {
         return phoneScreen(
-          "14 · Review order · Needs review",
+          "Recommendation support · Review order",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Order", "Prescription subscription").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
@@ -4035,9 +4069,10 @@
                 <span class="status-pill">Ready</span>
               </div>
               <button class="cta">Place Order</button>
-              <button class="cta ghost">Back to Recommendations</button>
+              <button class="cta ghost">Back to Labs</button>
             </section>
           `,
+          { hideLabel: true },
         );
       }
 
@@ -4129,7 +4164,7 @@
         if (!summary || !list) return;
 
         const count = openQuestionCount();
-        summary.textContent = `Open questions · MVP state model · ${count} open`;
+        summary.textContent = `14 · Open Questions · ${count} open`;
         const addButton = document.getElementById("addOpenQuestion");
         if (addButton) {
           addButton.disabled = openQuestionsUsingFallback;
