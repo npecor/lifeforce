@@ -1528,9 +1528,15 @@
 
       .biomarker-filter-bar {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
         margin: 4px 0 14px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .biomarker-filter-bar::-webkit-scrollbar {
+        display: none;
       }
 
       .biomarker-filter-label {
@@ -1557,7 +1563,8 @@
       }
 
       .biomarker-filter-chip {
-        padding: 8px 12px;
+        flex: 0 0 auto;
+        padding: 8px 11px;
         border: 1px solid var(--border);
         border-radius: 999px;
         background: #fff;
@@ -1569,6 +1576,31 @@
       }
 
       .biomarker-filter-chip[aria-pressed="true"] {
+        border-color: var(--brown);
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .biomarker-filter-chip[data-biomarker-range-filter="out-of-range"] {
+        border-color: rgba(184, 79, 54, 0.2);
+        background: rgba(184, 79, 54, 0.08);
+        color: #b84f36;
+      }
+
+      .biomarker-filter-chip[data-biomarker-range-filter="normal"] {
+        border-color: rgba(200, 148, 30, 0.22);
+        background: rgba(200, 148, 30, 0.1);
+        color: #9a6a12;
+      }
+
+      .biomarker-filter-chip[data-biomarker-range-filter="optimal"] {
+        border-color: rgba(77, 143, 69, 0.2);
+        background: rgba(77, 143, 69, 0.1);
+        color: #4d8f45;
+      }
+
+      .biomarker-filter-chip[aria-pressed="true"],
+      .biomarker-filter-chip[data-biomarker-range-filter][aria-pressed="true"] {
         border-color: var(--brown);
         background: var(--brown);
         color: #fff;
@@ -3064,7 +3096,7 @@
           ["Result summary tiles", "Filter biomarker list by range", "Lifeforce-owned"],
           ["Category filter", "Filter biomarker list by category", "Lifeforce-owned"],
           ["Biomarker rows", "Biomarker detail screen", "Lifeforce-owned"],
-          ["Download Lab Report", "Lab report PDF / document download", "TBD"],
+          ["Download Lab Report", "Lab report PDF / document download", "Lifeforce-owned"],
         ],
         "biomarker-detail": [
           ["Back", "Return to lab report detail", "Lifeforce-owned"],
@@ -3676,7 +3708,7 @@
           <section class="card insight">
             <span class="icon-bubble green">${icon("heart-pulse", 19)}</span>
             <div>
-              <h4 class="row-title">Vitamin D — Optimal Range</h4>
+              <h4 class="row-title">Vitamin D — Optimal</h4>
               <p class="row-copy">Current panel shows Vitamin D in the optimal range.</p>
             </div>
           </section>
@@ -3969,8 +4001,8 @@
       ];
       const biomarkerRangeGroups = [
         ["out-of-range", "Out of Range"],
-        ["normal", "Normal Range"],
-        ["optimal", "Optimal Range"],
+        ["normal", "Normal"],
+        ["optimal", "Optimal"],
       ];
       const biomarkerRangeRank = { "out-of-range": 0, normal: 1, optimal: 2 };
       const biomarkerCategories = [
@@ -4032,8 +4064,8 @@
           <div class="biomarker-filter-bar" aria-label="Filter biomarkers by range">
             ${biomarkerRangeButton("all", "All", true)}
             ${biomarkerRangeButton("out-of-range", "Out of Range")}
-            ${biomarkerRangeButton("normal", "Normal Range")}
-            ${biomarkerRangeButton("optimal", "Optimal Range")}
+            ${biomarkerRangeButton("normal", "Normal")}
+            ${biomarkerRangeButton("optimal", "Optimal")}
           </div>
         `;
       }
@@ -4077,8 +4109,8 @@
               <h3 class="module-title">Result Summary</h3>
               <p class="result-summary-line">For this test, <strong>63%</strong> of your biomarkers were optimized.</p>
               <div class="metrics">
-                ${biomarkerRangeButton("optimal", "<strong>12</strong><span>Optimal Range</span>", false, "metric optimal", "summary")}
-                ${biomarkerRangeButton("normal", "<strong>5</strong><span>Normal Range</span>", false, "metric monitor", "summary")}
+                ${biomarkerRangeButton("optimal", "<strong>12</strong><span>Optimal</span>", false, "metric optimal", "summary")}
+                ${biomarkerRangeButton("normal", "<strong>5</strong><span>Normal</span>", false, "metric monitor", "summary")}
                 ${biomarkerRangeButton("out-of-range", "<strong>2</strong><span>Out of Range</span>", false, "metric out-of-range", "summary")}
               </div>
             </section>
