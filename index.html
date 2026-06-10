@@ -2200,7 +2200,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.9 · UX hierarchy cleanup</span>
+          <span class="version-pill">v0.10 · Final review cleanup</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -2255,7 +2255,7 @@
         </section>
 
         <details class="prototype-changelog" id="openQuestionsDetails">
-          <summary id="openQuestionsSummary">14 · Open Questions</summary>
+          <summary id="openQuestionsSummary">Open Questions · 0 open</summary>
           <h2>Open Questions</h2>
           <p class="comment-meta">Shared product and design questions for this prototype. Add your initials so we know who raised the question.</p>
           <div class="open-question-tools">
@@ -2289,8 +2289,23 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>15 · Changelog</summary>
+          <summary>Changelog</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.10 · Final review cleanup</h3>
+          <ul>
+            <li>Replaced Needs Ashley / Needs SprintFWD labels with Needs SprintFWD input in CTA destination annotations.</li>
+            <li>Simplified Open Questions into Questions for SprintFWD and Internal LifeForce Questions.</li>
+            <li>Removed or archived older granular open questions covered by the SprintFWD agenda.</li>
+            <li>Removed the global CTA destination legend while keeping per-screen CTA destination panels.</li>
+            <li>Removed the rigid What happens next timeline and kept the conceptual Measure → Review → Personalize journey module.</li>
+            <li>Removed unsupported locked/pending Recommendations screen from the core flow.</li>
+            <li>Removed biomarker-specific Recommended next steps from Biomarker Detail.</li>
+            <li>Removed top-level filter chips from Lab Reports while keeping Optimal / Monitor / Attention summary chips on report cards.</li>
+            <li>Updated in-progress Health Questionnaire progress from section-based language to percentage-based progress.</li>
+            <li>Updated Results Back / Questionnaire Incomplete hierarchy so Schedule Clinician Visit is the highest-priority CTA when available.</li>
+            <li>Removed the Post-visit capsule from the post-clinician recommendations card.</li>
+            <li>Restored individual titles for Recommendation Support Screens.</li>
+          </ul>
           <h3>v0.9 · UX hierarchy cleanup</h3>
           <ul>
             <li>Clarified the next best action for each dashboard state.</li>
@@ -4216,7 +4231,7 @@
         if (!summary || !list) return;
 
         const count = openQuestionCount();
-        summary.textContent = `14 · Open Questions · ${count} open`;
+        summary.textContent = `Open Questions · ${count} open`;
         const addButton = document.getElementById("addOpenQuestion");
         if (addButton) {
           addButton.disabled = openQuestionsUsingFallback;

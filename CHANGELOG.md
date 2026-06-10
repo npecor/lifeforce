@@ -1,5 +1,40 @@
 # ULC x Lifeforce Prototype Changelog
 
+## v0.10 · Final review cleanup
+
+Date: June 09, 2026
+
+Summary:
+- Replaced "Needs Ashley" / "Needs SprintFWD" with "Needs SprintFWD input" in CTA destination annotations.
+- Simplified Open Questions into "Questions for SprintFWD" and "Internal LifeForce Questions."
+- Removed or archived older granular open questions covered by the SprintFWD agenda.
+- Removed the global CTA destination legend while keeping per-screen CTA destination panels.
+- Removed the rigid "What happens next" timeline and kept the conceptual Measure -> Review -> Personalize journey module.
+- Removed unsupported locked/pending Recommendations screen from the core flow.
+- Removed biomarker-specific "Recommended next steps" from Biomarker Detail.
+- Removed top-level filter chips from Lab Reports Listing while keeping Optimal / Monitor / Attention summary chips on report cards.
+- Updated in-progress Health Questionnaire progress from section-based language to percentage-based progress.
+- Updated Results Back / Questionnaire Incomplete hierarchy so Schedule Clinician Visit is the highest-priority CTA when available.
+- Removed "Post-visit" capsule from the post-clinician recommendations card.
+- Restored individual titles for Recommendation Support Screens.
+
+User states affected:
+- Results Back · Questionnaire Incomplete
+- Labs Processing · Questionnaire Complete
+- Biomarker Detail
+- Lab Reports
+- Post-Clinician Visit · Recommendations Active
+- Recommendation Support Screens
+- Open Questions
+- Changelog
+
+Known open questions:
+- Which ULC/Kite routes need SprintFWD input before implementation?
+- Should recommendation support screens remain as reference-only prototype material?
+
+Risky changes or assumptions:
+- CTA destination annotations remain best-guess reviewer markup until SprintFWD confirms ULC/Kite destinations.
+
 ## v0.9 · UX hierarchy cleanup
 
 Date: June 09, 2026
