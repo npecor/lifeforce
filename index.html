@@ -1909,7 +1909,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.6 · Sticky CTA cleanup</span>
+          <span class="version-pill">v0.7 · V0 state simplification</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -1953,11 +1953,11 @@
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
         <section class="hero" style="margin-top: 44px">
-          <p class="eyebrow">Recommendations / Products Flow</p>
-          <h1>Recommendations + Products</h1>
+          <p class="eyebrow">Recommendations / Care Plan Flow</p>
+          <h1>Recommendations + Care Plan</h1>
         </section>
 
-        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations and product flow"></section>
+        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations and care plan flow"></section>
 
         <section class="state-board" aria-label="Reusable Health Questionnaire states">
           <h2>Reusable Health Questionnaire States</h2>
@@ -1999,8 +1999,16 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.6</summary>
+          <summary>Change log · v0.7</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.7 · V0 state simplification</h3>
+          <ul>
+            <li>Collapsed the dashboard states around blood draw and results status instead of member/non-member segmentation.</li>
+            <li>Reduced the no-labs screen to orientation plus deep-link-dependent scheduling actions.</li>
+            <li>Moved post-clinician recommendations to the top of the care plan state and split them into prescriptions, supplements, and ULC services.</li>
+            <li>Changed supplement recommendation language to available at your local ULC instead of in-app purchase language.</li>
+            <li>Added Documents as a lower-priority utility section after recommendations, LifeScore, and lab reports.</li>
+          </ul>
           <h3>v0.6 · Sticky CTA cleanup</h3>
           <ul>
             <li>Moved recommendations, product, and order purchase CTAs out of the scroll content and into phone-level bottom bars.</li>
@@ -2010,7 +2018,7 @@
           <h3>v0.4 · Care plan refinement</h3>
           <ul>
             <li>Simplified the post-clinician care plan state to avoid repeated recommendation CTAs.</li>
-            <li>Changed the top care plan CTA to View Care Plan.</li>
+            <li>Adjusted the care plan hierarchy before the later v0.7 recommendation-led structure.</li>
             <li>Replaced generic supplement examples with prescription recommendations: Estradiol Patch and Semaglutide.</li>
             <li>Moved Prescription Recommendations above LifeScore and Lab Reports in the post-clinician state.</li>
             <li>Updated the labs/no-member card copy to use user-facing biomarker testing language and removed TBD chips from the mobile UI.</li>
@@ -2032,12 +2040,12 @@
           </ul>
           <h3>Upcoming / in progress</h3>
           <ul>
-            <li>Clarify non-member primary CTA strategy.</li>
-            <li>Confirm one-off labs entitlements.</li>
-            <li>Confirm supplement purchase path and pre-clinician recommendation rules.</li>
-            <li>Define ULC service recommendation rules and deep links.</li>
+            <li>Confirm which ULC/Kite destinations can be deep-linked from the embedded Labs experience.</li>
+            <li>Confirm whether membership or one-off-lab purchase status is available to Lifeforce.</li>
+            <li>Confirm supplement purchase path, BOPUS support, or in-center-only fallback.</li>
+            <li>Define ULC service recommendation rules, imagery, and booking deep links.</li>
           </ul>
-          <p class="changelog-updated">Last updated May 18, 2026.</p>
+          <p class="changelog-updated">Last updated June 09, 2026.</p>
         </details>
       </section>
 
@@ -2103,62 +2111,25 @@
       const variants = [
         {
           key: "non_member_no_labs",
-          label: "01 · Non-member · No labs",
-          title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
-          introTitle: "Start with a Longevity Assessment",
-          context: "Get an in-center snapshot of your health and learn how Lifeforce-powered membership can personalize your next steps.",
-          actionTitle: "Book a Longevity Assessment",
-          actionCopy: "Get an in-center snapshot of your strength, cardio, respiratory fitness, and body composition.",
-          cta: "Book Longevity Assessment",
-          ctaIcon: "activity",
-          profileState: "not_started",
-          hasLabs: false,
-          productTitle: "Browse products",
-          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
-          journeyState: "prospect",
-        },
-        {
-          key: "labs_no_member",
-          label: "02 · Non-member · one-off labs",
+          label: "01 · No labs performed",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
-          introTitle: "One-off labs inside ULC",
-          context: "Schedule a blood draw and view lab results without assuming an ongoing clinical membership.",
-          actionTitle: "Schedule your blood draw",
-          actionCopy: "Start with a Lifeforce blood panel to get a clearer view of your biomarkers.",
+          introTitle: "Labs powered by Lifeforce",
+          context: "Use this area to schedule a blood draw, review biomarker results, and access clinician-guided recommendations when available.",
+          actionTitle: "Get your biomarkers tested",
+          actionCopy: "Begin with a Lifeforce blood panel. Clinical membership unlocks LifeScore, clinician review, and personalized recommendations.",
           cta: "Schedule Blood Draw",
           ctaIcon: "syringe",
+          secondaryCta: "Book Longevity Assessment",
           hasLabs: false,
-          journeyState: "labs_no_member",
-          productTitle: "Browse products",
-          productCopy: "Explore ULC wellness products. Personalized recommendations require clinical review.",
-        },
-        {
-          key: "member_no_labs_not_scheduled",
-          label: "03 · Member · No labs · draw not scheduled",
-          title: "Your Longevity Journey",
-          subtitle: "Powered by Lifeforce",
-          member: true,
-          compactContext: true,
-          introTitle: "Your path to personalized health",
-          context: "Start with your first blood draw to unlock the next steps in your Lifeforce review.",
-          actionTitle: "Schedule your first blood draw",
-          actionCopy: "Your Lifeforce journey begins with comprehensive bloodwork and clinical review.",
-          cta: "Schedule Blood Draw",
-          ctaIcon: "syringe",
-          hasLabs: false,
-          productTitle: "Browse Products While You Wait",
-          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after bloodwork and clinical review.",
-          journeyState: "member_no_labs",
+          journeyState: "no_labs_performed",
         },
         {
           key: "member_blood_draw_booked",
-          label: "04 · Member · Blood draw booked · draw not completed",
+          label: "02 · Blood draw scheduled · not completed",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
           actionTitle: "Complete your Health Questionnaire",
           actionCopy: "Finish this before your results review so your clinician has the context they need.",
@@ -2168,15 +2139,12 @@
           hasLabs: false,
           resultsStatus: "labs_booked",
           journeyState: "blood_draw_booked",
-          productTitle: "Browse Products While You Wait",
-          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after bloodwork and clinical review.",
         },
         {
           key: "member_labs_processing_questionnaire_incomplete",
-          label: "05 · Labs processing · questionnaire incomplete",
+          label: "03 · Labs processing · questionnaire incomplete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
           actionTitle: "Complete your Health Questionnaire",
           actionCopy: "Your bloodwork is processing. Complete your questionnaire while Lifeforce reviews your panel.",
@@ -2186,32 +2154,23 @@
           hasLabs: false,
           resultsStatus: "labs_processing",
           journeyState: "labs_processing_questionnaire_incomplete",
-          productTitle: "Browse Products While You Wait",
-          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
         },
         {
           key: "member_labs_processing_questionnaire_complete",
-          label: "06 · Labs processing · questionnaire complete",
+          label: "04 · Labs processing · questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
-          actionTitle: "Bloodwork processing",
-          actionCopy: "Your Lifeforce blood panel is being processed. Results and recommendations will appear after clinical review.",
-          ctaIcon: "loader",
           profileState: "complete",
           hasLabs: false,
           resultsStatus: "labs_processing",
           journeyState: "labs_processing_questionnaire_complete",
-          productTitle: "Browse Products While You Wait",
-          productCopy: "Explore ULC wellness products. Personalized recommendations unlock after clinical review.",
         },
         {
           key: "member_results_questionnaire_incomplete",
-          label: "07 · Results back · questionnaire incomplete",
+          label: "05 · Results back · questionnaire incomplete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
           actionTitle: "Complete your Health Questionnaire",
           actionCopy: "Your results are back. Complete your questionnaire so your clinician has the context they need.",
@@ -2220,37 +2179,23 @@
           profileState: "in_progress",
           hasLabs: true,
           journeyState: "results_questionnaire_incomplete",
-          productTitle: "Browse Products While You Wait",
-          productCopy: "Explore ULC wellness products. Personalized recommendations will appear after questionnaire completion and clinical review.",
         },
         {
           key: "member_results_questionnaire_complete",
-          label: "08 · Results back · questionnaire complete",
+          label: "06 · Results back · questionnaire complete",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
-          actionTitle: "Review your results with a clinician",
-          actionCopy: "Schedule a telehealth visit to review your LifeScore, results, and recommendations.",
-          cta: "Schedule Clinician Visit",
-          ctaIcon: "stethoscope",
           profileState: "complete",
           hasLabs: true,
           journeyState: "results_questionnaire_complete",
-          productTitle: "Your Product Recommendations",
-          productCopy: "Based on your latest bloodwork, Health Questionnaire, and clinician review.",
         },
         {
           key: "member_care_plan_active",
-          label: "09 · Post-clinician visit · Care plan active",
+          label: "07 · Post-clinician visit · Care plan active",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
-          member: true,
           compactContext: true,
-          actionTitle: "Your care plan is active",
-          actionCopy: "Review your clinician-approved recommendations and next steps.",
-          cta: "View Care Plan",
-          ctaIcon: "sparkles",
           profileState: "complete",
           hasLabs: true,
           journeyState: "care_plan_active",
@@ -2299,14 +2244,12 @@
           id: "userType",
           label: "Preview as:",
           options: [
-            ["non_member_no_labs", "Non-member · No labs"],
-            ["labs_no_member", "Non-member · one-off labs"],
-            ["member_no_labs_not_scheduled", "Member · No labs · draw not scheduled"],
-            ["member_blood_draw_booked", "Member · Blood draw booked"],
+            ["non_member_no_labs", "No labs performed"],
+            ["member_blood_draw_booked", "Blood draw scheduled · not completed"],
             ["member_labs_processing_questionnaire_incomplete", "Labs processing · questionnaire incomplete"],
             ["member_labs_processing_questionnaire_complete", "Labs processing · questionnaire complete"],
-            ["member_results_questionnaire_incomplete", "Member · Results back · Questionnaire incomplete"],
-            ["member_results_questionnaire_complete", "Member · Results back · Questionnaire complete"],
+            ["member_results_questionnaire_incomplete", "Results back · Questionnaire incomplete"],
+            ["member_results_questionnaire_complete", "Results back · Questionnaire complete"],
             ["member_care_plan_active", "Post-clinician visit · Care plan active"],
           ],
         },
@@ -2320,22 +2263,31 @@
       const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
       const QUESTION_AUTHOR_KEY = "ulc_lifeforce_open_question_author";
       const OPEN_QUESTION_CATEGORIES = [
-        "Non-member and one-off labs",
+        "Deep linking",
+        "One-off labs and status",
         "Products, supplements, and services",
         "Blood draw and questionnaire data",
+        "Results, documents, and LifeScore",
         "Recommendations and care plan",
         "Membership / packaging",
         "Other",
       ];
       const OPEN_QUESTION_SEEDS = [
-        ["Non-member and one-off labs", "Should the non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?"],
-        ["Non-member and one-off labs", "What exactly is included for labs-no-member / one-off labs users?"],
-        ["Non-member and one-off labs", "Do one-off labs users receive LifeScore, recommendations, or a clinician visit?"],
-        ["Products, supplements, and services", "Are supplements purchasable in-app or in-store only?"],
-        ["Products, supplements, and services", "Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?"],
-        ["Products, supplements, and services", "Which ULC services can be recommended before clinician review, and which biomarkers trigger them?"],
-        ["Blood draw and questionnaire data", "What blood draw booking status/date data can Lifeforce receive from ULC/Kite?"],
-        ["Blood draw and questionnaire data", "Should the completed Health Questionnaire state be shown, or should it disappear after completion?"],
+        ["Deep linking", "Which ULC/Kite destinations are deep-linkable from the embedded Lifeforce Labs view?"],
+        ["Deep linking", "Can we deep link to Schedule Blood Draw, Manage Booking, and Schedule Clinician Visit?"],
+        ["Deep linking", "Can we deep link to specific ULC service booking, prescription product detail, cart, checkout, documents, and LifeScore detail?"],
+        ["One-off labs and status", "Can Lifeforce receive membership status, one-off-lab purchase status, or subscription status from ULC/Kite?"],
+        ["One-off labs and status", "What should one-off labs users see if membership status is unavailable in V0?"],
+        ["One-off labs and status", "Do one-off labs users receive LifeScore, recommendations, or a clinician visit?"],
+        ["Products, supplements, and services", "Are supplements purchasable in-app, BOPUS, or in-center only at launch?"],
+        ["Products, supplements, and services", "Should supplement recommendations display as available at your local ULC until purchase support is confirmed?"],
+        ["Products, supplements, and services", "Which ULC services/modalities can be recommended and deep-linked from post-clinician recommendations?"],
+        ["Blood draw and questionnaire data", "What scheduled, processing, or completed blood draw status data can Lifeforce receive from ULC/Kite?"],
+        ["Blood draw and questionnaire data", "Can the embedded view receive blood draw date/time, or only a booked/scheduled status?"],
+        ["Results, documents, and LifeScore", "Should Documents and upload functionality be included in V0?"],
+        ["Results, documents, and LifeScore", "Should LifeScore have a dedicated detail page in V0, and what explanatory content should it include?"],
+        ["Recommendations and care plan", "Which prescription recommendation CTAs should be used: Subscribe, Add to Cart, Order, or View Details?"],
+        ["Recommendations and care plan", "Can recommended prescription shipments be batched, or should each product deep link independently?"],
       ];
       let supabaseClient = null;
       let commentsLoading = false;
@@ -2347,7 +2299,7 @@
       let commentMode = true;
       let commentsPanelOpen = false;
       let activeScreenId = "dashboard-non-member-no-labs";
-      let activeScreenTitle = "Dashboard · Non-member · No labs";
+      let activeScreenTitle = "Dashboard · No labs performed";
       let selectedCommentId = "";
       let commentFilter = "open";
       let pendingComment = null;
@@ -2522,7 +2474,6 @@
         "lab-report-detail": "Lab Report Detail",
         "biomarker-detail": "Biomarker Detail",
         recommendations: "Recommendations",
-        "product-browse": "Product Browse",
         "product-detail": "Product Detail",
         "review-order": "Review Order",
         "labs-processing": "Labs Processing",
@@ -2616,7 +2567,7 @@
       }
 
       function contextModule(v) {
-        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs");
+        const early = v.journeyState === "no_labs_performed" || (v.livePreview && v.userType === "non_member_no_labs");
         return `
           <section class="card module context ${v.compactContext ? "compact" : ""} ${early ? "early-context" : ""}">
             <h3 class="module-title">${v.introTitle || "How Lifeforce works inside ULC"}</h3>
@@ -2734,8 +2685,22 @@
         return `
           <section class="card module action">
             <h3 class="module-title">Review your results with a clinician</h3>
-            <p class="module-copy">Schedule a telehealth visit to review your LifeScore, results, and recommendations.</p>
+            <p class="module-copy">Schedule a clinician visit to review your LifeScore, results, and recommendations.</p>
             <button class="cta">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
+          </section>
+        `;
+      }
+
+      function clinicianVisitPrompt({ questionnaireIncomplete = false } = {}) {
+        return `
+          <section class="card module">
+            <h3 class="module-title">Schedule your clinician visit</h3>
+            <p class="module-copy">${
+              questionnaireIncomplete
+                ? "Your clinician visit can be scheduled now. Completing your Health Questionnaire first helps your clinician prepare."
+                : "Review your LifeScore, latest results, and next steps with a clinician."
+            }</p>
+            <button class="cta ghost">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
           </section>
         `;
       }
@@ -2773,14 +2738,14 @@
 
       function actionModule(v) {
         if (!v.actionTitle) return "";
-        const early = v.key === "non_member_no_labs" || (v.livePreview && v.userType === "non_member_no_labs");
+        const early = v.journeyState === "no_labs_performed" || (v.livePreview && v.userType === "non_member_no_labs");
         return `
           <section class="card module action ${early ? "early-action" : ""}">
             <h3 class="module-title">${v.actionTitle}</h3>
             <p class="module-copy">${v.actionCopy}</p>
-            ${early ? `<div class="chip-row"><span class="chip">Strength</span><span class="chip">Cardio</span><span class="chip">Respiratory</span><span class="chip">Body composition</span></div>` : ""}
+            ${early ? `<div class="chip-row"><span class="chip">Blood draw</span><span class="chip">Biomarker results</span><span class="chip">Clinician review when eligible</span></div>` : ""}
             ${v.cta ? `<button class="cta">${icon(v.ctaIcon, 18)} ${v.cta}</button>` : ""}
-            ${early ? `<button class="cta ghost">Learn what’s included</button>` : ""}
+            ${early && v.secondaryCta ? `<button class="cta ghost">${v.secondaryCta}</button>` : ""}
           </section>
         `;
       }
@@ -2830,7 +2795,7 @@
                   <p class="product-name">${p.price}</p>
                   <button class="mini-cta outline">View Details</button>
                 </div>
-                <button class="mini-cta">Add to Plan</button>
+                <button class="mini-cta outline">View Details</button>
               </div>
             `,
           )
@@ -2871,7 +2836,7 @@
                       .join("")}
                   </div>`
             }
-            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "Add Products to Plan" : "Browse Products"} ${icon("arrow-right", 17)}</button>
+            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "Review Recommended Products" : "Browse Products"} ${icon("arrow-right", 17)}</button>
             ${personalized ? `<button class="cta ghost">Review Recommendations ${icon("arrow-right", 17)}</button>` : ""}
           </section>
         `;
@@ -2891,7 +2856,7 @@
                 <span class="icon-bubble">${icon("loader", 22)}</span>
                 <div>
                   <h3 class="module-title">Bloodwork processing</h3>
-                  <p class="row-copy">Your Lifeforce blood panel is being processed. Recommendations unlock after clinical review.</p>
+                  <p class="row-copy">Your Lifeforce blood panel is being processed. Results will appear after review.</p>
                 </div>
               </div>
             </section>
@@ -2929,6 +2894,7 @@
               <div class="metric attention"><strong>2</strong><span>Attention</span></div>
             </div>
             <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
+            <button class="mini-cta outline">View Lab History</button>
           </section>
         `;
       }
@@ -2950,11 +2916,18 @@
       }
 
       function documentCard() {
-        return rowCard({
-          title: "Documents",
-          copy: "View Lifeforce forms, lab PDFs, and care documents.",
-          iconName: "folder-open",
-        });
+        return `
+          <section class="card module">
+            <div class="card-head">
+              <div>
+                <h3 class="module-title">Documents</h3>
+                <p class="module-copy">View lab PDFs, requisitions, clinician notes, and uploaded documents.</p>
+              </div>
+              <span class="icon-bubble">${icon("folder-open", 20)}</span>
+            </div>
+            <button class="mini-cta outline">View Documents</button>
+          </section>
+        `;
       }
 
       function utilityCards(v) {
@@ -2989,7 +2962,8 @@
               <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
               <div class="metric attention"><strong>2</strong><span>Attention</span></div>
             </div>
-            <button class="cta ghost">View Full Results ${icon("arrow-right", 17)}</button>
+            <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
+            <button class="mini-cta outline">View Lab History</button>
           </section>
           <div class="note">${icon("clock-3", 17)}<span>Your previous labs may need to be refreshed before new recommendations are finalized.</span></div>
         `;
@@ -3057,16 +3031,17 @@
         `;
       }
 
-      function prescriptionRecommendations() {
+      function clinicianRecommendations() {
         return `
           <section class="card recommendation">
             <div class="card-head">
               <div>
-                <h3 class="module-title">Prescription Recommendations</h3>
-                <p class="module-copy">Your clinician has recommended these products as part of your care plan.</p>
+                <h3 class="module-title">Clinician Recommendations</h3>
+                <p class="module-copy">Recommended after your clinician visit. Follow the next step for each type of recommendation.</p>
               </div>
               <span class="status-pill">Post-visit</span>
             </div>
+            <div class="section-title"><span>Prescription recommendations</span></div>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("badge-plus", 19)}</span>
               <div>
@@ -3074,7 +3049,7 @@
                 <p class="row-copy">Hormone support · $110/mo</p>
                 <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
-              <button class="mini-cta">Add to Plan</button>
+              <button class="mini-cta">Subscribe</button>
             </div>
             <div class="rec-row">
               <span class="icon-bubble">${icon("syringe", 19)}</span>
@@ -3083,9 +3058,61 @@
                 <p class="row-copy">Metabolic support · $270/mo</p>
                 <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
-              <button class="mini-cta">Add to Plan</button>
+              <button class="mini-cta">Subscribe</button>
             </div>
-            <button class="cta">Order Recommended Products ${icon("arrow-right", 17)}</button>
+            <button class="cta">Order Prescriptions ${icon("arrow-right", 17)}</button>
+            <div class="section-title"><span>Supplement recommendations</span></div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("sun", 19)}</span>
+              <div>
+                <h4 class="row-title">Vitamin D</h4>
+                <p class="row-copy">Nutrient support · available at your local ULC</p>
+                <div class="chip-row"><span class="chip gold">Clinician-recommended</span></div>
+              </div>
+              <button class="mini-cta outline">Buy at ULC</button>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble green">${icon("fish", 19)}</span>
+              <div>
+                <h4 class="row-title">Omega-3</h4>
+                <p class="row-copy">Cardiovascular support · available in-center</p>
+                <div class="chip-row"><span class="chip gold">Based on LDL</span></div>
+              </div>
+              <button class="mini-cta outline">Buy at ULC</button>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("sparkles", 19)}</span>
+              <div>
+                <h4 class="row-title">Magnesium</h4>
+                <p class="row-copy">Sleep and recovery support · available in-center</p>
+              </div>
+              <button class="mini-cta outline">View Details</button>
+            </div>
+            <div class="section-title"><span>ULC services + modalities</span></div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("sun-medium", 19)}</span>
+              <div>
+                <h4 class="row-title">Red light therapy</h4>
+                <p class="row-copy">Recovery and inflammation support.</p>
+              </div>
+              <button class="mini-cta">Book</button>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble green">${icon("waves", 19)}</span>
+              <div>
+                <h4 class="row-title">Hyperbaric</h4>
+                <p class="row-copy">Recommended service to discuss and schedule at ULC.</p>
+              </div>
+              <button class="mini-cta">Book</button>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("snowflake", 19)}</span>
+              <div>
+                <h4 class="row-title">Dry plunge</h4>
+                <p class="row-copy">Recovery modality matched to your goals.</p>
+              </div>
+              <button class="mini-cta">Book</button>
+            </div>
           </section>
         `;
       }
@@ -3097,40 +3124,21 @@
       function dashboardContent(v) {
         const state = v.journeyState || v.userType || v.key;
 
-        if (state === "prospect" || state === "non_member_no_labs") {
+        if (state === "no_labs_performed" || state === "prospect" || state === "non_member_no_labs") {
           return `
-            ${membershipConversionCard()}
-            ${ivInjectableCard()}
-            ${lightweightProductBrowse(v)}
-          `;
-        }
-
-        if (state === "labs_no_member") {
-          return `
-            ${oneOffLabsInfoCard()}
-            ${membershipConversionCard()}
-            ${lightweightProductBrowse(v)}
-          `;
-        }
-
-        if (state === "member_no_labs") {
-          return `
-            ${longevityAssessmentCard()}
-            ${productCard({ ...v, compactProducts: true }, false)}
+            ${unlockCard()}
           `;
         }
 
         if (state === "blood_draw_booked") {
           return `
             ${bloodDrawBookedCard()}
-            ${productCard({ ...v, compactProducts: true }, false)}
           `;
         }
 
         if (state === "labs_processing_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
-            ${productCard({ ...v, compactProducts: true }, false)}
           `;
         }
 
@@ -3138,14 +3146,13 @@
           return `
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
-            ${productCard({ ...v, compactProducts: true }, false)}
           `;
         }
 
         if (state === "results_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
-            ${productCard({ ...v, compactProducts: true }, false)}
+            ${clinicianVisitPrompt({ questionnaireIncomplete: true })}
           `;
         }
 
@@ -3153,19 +3160,16 @@
           return `
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
-            <section class="card module">
-              <h3 class="module-title">Potential next steps</h3>
-              <p class="module-copy">Supplement recommendations are pending ULC purchase-path clarification. Review services and product topics during your clinician visit.</p>
-              <button class="mini-cta outline">View topics to discuss</button>
-            </section>
+            ${clinicianVisitPrompt()}
           `;
         }
 
         if (state === "care_plan_active") {
           return `
-            ${prescriptionRecommendations()}
+            ${clinicianRecommendations()}
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
+            ${documentCard()}
           `;
         }
 
@@ -3260,7 +3264,7 @@
 
       function labReportsListing() {
         return phoneScreen(
-          "09 · Lab reports listing",
+          "08 · Lab reports listing",
           `
             ${titleBar("Lab Reports", "Lifeforce Blood Panels", "plus")}
             <div class="filter-bar">
@@ -3279,7 +3283,7 @@
 
       function labReportsEmpty() {
         return phoneScreen(
-          "10 · Lab reports empty state",
+          "09 · Lab reports empty state",
           `
             ${titleBar("Lab Reports", "Lifeforce Blood Panels")}
             <section class="card empty-state">
@@ -3339,11 +3343,18 @@
           .join("");
 
         return phoneScreen(
-          "11 · Lab report detail",
+          "10 · Lab report detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Lifeforce Blood Panel", "March 15, 2025").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
               <h3 class="module-title">Clinician Summary</h3>
+              <div class="lab-head" style="margin-bottom:12px">
+                <span class="icon-bubble green">${icon("user-round", 20)}</span>
+                <div>
+                  <h4 class="row-title">Eimy Connor, PA-C</h4>
+                  <p class="row-copy">Your Lifeforce clinician</p>
+                </div>
+              </div>
               <div class="note-preview">
                 <p class="module-copy">Most of your biomarkers are in an optimal range. Your recommendations focus on hormone balance, metabolic health, and nutrient optimization. Your clinician suggests a few targeted next steps based on the newest panel.</p>
               </div>
@@ -3376,7 +3387,7 @@
       function biomarkerDetail() {
         const b = biomarkers.find((item) => item.name === "LDL Cholesterol");
         return phoneScreen(
-          "12 · Biomarker detail",
+          "11 · Biomarker detail",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LDL Cholesterol", "Key Risk Factors · Cardiovascular").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card hero-value">
@@ -3394,11 +3405,11 @@
               <div class="rec-row">
                 <span class="icon-bubble">${icon("heart-pulse", 18)}</span>
                 <div>
-                  <h4 class="row-title">Omega-3 Protocol</h4>
-                  <p class="row-copy">Supports cardiovascular optimization.</p>
-                  <div class="chip-row"><span class="chip gold">Based on LDL</span><span class="chip green">Clinician-reviewed</span></div>
-                </div>
-                <button class="mini-cta">Add to Plan</button>
+                <h4 class="row-title">Omega-3 Protocol</h4>
+                <p class="row-copy">Supports cardiovascular optimization.</p>
+                <div class="chip-row"><span class="chip gold">Based on LDL</span><span class="chip green">Clinician-reviewed</span></div>
+              </div>
+                <button class="mini-cta outline">Discuss</button>
               </div>
               <div class="rec-row">
                 <span class="icon-bubble green">${icon("calendar-plus", 18)}</span>
@@ -3434,126 +3445,40 @@
         return phoneScreen(
           "13 · Recommendations page",
           `
-            ${titleBar("Your Recommendations", "Based on latest bloodwork, Health Questionnaire, and clinician review.", "sparkles")}
-            <section class="card module">
-              <h3 class="module-title">Your recommended plan is ready</h3>
-              <p class="module-copy">Lifeforce reviewed your latest bloodwork and prepared 2 products, 2 services, and 1 follow-up action.</p>
-              <div class="chip-row">
-                <span class="chip green">Clinician reviewed</span>
-                <span class="chip">Mar 12, 2026 panel</span>
-              </div>
-              <button class="cta">Start Recommended Plan ${icon("arrow-right", 17)}</button>
-              <button class="cta ghost">Review Recommendations</button>
-            </section>
-            <section class="card recommendation">
-              <div class="card-head"><div><h3 class="module-title">Recommended products</h3><p class="module-copy">2 products recommended based on your latest review.</p></div><span class="status-pill">Updated</span></div>
-              ${recommendedProductRows()}
-              <div class="purchase-actions">
-                <button class="cta">Add All to Plan</button>
-                <button class="cta ghost">Review Products Individually</button>
-              </div>
-            </section>
-            <section class="card recommendation">
-              <h3 class="module-title">ULC service recommendations</h3>
-              <div class="rec-row"><span class="icon-bubble">${icon("waves", 18)}</span><div><h4 class="row-title">Metabolic Health Consult</h4><p class="row-copy">Review LDL and glucose trends with a clinician.</p><div class="chip-row"><span class="chip gold">LDL Cholesterol</span><span class="chip">Hemoglobin A1c</span></div></div><button class="mini-cta">Book</button></div>
-              <div class="rec-row"><span class="icon-bubble green">${icon("waves", 18)}</span><div><h4 class="row-title">Recovery services</h4><p class="row-copy">Discuss hyperbaric, dry plunge, and infusion options tied to your goals.</p></div><button class="mini-cta">View Services</button></div>
-            </section>
-            <section class="card module membership-status">
-              <h3 class="module-title">Membership Rx</h3>
-              <p class="module-copy">Prescription options are available only when clinically appropriate after clinician review.</p>
-              <button class="mini-cta outline">View Rx Options</button>
-            </section>
+            ${titleBar("Clinician Recommendations", "Post-visit care plan actions.", "sparkles")}
+            ${clinicianRecommendations()}
           `,
           "recommendations",
-          `
-            <section class="sticky-action">
-              <div class="card-head">
-                <div>
-                  <h3 class="row-title">2 products recommended</h3>
-                  <p class="row-copy">$70/mo estimated</p>
-                </div>
-                <span class="status-pill">Plan ready</span>
-              </div>
-              <button class="cta">Add All to Plan</button>
-            </section>
-          `,
-        );
-      }
-
-      function productBrowsePage() {
-        return phoneScreen(
-          "14 · Product browse page",
-          `
-            ${titleBar("Browse Products", "Explore ULC wellness products. Personalized picks unlock after your bloodwork is reviewed.", "shopping-bag")}
-            <section class="card module">
-              <div class="row-card" style="margin:0;padding:0;border:0;box-shadow:none">
-                <span class="icon-bubble">${icon("search", 20)}</span>
-                <div><h3 class="row-title">Search products</h3><p class="row-copy">Supplements, tests, bundles...</p></div>
-              </div>
-            </section>
-            <div class="filter-bar">
-              <span class="chip active">Hormone Therapy</span><span class="chip">Weight Loss</span><span class="chip">Sleep</span><span class="chip">Energy</span><span class="chip">Metabolic</span><span class="chip">Bundles</span>
-            </div>
-            <section class="card module" style="background:#fffdf1">
-              <div class="card-head">
-                <span class="icon-bubble">${icon("package-plus", 19)}</span>
-                <div>
-                  <h3 class="module-title">Foundational Wellness Kit</h3>
-                  <p class="module-copy">A general starting point before personalized recommendations.</p>
-                </div>
-              </div>
-              <button class="mini-cta outline">View bundle</button>
-            </section>
-            <div class="section-title"><span>Popular at ULC</span></div>
-            <div class="product-grid-2">
-              ${[
-                ["Vitamin D3+K2", "Bone health & immunity", "$38/mo", "sun"],
-                ["Omega-3 Fish Oil", "Heart & brain support", "$45/mo", "fish"],
-                ["Magnesium Complex", "Sleep & recovery support", "$32/mo", "sparkles"],
-                ["NAD+ Boost", "Cellular energy & longevity", "$62/mo", "battery-charging"],
-              ]
-                .map(
-                  ([name, copy, price, glyph]) => `
-                    <section class="card shop-card">
-                      <div class="shop-art">${icon(glyph, 34)}</div>
-                      <div class="shop-body"><h3 class="row-title">${name}</h3><p class="row-copy">${copy}</p><p class="product-name">${price}</p></div>
-                    </section>
-                  `,
-                )
-                .join("")}
-            </div>
-          `,
-          "product-browse",
         );
       }
 
       function productDetailPage() {
         return phoneScreen(
-          "15 · Product detail page",
+          "14 · Prescription detail page",
           `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Supplement Details", "Vitamin D3 · 4000 IU").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Prescription Detail", "Estradiol Patch").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card shop-card">
-              <div class="shop-art" style="height:190px">${icon("sun", 52)}</div>
+              <div class="shop-art" style="height:190px">${icon("badge-plus", 52)}</div>
               <div class="shop-body" style="padding:18px">
-                <p class="eyebrow-small" style="color:#aa7b11;font-weight:850;letter-spacing:.1em;text-transform:uppercase">Critical nutrients</p>
-                <h3 class="title" style="font-size:25px">Vitamin D3 · 4000 IU</h3>
-                <p class="module-copy">Supports bone health, immunity, and nutrient optimization.</p>
-                <p class="title" style="font-size:26px;margin-top:14px">$32<span class="subtitle">/month</span></p>
+                <p class="eyebrow-small" style="color:#aa7b11;font-weight:850;letter-spacing:.1em;text-transform:uppercase">Clinician-prescribed</p>
+                <h3 class="title" style="font-size:25px">Estradiol Patch</h3>
+                <p class="module-copy">Hormone support recommended after your clinician visit.</p>
+                <p class="title" style="font-size:26px;margin-top:14px">$110<span class="subtitle">/month</span></p>
               </div>
             </section>
             <section class="card module">
-              <h3 class="module-title">Why this was recommended</h3>
-              <p class="module-copy">Your Vitamin D level was below the optimal range on your latest bloodwork. Your clinician reviewed this alongside your Health Questionnaire before recommending supplementation.</p>
-              <div class="chip-row"><span class="chip gold">Based on Vitamin D</span><span class="chip green">Clinician-reviewed</span></div>
+              <h3 class="module-title">Why this was prescribed</h3>
+              <p class="module-copy">Your clinician reviewed your bloodwork, Health Questionnaire, and visit discussion before recommending this prescription option.</p>
+              <div class="chip-row"><span class="chip gold">Hormone support</span><span class="chip green">Clinician-prescribed</span></div>
             </section>
             <section class="card module">
-              <h3 class="module-title">Suggested use</h3>
-              <p class="module-copy">Take daily with food. Your next blood draw can help track response over time.</p>
-              <button class="mini-cta outline">View Vitamin D result</button>
+              <h3 class="module-title">Fulfillment</h3>
+              <p class="module-copy">Subscription and checkout destination depend on ULC/Kite commerce deep-link support.</p>
+              <button class="mini-cta outline">View Clinician Note</button>
             </section>
             <section class="card module">
-              <h3 class="module-title">Related ULC services</h3>
-              <p class="module-copy">Follow-up consult and next blood draw can help monitor response over time.</p>
+              <h3 class="module-title">Related results</h3>
+              <p class="module-copy">Review your lab report and clinician write-up for the full care context.</p>
             </section>
           `,
           "product-detail",
@@ -3561,12 +3486,12 @@
             <section class="sticky-action">
               <div class="card-head">
                 <div>
-                  <h3 class="row-title">Vitamin D3 · 4000 IU</h3>
-                  <p class="row-copy">$32/mo</p>
+                  <h3 class="row-title">Estradiol Patch</h3>
+                  <p class="row-copy">$110/mo</p>
                 </div>
-                <span class="status-pill">Recommended</span>
+                <span class="status-pill">Prescribed</span>
               </div>
-              <button class="cta">Add to Plan · $32/mo</button>
+              <button class="cta">Subscribe · $110/mo</button>
             </section>
           `,
         );
@@ -3574,21 +3499,17 @@
 
       function orderReviewPage() {
         return phoneScreen(
-          "16 · Review order",
+          "15 · Review order",
           `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Product Plan", "2 recommended products selected").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Order", "Prescription subscription").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
-              <h3 class="module-title">Products selected</h3>
+              <h3 class="module-title">Prescription selected</h3>
               <div class="order-line">
-                <div><h4 class="row-title">Vitamin D3 · 4000 IU</h4><p class="row-copy">Monthly subscription · Based on Vitamin D</p></div>
-                <strong>$32/mo</strong>
+                <div><h4 class="row-title">Estradiol Patch</h4><p class="row-copy">Monthly subscription · Clinician-prescribed</p></div>
+                <strong>$110/mo</strong>
               </div>
               <div class="order-line">
-                <div><h4 class="row-title">Omega-3 Protocol</h4><p class="row-copy">Monthly subscription · Based on LDL</p></div>
-                <strong>$38/mo</strong>
-              </div>
-              <div class="order-line">
-                <div><h4 class="row-title">Member savings</h4><p class="row-copy">Applied at checkout when eligible.</p></div>
+                <div><h4 class="row-title">Shipping cadence</h4><p class="row-copy">Confirmed during checkout.</p></div>
                 <strong>-</strong>
               </div>
             </section>
@@ -3603,7 +3524,7 @@
               <div class="card-head">
                 <div>
                   <h3 class="row-title">Estimated total</h3>
-                  <p class="row-copy">$70/mo · cancel anytime</p>
+                  <p class="row-copy">$110/mo · details confirmed at checkout</p>
                 </div>
                 <span class="status-pill">Ready</span>
               </div>
@@ -3616,15 +3537,14 @@
 
       function processingState() {
         return phoneScreen(
-          "17 · Processing labs state",
+          "12 · Processing status",
           `
             ${titleBar("Lab Reports", "Lifeforce Blood Panels")}
             <section class="card empty-state">
               <div>
                 <span class="icon-bubble">${icon("loader", 30)}</span>
                 <h3 class="module-title">Bloodwork processing</h3>
-                <p class="module-copy">Your bloodwork is being processed. Personalized recommendations will appear after clinical review. In the meantime, you can browse wellness products available through ULC.</p>
-                <button class="cta ghost">Browse Products While You Wait</button>
+                <p class="module-copy">Your Lifeforce blood panel is being processed. Results will appear after review.</p>
               </div>
             </section>
           `,
@@ -3634,7 +3554,7 @@
 
       function recommendationsLocked() {
         return phoneScreen(
-          "18 · Recommendations locked",
+          "16 · Recommendations locked",
           `
             ${titleBar("Your Recommendations", "Pending clinical review", "lock")}
             <section class="card empty-state membership">
@@ -3644,7 +3564,6 @@
                 <p class="module-copy">Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Health Questionnaire.</p>
                 <div class="chip-row" style="justify-content:center"><span class="chip">Bloodwork needed</span><span class="chip">Questionnaire needed</span><span class="chip">Review pending</span></div>
                 <button class="cta">Schedule Blood Draw</button>
-                <button class="cta ghost">Browse Products While You Wait</button>
               </div>
             </section>
           `,
@@ -4352,7 +4271,6 @@
         ].join("");
         document.getElementById("productFlow").innerHTML = [
           recommendationsPage(),
-          productBrowsePage(),
           productDetailPage(),
           orderReviewPage(),
           recommendationsLocked(),

@@ -1,198 +1,122 @@
-# ULC x LifeForce Prototype Spec
+# ULC x Lifeforce Prototype Spec
 
 ## Purpose
 
-This coded prototype explores how the LifeForce experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of state-based dashboard logic, lab reports, result detail, recommendations, products, and collaborative feedback.
+This coded prototype explores how the Lifeforce-powered Labs experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of the Labs tab dashboard, blood draw status states, lab reports, LifeScore, recommendations, documents, and review feedback.
 
-This file records the current pre-MVP baseline before the May 15 meeting-driven state model rework.
+The current prototype direction is v0.7: a simplified V0 state model based on blood draw and results status rather than member vs non-member segmentation.
 
-## Snapshot Baseline
+Detailed screen-state requirements live in:
 
-Snapshot label: v0.2 · Pre-MVP state update
+- [Labs tab screen states spec](./labs-tab-screen-states-spec.md)
 
-Recoverable checkpoint: snapshot-before-mvp-state-rework
+## Current Prototype Version
 
-Use this snapshot as the revert point if the next round of MVP state-model changes goes in the wrong direction.
+Visible prototype label:
 
-## Current Supported Prototype States
+- v0.7 · V0 state simplification
 
-Current dashboard states after the v0.3 MVP state model pass:
+Current design direction:
 
-- Non-member · No labs
-- Non-member · one-off labs
-- Member · No labs · draw not scheduled
-- Member · Blood draw booked · draw not completed
-- Member · Labs processing · questionnaire incomplete
-- Member · Labs processing · questionnaire complete
-- Member · Results back · questionnaire incomplete
-- Member · Results back · questionnaire complete
-- Member · Post-clinician visit / care plan active
+- Collapse early member/non-member/one-off-labs states into a universal No Labs Performed state.
+- Use Schedule Blood Draw as the primary blood draw terminology.
+- Hide Health Questionnaire until a blood draw is scheduled.
+- Allow View Results when results are back even if Health Questionnaire is incomplete.
+- Show LifeScore only when results are back and Health Questionnaire is complete.
+- Make Schedule Clinician Visit the primary post-results action.
+- Treat post-clinician recommendations as the active care plan.
+- Split post-clinician recommendations into prescriptions, supplements, and ULC services/modalities.
+- Put broad product browsing on hold for V0.
 
-Current supporting flows:
+## Current Dashboard States
+
+1. No Labs Performed
+2. Blood Draw Scheduled / Not Completed
+3. Labs Processing · Questionnaire Incomplete
+4. Labs Processing · Questionnaire Complete
+5. Results Back · Questionnaire Incomplete
+6. Results Back · Questionnaire Complete
+7. Post-Clinician Visit / Care Plan Active
+
+## Supporting Screens
 
 - Lab reports listing
 - Lab reports empty state
 - Lab report detail
 - Biomarker detail
-- Processing labs state
-- Recommendations
-- Product browse
-- Product detail
+- Processing status
+- Clinician recommendations
+- Prescription detail
 - Review order
 - Recommendations locked
 - Reusable Health Questionnaire states
 
-## Current Product Decisions
+## Key Product Decisions
 
-- The LifeForce area is framed as a broader ULC longevity journey rather than only a Labs tab.
-- The bottom nav remains ULC-native: Home, Book, Schedule, Labs, Account.
-- The prototype includes collaborative comments through Supabase.
-- Comments are shared across users/devices and do not require login.
-- Comment author initials/name are remembered locally, but comment content is stored in Supabase.
-- Comment Mode is intentionally retained: off allows normal prototype interaction, on allows click-to-place pinned comments.
-- Open Questions are also collaborative through Supabase and can be added, resolved, unresolved, and deleted by reviewers.
-- The post-clinician visit / care plan active state emphasizes one care plan CTA and one prescription recommendations module.
-- Prescription recommendation examples currently include Estradiol Patch and Semaglutide.
-- The labs/no-member state uses user-facing biomarker testing language; unclear entitlements remain tracked as open questions, not mobile UI chips.
+- The Labs tab should be organized around operational status: no draw, draw scheduled, labs processing, results back, post-clinician recommendations.
+- Lifeforce may not receive ULC/Kite membership status in V0, so membership-dependent screen branching is deferred.
+- The no-labs screen should stay minimal and avoid unsupported membership, IV/injectable, documents, and product catalog modules.
+- Health Questionnaire should only appear after a blood draw is scheduled because it needs a DX order ID.
+- Results should not be blocked by an incomplete Health Questionnaire.
+- LifeScore is gated behind results back plus Health Questionnaire complete.
+- The post-clinician state should prioritize recommendations at the top.
+- Prescription recommendations may deep link to product/detail/cart/subscription if supported.
+- Supplement recommendations should use in-center language unless in-app purchase or BOPUS is confirmed.
+- ULC services/modalities should use Book CTAs and deep link into service booking if supported.
+- Documents are lower-priority utility content and should not compete with recommendations, LifeScore, or lab reports.
 
-## May 15 MVP Direction
+## Deep-Link Dependency
 
-The prototype now begins simplifying the LifeForce section around the operational journey:
+Deep linking is the primary V0 blocker. The prototype intentionally keeps the user-facing CTAs visible, but the implementation depends on whether ULC/Kite can route to the right destination.
 
-Orient -> Schedule blood draw -> Complete Health Questionnaire -> View results -> Schedule clinician visit -> Review recommendations / care plan
+Highest-priority deep links:
 
-Applied removals or de-emphasis:
+- Schedule Blood Draw
+- Manage Blood Draw Booking
+- Book Longevity Assessment
+- Schedule Clinician Visit
+- Book specific ULC service or modality
+- Prescription product detail / cart / checkout / subscription
+- Lab reports and historical lab reports
+- Documents
+- LifeScore detail
 
-- Time for next blood draw
-- Questionnaire update required
-- Questionnaire update recommended
-- View questionnaire answers
-- Membership management inside the embedded LifeForce view
-- Future blood draw cadence / eligibility logic
+## Open Questions
 
-Applied terminology:
+Open questions are tracked in the prototype UI and in the detailed Labs tab spec.
 
-- Use Schedule Blood Draw, not Book Blood Draw.
-- Use Health Questionnaire, not Health Profile.
-- Use Schedule Clinician Visit for the post-results review CTA.
+Critical question groups:
 
-Applied gating:
+- Deep-linkable ULC/Kite destinations
+- Membership or one-off-lab status availability
+- One-off labs entitlements
+- Prescription commerce flow and CTA language
+- Supplement purchase path: in-app, BOPUS, or in-center only
+- ULC services/modalities recommendation rules and deep links
+- Documents/upload inclusion for V0
+- LifeScore detail page scope
 
-- Health Questionnaire does not appear before blood draw is booked.
-- Results can be viewed when results are back, even if the Health Questionnaire is incomplete.
-- LifeScore appears only when results are back and Health Questionnaire is complete.
+## Supabase Review Tools
 
-## Key Open Questions
+The prototype includes collaborative review tools for internal feedback:
 
-LifeForce positioning:
-
-- What is the approved copy for introducing LifeForce inside ULC?
-- How should the non-member/no-labs page merchandise LifeForce?
-- Is Your Longevity Journey / Powered by LifeForce still the preferred header?
-
-Non-member primary action:
-
-- Should non-member/no-labs primary CTA be Explore Membership, Schedule Blood Draw, or Book Longevity Assessment?
-- How important is Longevity Assessment for launch?
-
-One-off labs / labs-no-member:
-
-- What exactly can labs-no-member users do?
-- Do they receive LifeScore?
-- Do they receive recommendations?
-- Do they schedule a clinician visit?
-- Is this V0 or later?
-
-Health Questionnaire:
-
-- Should the questionnaire be hidden completely until blood draw is booked?
-- What should a completed state show if users cannot view answers?
-
-Blood draw booking:
-
-- What exact status can LifeForce receive after the draw is booked?
-- Can the prototype show dates and expected draw timing, or only "booked"?
-- What is the deep-link destination for manage booking?
-
-Supplements:
-
-- Are supplements purchasable in-app?
-- Are supplements in-store only?
-- Should supplement recommendations show before clinician visit?
-- If in-store only, should supplement recommendations wait until the in-center clinician visit?
-
-ULC service recommendations:
-
-- Which ULC services/modalities will be recommended?
-- Are any safe to recommend automatically from biomarker thresholds before clinician visit?
-- Which biomarkers map to which services?
-
-Rx recommendations:
-
-- Which Rx products should appear in the post-clinician care plan?
-- What is the correct CTA/deep link for purchase?
-
-Membership management:
-
-- Where exactly in the ULC app is clinical membership displayed or managed?
-- Should the LifeForce section link to it at all, or avoid it entirely?
-
-Future blood draws:
-
-- How will ULC lifecycle communications prompt next draw?
-- Can LifeForce ever know eligibility/cadence?
-- Should LifeForce show a future draw module, or only previous/in-progress draws?
-
-## Supabase Collaborative Comments
-
-Comments use Supabase table: prototype_comments
-
-Open Questions use Supabase table: prototype_open_questions
+- Comments are stored in Supabase table: prototype_comments
+- Open Questions are stored in Supabase table: prototype_open_questions
+- localStorage is used only to remember the last-entered reviewer initials/name
 
 Frontend environment variables:
 
 - VITE_SUPABASE_URL
 - VITE_SUPABASE_ANON_KEY
 
-Persistence rules:
-
-- Comments are stored in Supabase.
-- Open Questions are stored in Supabase.
-- localStorage is used only for the last-entered reviewer initials/name.
-
-Supported comment actions:
-
-- Add comment
-- Toggle Comment Mode for click-to-place pinned comments
-- Add general unpinned comment
-- View comments grouped by screen
-- View screen from comment
-- Resolve/unresolve
-- Delete
-- Export all comments
-- Drag pinned comment markers to update location
-
-Comment interaction rules:
-
-- Comment Mode off: prototype buttons, screen controls, and navigation work normally.
-- Comment Mode on: clicking a visible mobile screen places a temporary pin and opens the composer.
-- Canceling the composer removes the temporary pin.
-- Saving the composer persists the comment in Supabase and keeps the pin visible.
-- Add general comment attaches feedback to the active screen without x/y coordinates.
-
-Supported open question actions:
-
-- Add open question with initials/name, category, and text
-- View questions grouped by category
-- Filter by Open / Resolved / All
-- Resolve/unresolve
-- Confirmed delete
-- Seed the existing MVP open questions through the SQL setup with fixed IDs
-
 ## Changelog Process
 
-After each meaningful round of changes, update:
+After each meaningful prototype/design round, update:
 
 - CHANGELOG.md
 - The visible collapsed changelog at the bottom of the All Screens page
-- This spec, if product decisions or supported states change
+- This spec or the Labs tab screen states spec when state logic changes
+
+Audience note:
+
+- CHANGELOG.md and the visible page changelog should focus on design/prototype changes, not comment-tool or open-question-tool implementation details.

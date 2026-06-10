@@ -1,4 +1,43 @@
-# ULC x LifeForce Prototype Changelog
+# ULC x Lifeforce Prototype Changelog
+
+## v0.7 · V0 state simplification
+
+Date: June 09, 2026
+
+Summary:
+- Collapses the dashboard state model around blood draw and results status instead of member/non-member segmentation.
+- Replaces the earlier member/no-member/one-off-labs dashboard split with a universal No Labs Performed state for V0.
+- Keeps the no-labs screen minimal: orientation, Schedule Blood Draw, Book Longevity Assessment, and what unlocks after bloodwork.
+- Keeps Health Questionnaire gated until a blood draw is scheduled.
+- Allows results access when results are back while keeping LifeScore gated until Health Questionnaire is complete.
+- Adds Schedule Clinician Visit as a visible action when results are back.
+- Moves post-clinician recommendations to the top of the care plan state.
+- Splits recommendations into prescription recommendations, supplement recommendations, and ULC services/modalities.
+- Changes supplement recommendation language to available at your local ULC / Buy at ULC instead of in-app purchase language.
+- Adds Documents as a lower-priority utility section after recommendations, LifeScore, and lab reports.
+- De-emphasizes broad product browsing in favor of recommendation-driven actions.
+
+User states affected:
+- No Labs Performed
+- Blood Draw Scheduled / Not Completed
+- Labs Processing · Questionnaire Incomplete
+- Labs Processing · Questionnaire Complete
+- Results Back · Questionnaire Incomplete
+- Results Back · Questionnaire Complete
+- Post-Clinician Visit / Care Plan Active
+
+Known open questions:
+- Which ULC/Kite destinations can be deep-linked from the embedded Labs experience?
+- Can Lifeforce receive membership or one-off-lab purchase status?
+- What should one-off labs users see if status is unavailable?
+- Are supplements purchasable in-app, BOPUS, or in-center only?
+- Which ULC services/modalities can be recommended and deep-linked?
+- Should Documents/upload and LifeScore detail be included in V0?
+
+Risky changes or assumptions:
+- Member vs non-member differences are intentionally collapsed for V0 because status may not be available.
+- Prescription, supplement, and service recommendation examples are prototype placeholders pending ULC/Kite deep-link and catalog confirmation.
+- Supplement recommendations assume an in-center fallback until commerce support is clarified.
 
 ## v0.6 · Sticky CTA cleanup
 
@@ -28,7 +67,7 @@ Date: May 18, 2026
 Summary:
 - Simplifies the post-clinician visit / care plan active state.
 - Replaces repeated recommendation/product CTAs with one top-level care plan CTA and one prescription product CTA.
-- Changes the top care plan CTA to View Care Plan.
+- Adjusts the care plan hierarchy before the later v0.7 recommendation-led structure.
 - Replaces generic supplement examples with Estradiol Patch and Semaglutide in the post-clinician prescription recommendations module.
 - Moves prescription recommendations above LifeScore and Lab Reports.
 - Updates the labs/no-member card to use user-facing biomarker testing language and removes TBD chips from the mobile UI.
@@ -38,7 +77,7 @@ User states affected:
 - Post-clinician visit · Care plan active
 
 Known open questions:
-- Should post-clinician product CTA language be Add to Plan, Order Now, or Order Recommended Products?
+- Should post-clinician product CTA language use Subscribe, Order, Add to Cart, or View Details?
 - Which Rx products and prices are approved for prototype/demo use?
 - Where should product ordering deep-link in the main ULC app?
 
@@ -53,7 +92,7 @@ Date: May 18, 2026
 Summary:
 - Updates the prototype toward the May 15 MVP operational journey.
 - Adds labs/no-member and blood-draw-booked states.
-- Changes blood draw terminology from Book Blood Draw to Schedule Blood Draw.
+- Standardizes blood draw CTA terminology around Schedule Blood Draw.
 - Hides Health Questionnaire before blood draw is scheduled.
 - Splits labs processing into questionnaire incomplete and questionnaire complete states.
 - Allows results access when questionnaire is incomplete while gating LifeScore.
