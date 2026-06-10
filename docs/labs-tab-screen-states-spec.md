@@ -397,6 +397,6 @@ State logic:
 ### Internal LifeForce Questions
 
 - Should completed Health Questionnaire status remain visible after submission, or disappear once complete?
-- Should repeat lab cycles use Follow-up Questionnaire everywhere instead of Health Questionnaire?
+- Repeat lab flow: How should the Labs tab behave for users who already have prior labs/results and are now completing a follow-up blood draw? Should they continue to see prior LifeScore, lab history, documents, and recommendations while the new bloodwork is scheduled/processing? How should the Follow-up Questionnaire be presented?
 - Should the standalone recommendation support screens remain in the prototype as reference only, or be removed from the main review path?
 - What level of detail should the LifeScore detail screen include for V0?

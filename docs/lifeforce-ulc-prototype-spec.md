@@ -91,7 +91,7 @@ Open questions are tracked in the prototype UI and in the detailed Labs tab spec
 Critical question groups:
 
 - Questions for SprintFWD: deep linking/routing, membership status and language, prescription and supplement purchase flow, recommended services, product/service imagery, and blood draw/status data.
-- Internal LifeForce Questions: completed questionnaire status visibility, follow-up questionnaire naming, whether recommendation support screens remain reference-only, and LifeScore detail scope.
+- Internal LifeForce Questions: completed questionnaire status visibility, repeat-labs/follow-up questionnaire behavior, whether recommendation support screens remain reference-only, and LifeScore detail scope.
 
 ## Supabase Review Tools
 

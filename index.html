@@ -2762,7 +2762,7 @@
         ],
         [
           "Internal LifeForce Questions",
-          "Should repeat lab cycles use Follow-up Questionnaire everywhere instead of Health Questionnaire?",
+          "Repeat lab flow: How should the Labs tab behave for users who already have prior labs/results and are now completing a follow-up blood draw? Should they continue to see prior LifeScore, lab history, documents, and recommendations while the new bloodwork is scheduled/processing? How should the Follow-up Questionnaire be presented?",
         ],
         [
           "Internal LifeForce Questions",
@@ -2821,6 +2821,7 @@
         "Are supplements purchasable in-app or in-store only?",
         "Should supplement recommendations appear before clinician visit, or wait until post-visit care plan?",
         "Which ULC services can be recommended before clinician review, and which biomarkers trigger them?",
+        "Should repeat lab cycles use Follow-up Questionnaire everywhere instead of Health Questionnaire?",
       ]);
       let supabaseClient = null;
       let commentsLoading = false;
@@ -3158,6 +3159,12 @@
             ${note ? `<span class="variant-label-note">${escapeHtml(note)}</span>` : ""}
           </div>
         `;
+      }
+
+      function repeatLabsReviewerNote(v) {
+        return ["labs_processing_questionnaire_incomplete", "labs_processing_questionnaire_complete"].includes(v.journeyState)
+          ? "Reviewer note: Repeat-labs UX still needs review; users may have prior results/recommendations while a new follow-up draw processes."
+          : "";
       }
 
       function processRow() {
@@ -3905,7 +3912,7 @@
         return `
           <article class="variant ${annotations ? "with-cta-destinations" : ""}">
             <div class="variant-phone-column">
-              ${renderVariantLabel(v.label)}
+              ${renderVariantLabel(v.label, options.labelNote || "")}
               <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
                 ${statusBar()}
                 <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
@@ -5120,7 +5127,7 @@
       function renderPrototype() {
         renderInteractivePreview();
         showReviewerCtaDestinations = true;
-        document.getElementById("canvas").innerHTML = variants.map((variant) => renderVariant(variant)).join("");
+        document.getElementById("canvas").innerHTML = variants.map((variant) => renderVariant(variant, { labelNote: repeatLabsReviewerNote(variant) })).join("");
         document.getElementById("labsFlow").innerHTML = [
           labReportsListing(),
           labReportDetail(),
