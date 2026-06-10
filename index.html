@@ -1083,6 +1083,22 @@
         font-weight: 900;
       }
 
+      .detail-list {
+        margin: 12px 0 0;
+        padding-left: 22px;
+        color: var(--brown);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .detail-list li + li {
+        margin-top: 5px;
+      }
+
+      .detail-list strong {
+        font-weight: 850;
+      }
+
       .chip-row {
         display: flex;
         flex-wrap: wrap;
@@ -3647,12 +3663,16 @@
             </section>
             <section class="card module">
               <h3 class="module-title">What this means</h3>
-              <p class="module-copy">LDL cholesterol is one marker used to evaluate cardiovascular risk. Your clinician may consider diet, activity, supplements, and follow-up testing in context with the rest of your panel.</p>
-            </section>
-            <section class="card module">
-              <h3 class="module-title">Related education</h3>
-              <p class="module-copy">Learn how nutrition, movement, supplements, and follow-up testing can support cardiovascular goals.</p>
-              <button class="mini-cta outline">See all recommendations ${icon("arrow-right", 16)}</button>
+              <p class="module-copy">LDL cholesterol is one of the markers clinicians use to understand cardiovascular risk. LDL particles carry cholesterol through the bloodstream; when levels stay elevated, cholesterol-containing particles can contribute to plaque buildup in artery walls over time.</p>
+              <p class="module-copy">Your LDL Cholesterol result is above the target range for this panel. Your clinician will review it alongside related markers like ApoB, HDL, triglycerides, glucose, inflammation, blood pressure, family history, and your Health Questionnaire context.</p>
+              <p class="module-copy">Higher LDL can be influenced by:</p>
+              <ul class="detail-list">
+                <li><strong>Genetics or family history</strong></li>
+                <li><strong>Dietary patterns</strong>, especially saturated fat balance and fiber intake</li>
+                <li><strong>Insulin resistance or metabolic health changes</strong></li>
+                <li><strong>Thyroid, hormone, or inflammatory factors</strong></li>
+                <li><strong>Medication changes or recent weight shifts</strong></li>
+              </ul>
             </section>
           `,
           "biomarker-detail",
