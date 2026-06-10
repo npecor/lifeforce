@@ -25,7 +25,7 @@ This is the reviewer-facing summary of the prototype changes that matter to the 
 - Changed blood draw terminology to Schedule Blood Draw.
 - Hid Health Questionnaire from the unscheduled member no-labs state.
 - Split labs processing by questionnaire incomplete vs complete.
-- Removed next-draw-due logic and LifeForce membership management from dashboard states.
+- Removed next-draw-due logic and Lifeforce membership management from dashboard states.
 
 ## v0.2 · Pre-MVP state update snapshot
 

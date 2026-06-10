@@ -175,7 +175,7 @@ Summary:
 - Allows results access when questionnaire is incomplete while gating LifeScore.
 - Renames the post-clinician state to clarify when recommendations become active.
 - Removes next-draw-due logic from the production-facing state set.
-- Removes LifeForce membership management from dashboard states.
+- Removes Lifeforce membership management from dashboard states.
 
 User states affected:
 - Non-member · No labs
@@ -220,7 +220,7 @@ Known open questions:
 - Can one-off labs users receive LifeScore, recommendations, or clinician visits?
 - Are supplement recommendations purchasable in-app, in-store only, or deferred until after clinician review?
 - Which ULC services can be recommended before a clinician visit?
-- What blood draw booking status/date data can LifeForce receive from ULC/Kite?
+- What blood draw booking status/date data can Lifeforce receive from ULC/Kite?
 
 Risky changes or assumptions:
 - This entry intentionally does not rework the operational state model yet.

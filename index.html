@@ -371,11 +371,11 @@
 
       .cta-destination-panel {
         display: grid;
-        gap: 10px;
+        gap: 8px;
         margin-top: 46px;
-        padding: 12px;
+        padding: 10px;
         border: 1px solid rgba(214, 209, 202, 0.9);
-        border-radius: 18px;
+        border-radius: 16px;
         background: rgba(255, 255, 255, 0.54);
         color: var(--muted);
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
@@ -390,22 +390,15 @@
         text-transform: uppercase;
       }
 
-      .cta-destination-note {
-        margin: -4px 0 0;
-        font-size: 10px;
-        font-weight: 750;
-        line-height: 1.3;
-      }
-
       .cta-destination-list {
         display: grid;
-        gap: 9px;
+        gap: 7px;
       }
 
       .cta-destination-item {
         display: grid;
-        gap: 3px;
-        padding-top: 8px;
+        gap: 2px;
+        padding-top: 7px;
         border-top: 1px solid rgba(214, 209, 202, 0.7);
       }
 
@@ -416,13 +409,13 @@
 
       .cta-destination-label {
         color: var(--ink);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 900;
         line-height: 1.2;
       }
 
       .cta-destination-route {
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 750;
         line-height: 1.25;
       }
@@ -439,6 +432,41 @@
         letter-spacing: 0.02em;
       }
 
+      .cta-legend {
+        display: grid;
+        gap: 8px;
+        max-width: 1600px;
+        margin: 0 auto 22px;
+        padding: 12px 14px;
+        border: 1px solid rgba(214, 209, 202, 0.9);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--muted);
+      }
+
+      .cta-legend-title {
+        margin: 0;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .cta-legend-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        margin: 0;
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.3;
+      }
+
+      .cta-legend-list span {
+        white-space: nowrap;
+      }
+
       .cta-status.needs-ashley {
         background: rgba(200, 148, 30, 0.14);
         color: #9a6a12;
@@ -449,7 +477,7 @@
         color: var(--muted);
       }
 
-      .cta-status.informational-only {
+      .cta-status.informational {
         background: rgba(47, 95, 88, 0.1);
         color: #2f5f58;
       }
@@ -1401,6 +1429,27 @@
         border-top: 0;
       }
 
+      .rec-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 7px;
+      }
+
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: rgba(77, 143, 69, 0.09);
+        color: var(--green);
+        font-size: 10px;
+        font-weight: 850;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
       .purchase-actions {
         display: grid;
         grid-template-columns: 1fr;
@@ -1471,6 +1520,19 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 10px;
+      }
+
+      .report-date-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: baseline;
+      }
+
+      .report-meta {
+        color: var(--soft);
+        font-size: 12px;
+        font-weight: 850;
       }
 
       .review-status {
@@ -2272,6 +2334,15 @@
 
       <section class="view-panel" id="allScreensView">
         <div class="at-glance-label">All states at a glance</div>
+        <section class="cta-legend" aria-label="CTA destination legend">
+          <h2 class="cta-legend-title">CTA Destination Legend</h2>
+          <p class="cta-legend-list">
+            <span><strong>Lifeforce-owned</strong> = destination exists in Lifeforce / this prototype</span>
+            <span><strong>Needs Ashley</strong> = requires ULC/Kite deep-link or API confirmation</span>
+            <span><strong>TBD</strong> = product/flow decision unresolved</span>
+            <span><strong>Informational</strong> = no tap action</span>
+          </p>
+        </section>
         <section class="canvas" id="canvas" aria-label="Lifeforce dashboard states"></section>
 
         <section class="hero" style="margin-top: 44px">
@@ -2282,11 +2353,11 @@
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
         <section class="hero" style="margin-top: 44px">
-          <p class="eyebrow">Recommendations Flow</p>
-          <h1>Recommendations</h1>
+          <p class="eyebrow">Recommendation Support Screens</p>
+          <h1>Details + Ordering</h1>
         </section>
 
-        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations flow"></section>
+        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendation support screens"></section>
 
         <section class="state-board" aria-label="Reusable Health Questionnaire states">
           <h2>Reusable Health Questionnaire States</h2>
@@ -2378,7 +2449,7 @@
             <li>Changed blood draw terminology to Schedule Blood Draw.</li>
             <li>Hid Health Questionnaire from the unscheduled member no-labs state.</li>
             <li>Split labs processing by questionnaire incomplete vs complete.</li>
-            <li>Removed next-draw-due logic and LifeForce membership management from dashboard states.</li>
+            <li>Removed next-draw-due logic and Lifeforce membership management from dashboard states.</li>
           </ul>
           <h3>v0.2 · Pre-MVP state update snapshot</h3>
           <ul>
@@ -2841,10 +2912,8 @@
         "biomarker-detail": "Biomarker Detail",
         "lifescore-detail": "LifeScore Detail",
         documents: "Documents",
-        recommendations: "Recommendations / Products · Needs Further Review",
         "product-detail": "Product Detail",
         "review-order": "Review Order",
-        "recommendations-locked": "Recommendations Locked",
       };
 
       const flowArrivalNotes = {
@@ -2853,90 +2922,76 @@
         "biomarker-detail": "Arrives from: tapping a biomarker row inside Lab Report Detail.",
         "lifescore-detail": "Arrives from: View LifeScore on the LifeScore module.",
         documents: "Arrives from: View Documents on results or post-clinician dashboard screens.",
-        recommendations: "Needs further review: separate recommendations/products page may be unnecessary if dashboard recommendations are complete.",
         "product-detail": "Arrives from: selecting a prescription recommendation.",
         "review-order": "Arrives from: Buy on a prescription detail or recommendation.",
-        "recommendations-locked": "Arrives from: opening Recommendations before clinical review is complete.",
       };
 
       const ctaDestinationAnnotations = {
         "dashboard-non-member-no-labs": [
-          ["Schedule Blood Draw", "Best guess: ULC/Kite blood draw booking flow", "Needs Ashley"],
-          ["Book Assessment", "Best guess: ULC Longevity Assessment booking flow", "Needs Ashley"],
+          ["Schedule Blood Draw", "ULC/Kite blood draw booking flow", "Needs Ashley"],
+          ["Book Assessment", "ULC Longevity Assessment booking flow", "Needs Ashley"],
         ],
         "dashboard-member-blood-draw-booked": [
-          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
-          ["Manage Booking", "Best guess: ULC/Kite booking detail", "Needs Ashley"],
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
+          ["Manage Booking", "ULC/Kite booking detail", "Needs Ashley"],
         ],
         "dashboard-member-labs-processing-questionnaire-incomplete": [
-          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
         ],
         "dashboard-member-labs-processing-questionnaire-complete": [
-          ["No major CTA", "Quiet processing status; no user action required", "Informational only"],
+          ["No major CTA", "Quiet processing status; no user action required", "Informational"],
         ],
         "dashboard-member-results-questionnaire-incomplete": [
-          ["Schedule Clinician Visit", "Best guess: scheduling destination TBD", "Needs Ashley"],
-          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
-          ["View Results", "Lab Report Detail", "LifeForce-owned"],
-          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
-          ["View Documents", "Documents screen", "LifeForce-owned"],
+          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
+          ["View Results", "Lab Report Detail", "Lifeforce-owned"],
+          ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
+          ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
         "dashboard-member-results-questionnaire-complete": [
-          ["Schedule Clinician Visit", "Best guess: scheduling destination TBD", "Needs Ashley"],
-          ["View Results", "Lab Report Detail", "LifeForce-owned"],
-          ["View LifeScore", "LifeScore Detail", "LifeForce-owned"],
-          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
-          ["View Documents", "Documents screen", "LifeForce-owned"],
+          ["Schedule Clinician Visit", "scheduling destination TBD", "Needs Ashley"],
+          ["View Results", "Lab Report Detail", "Lifeforce-owned"],
+          ["View LifeScore", "LifeScore Detail", "Lifeforce-owned"],
+          ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
+          ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
         "dashboard-member-care-plan-active": [
-          ["Buy", "Best guess: prescription product detail/cart/checkout", "Needs Ashley"],
-          ["Available at ULC", "No tap action; informational supplement availability callout", "Informational only"],
-          ["Book", "Best guess: ULC service booking flow", "Needs Ashley"],
-          ["View LifeScore", "LifeScore Detail", "LifeForce-owned"],
-          ["View Results", "Lab Report Detail", "LifeForce-owned"],
-          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
-          ["View Documents", "Documents screen", "LifeForce-owned"],
+          ["Buy", "prescription product detail/cart/checkout", "Needs Ashley"],
+          ["Available at ULC", "No tap action; informational supplement availability callout", "Informational"],
+          ["Book", "ULC service booking flow", "Needs Ashley"],
+          ["View LifeScore", "LifeScore Detail", "Lifeforce-owned"],
+          ["View Results", "Lab Report Detail", "Lifeforce-owned"],
+          ["View Lab History", "Lab Reports List", "Lifeforce-owned"],
+          ["View Documents", "Documents screen", "Lifeforce-owned"],
         ],
         "lab-reports-list": [
           ["Plus icon", "Potential add/upload or lab scheduling action", "TBD"],
-          ["Report cards", "Lab Report Detail", "LifeForce-owned"],
-          ["Filter chips", "Filter lab reports by status/category", "LifeForce-owned"],
+          ["Report cards", "Lab Report Detail", "Lifeforce-owned"],
         ],
         "lab-report-detail": [
-          ["Back", "Return to previous dashboard or lab reports list", "LifeForce-owned"],
-          ["Read full note", "Expanded clinician note/write-up", "LifeForce-owned"],
-          ["See all biomarkers", "Biomarker list on current lab report", "LifeForce-owned"],
-          ["Biomarker rows", "Biomarker detail screen", "LifeForce-owned"],
+          ["Back", "Return to previous dashboard or lab reports list", "Lifeforce-owned"],
+          ["Read full note", "Expanded clinician note/write-up", "Lifeforce-owned"],
+          ["See all biomarkers", "Biomarker list on current lab report", "Lifeforce-owned"],
+          ["Biomarker rows", "Biomarker detail screen", "Lifeforce-owned"],
         ],
         "biomarker-detail": [
-          ["Back", "Return to lab report detail", "LifeForce-owned"],
-          ["Discuss", "Best guess: clinician visit discussion topic; destination unresolved", "TBD"],
-          ["Book", "Best guess: ULC service booking flow", "Needs Ashley"],
+          ["Back", "Return to lab report detail", "Lifeforce-owned"],
         ],
         "lifescore-detail": [
-          ["Back", "Return to dashboard LifeScore module", "LifeForce-owned"],
-          ["Learn how LifeScore is calculated", "LifeScore methodology or education detail", "LifeForce-owned"],
+          ["Back", "Return to dashboard LifeScore module", "Lifeforce-owned"],
         ],
         documents: [
-          ["Download", "Download selected document or PDF", "LifeForce-owned"],
+          ["Download", "Download selected document or PDF", "Lifeforce-owned"],
           ["Upload", "Upload requested documents", "TBD"],
         ],
-        recommendations: [
-          ["Buy", "Best guess: prescription product detail/cart/checkout if this page remains", "Needs Ashley"],
-          ["Available at ULC", "No tap action; informational supplement availability callout", "Informational only"],
-          ["Book", "Best guess: ULC service booking flow if this page remains", "Needs Ashley"],
-        ],
         "product-detail": [
-          ["Back", "Return to recommendation source", "LifeForce-owned"],
-          ["Buy", "Best guess: prescription product detail/cart/checkout", "Needs Ashley"],
+          ["Back", "Return to recommendation source", "Lifeforce-owned"],
+          ["Buy", "prescription product detail/cart/checkout", "Needs Ashley"],
         ],
         "review-order": [
-          ["Back", "Return to prescription detail", "LifeForce-owned"],
-          ["Place Order", "Best guess: ULC/Kite prescription checkout/order placement", "Needs Ashley"],
-          ["Back to Recommendations", "Return to recommendation source; broader recommendations page remains under review", "TBD"],
-        ],
-        "recommendations-locked": [
-          ["Schedule Blood Draw", "Best guess: ULC/Kite blood draw booking flow", "Needs Ashley"],
+          ["Back", "Return to prescription detail", "Lifeforce-owned"],
+          ["Place Order", "ULC/Kite prescription checkout/order placement", "Needs Ashley"],
+          ["Back to Recommendations", "Return to recommendation source on Labs home", "Lifeforce-owned"],
         ],
       };
 
@@ -2950,7 +3005,6 @@
         return `
           <aside class="cta-destination-panel" aria-label="CTA destinations for ${escapeHtml(screenId)}">
             <h3>CTA Destinations</h3>
-            <p class="cta-destination-note">Best-guess routing assumptions for review. Unconfirmed ULC/Kite links are marked Needs Ashley.</p>
             <div class="cta-destination-list">
               ${annotations
                 .map(
@@ -2973,6 +3027,18 @@
           <div class="variant-label">
             <span>${escapeHtml(label)}</span>
             ${note ? `<span class="variant-label-note">${escapeHtml(note)}</span>` : ""}
+          </div>
+        `;
+      }
+
+      function processRow() {
+        return `
+          <div class="process">
+            <div class="step">${icon("test-tube-2", 15)}<br />Measure</div>
+            <span class="arrow">${icon("arrow-right", 15)}</span>
+            <div class="step">${icon("clipboard-check", 15)}<br />Review</div>
+            <span class="arrow">${icon("arrow-right", 15)}</span>
+            <div class="step">${icon("sparkles", 15)}<br />Personalize</div>
           </div>
         `;
       }
@@ -3107,13 +3173,7 @@
           <section class="card module context ${v.compactContext ? "compact" : ""} ${early ? "early-context" : ""}">
             <h3 class="module-title">${v.introTitle || "How Lifeforce works inside ULC"}</h3>
             <p class="module-copy">${v.context}</p>
-            <div class="process">
-              <div class="step">${icon("test-tube-2", 15)}<br />Measure</div>
-              <span class="arrow">${icon("arrow-right", 15)}</span>
-              <div class="step">${icon("clipboard-check", 15)}<br />Review</div>
-              <span class="arrow">${icon("arrow-right", 15)}</span>
-              <div class="step">${icon("sparkles", 15)}<br />Personalize</div>
-            </div>
+            ${early ? "" : processRow()}
           </section>
         `;
       }
@@ -3140,6 +3200,33 @@
                     </div>
                   `;
                 })
+                .join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function resultsVisitPrepTimeline() {
+        const steps = [
+          ["complete", "Results are back"],
+          ["current", "Schedule your clinician visit"],
+          ["", "Complete your Health Questionnaire before the visit"],
+          ["", "Meet with a clinician"],
+          ["", "Get recommendations"],
+        ];
+        return `
+          <section class="card journey-timeline">
+            <h3 class="module-title">What happens next</h3>
+            <div class="journey-steps">
+              ${steps
+                .map(
+                  ([stateClass, step], index) => `
+                    <div class="journey-step ${stateClass}">
+                      <span class="journey-step-marker">${stateClass === "complete" ? icon("check", 13) : index + 1}</span>
+                      <span>${step}</span>
+                    </div>
+                  `,
+                )
                 .join("")}
             </div>
           </section>
@@ -3260,7 +3347,7 @@
             <h3 class="module-title">Schedule your clinician visit</h3>
             <p class="module-copy">${
               questionnaireIncomplete
-                ? "Your clinician visit can be scheduled now. Completing your Health Questionnaire first helps your clinician prepare."
+                ? "Your results are back. Meet with a clinician to review your labs and next steps."
                 : "Review your LifeScore, latest results, and next steps with a clinician."
             }</p>
             <button class="cta ${subtleCta ? "ghost" : ""}">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
@@ -3463,22 +3550,6 @@
         `;
       }
 
-      function recommendationsLockedCard(v) {
-        const lockedCopy = v.member
-          ? "Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Health Questionnaire."
-          : "Join Lifeforce to unlock clinician-reviewed recommendations based on your lab results and Health Questionnaire.";
-        return `
-          <section class="card module membership">
-            <div class="card-head">
-              <h3 class="module-title">Recommendations locked</h3>
-              <span class="status-pill gray">${icon("lock", 13)} Locked</span>
-            </div>
-            <p class="module-copy">${lockedCopy}</p>
-            <button class="cta">${v.member ? "Check Review Status" : "Explore Membership"}</button>
-          </section>
-        `;
-      }
-
       function documentCard() {
         return `
           <section class="card module">
@@ -3600,10 +3671,9 @@
           <section class="card recommendation">
             <div class="card-head">
               <div>
-                <h3 class="module-title">Your clinician's note & recommendations are ready.</h3>
-                <p class="module-copy">Review your prescriptions, supplements, and recommended ULC services.</p>
+                <h3 class="module-title">Your clinician’s note and recommendations are ready</h3>
+                <p class="module-copy">Review your prescriptions, supplements, and recommended ULC services based on your lab results and clinician visit.</p>
               </div>
-              <span class="status-pill">Post-visit</span>
             </div>
             <div class="section-title"><span>Prescription Recommendations</span></div>
             <div class="rec-row">
@@ -3612,7 +3682,7 @@
                 <h4 class="row-title">Estradiol Patch</h4>
                 <p class="row-copy">Hormone support · $110/mo</p>
                 <p class="row-copy">Recommended after your clinician reviewed your symptoms and lab results.</p>
-                <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
+                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Buy</button>
             </div>
@@ -3622,7 +3692,7 @@
                 <h4 class="row-title">Semaglutide</h4>
                 <p class="row-copy">Metabolic support · $270/mo</p>
                 <p class="row-copy">Recommended after your clinician reviewed your metabolic markers and goals.</p>
-                <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
+                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Buy</button>
             </div>
@@ -3703,10 +3773,10 @@
 
         if (state === "results_questionnaire_incomplete") {
           return `
-            ${actionModule(v)}
+            ${clinicianVisitPrompt({ questionnaireIncomplete: true })}
+            ${actionModule({ ...v, actionCopy: "Complete your questionnaire before your visit so your clinician has the context they need." }, { subtleCta: true })}
             ${labReportsHub(v)}
-            ${clinicianVisitPrompt({ questionnaireIncomplete: true, subtleCta: true })}
-            ${journeyTimeline(1)}
+            ${resultsVisitPrepTimeline()}
             ${documentCard()}
           `;
         }
@@ -3814,10 +3884,13 @@
           <section class="card report-list-card">
             <div class="report-top">
               <div>
-                <h3 class="module-title">${date}</h3>
+                <div class="report-date-line">
+                  <h3 class="module-title">${date}</h3>
+                  ${latest ? `<span class="report-meta">· Latest</span>` : ""}
+                </div>
                 <p class="module-copy">Lifeforce Blood Panel</p>
               </div>
-              ${latest ? `<span class="status-pill">Latest</span>` : icon("chevron-right", 20)}
+              ${latest ? "" : icon("chevron-right", 20)}
             </div>
             <div class="chip-row">
               <span class="chip green">${counts[0]} Optimal</span>
@@ -3834,12 +3907,6 @@
           "08 · Lab reports listing",
           `
             ${titleBar("Lab Reports", "Lifeforce Blood Panels", "plus")}
-            <div class="filter-bar">
-              <span class="chip active">All</span>
-              <span class="chip">Needs Attention</span>
-              <span class="chip">Optimal</span>
-              <span class="chip">By Category</span>
-            </div>
             ${reportCard({ date: "Jun 9, 2026", latest: true, counts: [12, 5, 2], status: "Reviewed" })}
             ${reportCard({ date: "Apr 14, 2026", counts: [10, 4, 1], status: "Reviewed" })}
             ${reportCard({ date: "Mar 12, 2026", counts: [9, 6, 2], status: "Reviewed" })}
@@ -3894,7 +3961,7 @@
         return phoneScreen(
           "09 · Lab report detail",
           `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("LifeForce Lab Results", "June 9, 2026").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
+            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Lifeforce Lab Results", "June 9, 2026").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
               <h3 class="module-title">Clinician Summary</h3>
               <div class="lab-head" style="margin-bottom:12px">
@@ -3941,30 +4008,7 @@
               ${rangeBar(b)}
               <p class="module-copy">Optimal range: &lt; 100 mg/dL</p>
             </section>
-            <section class="card recommendation">
-              <div class="card-head">
-                <h3 class="module-title">Recommended next steps</h3>
-                <span class="status-pill">Based on LDL</span>
-              </div>
-              <div class="rec-row">
-                <span class="icon-bubble">${icon("heart-pulse", 18)}</span>
-                <div>
-                <h4 class="row-title">Omega-3 Protocol</h4>
-                <p class="row-copy">Supports cardiovascular optimization.</p>
-                <div class="chip-row"><span class="chip gold">Based on LDL</span><span class="chip green">Clinician-reviewed</span></div>
-              </div>
-                <button class="mini-cta outline">Discuss</button>
-              </div>
-              <div class="rec-row">
-                <span class="icon-bubble green">${icon("calendar-plus", 18)}</span>
-                <div>
-                  <h4 class="row-title">Metabolic Health Consult</h4>
-                  <p class="row-copy">Review LDL and glucose trends.</p>
-                  <div class="chip-row"><span class="chip">Supports metabolic health</span></div>
-                </div>
-                <button class="mini-cta outline">Book</button>
-              </div>
-            </section>
+            <div class="note">${icon("stethoscope", 16)}<span>Your clinician may discuss this marker during your results review.</span></div>
             <section class="card module">
               <h3 class="module-title">History over time</h3>
               <div class="history-row"><span class="dot" style="background:#d94b35"></span><p class="row-copy">May 2, 2026</p><strong>168</strong></div>
@@ -4077,24 +4121,9 @@
         );
       }
 
-      function recommendationsPage() {
-        return phoneScreen(
-          "13 · Recommendations / Products · Needs Further Review",
-          `
-            ${titleBar("Recommendations / Products", "Needs further review · may be removed if dashboard recommendations stay complete.", "sparkles")}
-            <section class="card module membership">
-              <h3 class="module-title">Standalone page under review</h3>
-              <p class="module-copy">The post-clinician Labs home screen now shows the full recommendation set directly. Keep this page only if a future detail flow needs more space for rationale, related biomarkers, or product/service deep links.</p>
-            </section>
-            ${clinicianRecommendations()}
-          `,
-          "recommendations",
-        );
-      }
-
       function productDetailPage() {
         return phoneScreen(
-          "14 · Prescription detail · Needs review",
+          "13 · Prescription detail · Needs review",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Prescription Detail", "Estradiol Patch").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card shop-card">
@@ -4134,7 +4163,7 @@
 
       function orderReviewPage() {
         return phoneScreen(
-          "15 · Review order · Needs review",
+          "14 · Review order · Needs review",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Order", "Prescription subscription").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
@@ -4167,25 +4196,6 @@
               <button class="cta ghost">Back to Recommendations</button>
             </section>
           `,
-        );
-      }
-
-      function recommendationsLocked() {
-        return phoneScreen(
-          "16 · Recommendations locked · Needs review",
-          `
-            ${titleBar("Your Recommendations", "Pending clinical review", "lock")}
-            <section class="card empty-state membership">
-              <div>
-                <span class="icon-bubble">${icon("lock", 30)}</span>
-                <h3 class="module-title">Recommendations pending</h3>
-                <p class="module-copy">Your recommendations will appear after Lifeforce completes clinical review of your bloodwork and Health Questionnaire.</p>
-                <div class="chip-row" style="justify-content:center"><span class="chip">Bloodwork needed</span><span class="chip">Questionnaire needed</span><span class="chip">Review pending</span></div>
-                <button class="cta">Schedule Blood Draw</button>
-              </div>
-            </section>
-          `,
-          "recommendations-locked",
         );
       }
 
@@ -4931,10 +4941,8 @@
           documentsPage(),
         ].join("");
         document.getElementById("productFlow").innerHTML = [
-          recommendationsPage(),
           productDetailPage(),
           orderReviewPage(),
-          recommendationsLocked(),
         ].join("");
         showReviewerCtaDestinations = false;
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)

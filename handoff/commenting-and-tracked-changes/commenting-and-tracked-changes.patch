@@ -17,10 +17,10 @@ index d7af8f1..944525b 100644
 --- a/README.md
 +++ b/README.md
 @@ -1,5 +1,14 @@
--# ULC x LifeForce Prototype
+-# ULC x Lifeforce Prototype
 +# ULC x Lifeforce Prototype
  
--Static coded prototype for the LifeForce experience inside the Ultimate Longevity Center mobile app.
+-Static coded prototype for the Lifeforce experience inside the Ultimate Longevity Center mobile app.
 +Static coded prototype for the Lifeforce experience inside the Ultimate Longevity Center mobile app.
  
  Open `index.html` directly or deploy the folder as a static site.
@@ -1140,7 +1140,7 @@ index 0000000..126ac13
 --- /dev/null
 +++ b/CHANGELOG.md
 @@ -0,0 +1,26 @@
-+# ULC x LifeForce Prototype Changelog
++# ULC x Lifeforce Prototype Changelog
 +
 +## v0.2 · Pre-MVP state update snapshot
 +
@@ -1161,7 +1161,7 @@ index 0000000..126ac13
 +- Can one-off labs users receive LifeScore, recommendations, or clinician visits?
 +- Are supplement recommendations purchasable in-app, in-store only, or deferred until after clinician review?
 +- Which ULC services can be recommended before a clinician visit?
-+- What blood draw booking status/date data can LifeForce receive from ULC/Kite?
++- What blood draw booking status/date data can Lifeforce receive from ULC/Kite?
 +
 +Risky changes or assumptions:
 +- This entry intentionally does not rework the operational state model yet.
@@ -1172,11 +1172,11 @@ index 0000000..8ad8c35
 --- /dev/null
 +++ b/docs/lifeforce-ulc-prototype-spec.md
 @@ -0,0 +1,170 @@
-+# ULC x LifeForce Prototype Spec
++# ULC x Lifeforce Prototype Spec
 +
 +## Purpose
 +
-+This coded prototype explores how the LifeForce experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of state-based dashboard logic, lab reports, result detail, recommendations, products, and collaborative feedback.
++This coded prototype explores how the Lifeforce experience can live inside the Ultimate Longevity Center mobile app. It is intended for stakeholder review of state-based dashboard logic, lab reports, result detail, recommendations, products, and collaborative feedback.
 +
 +This file records the current pre-MVP baseline before the May 15 meeting-driven state model rework.
 +
@@ -1216,7 +1216,7 @@ index 0000000..8ad8c35
 +
 +## Current Product Decisions
 +
-+- The LifeForce area is framed as a broader ULC longevity journey rather than only a Labs tab.
++- The Lifeforce area is framed as a broader ULC longevity journey rather than only a Labs tab.
 +- The bottom nav remains ULC-native: Home, Book, Schedule, Labs, Account.
 +- The prototype includes collaborative comments through Supabase.
 +- Comments are shared across users/devices and do not require login.
@@ -1225,7 +1225,7 @@ index 0000000..8ad8c35
 +
 +## May 15 MVP Direction To Apply Next
 +
-+The next round of design changes should simplify the LifeForce section around the operational journey:
++The next round of design changes should simplify the Lifeforce section around the operational journey:
 +
 +Orient -> Schedule blood draw -> Complete Health Questionnaire -> View results -> Schedule clinician visit -> Review recommendations / care plan
 +
@@ -1247,16 +1247,16 @@ index 0000000..8ad8c35
 +- Questionnaire update required
 +- Questionnaire update recommended
 +- View questionnaire answers
-+- Membership management inside the embedded LifeForce view
++- Membership management inside the embedded Lifeforce view
 +- Future blood draw cadence / eligibility logic
 +
 +## Key Open Questions
 +
-+LifeForce positioning:
++Lifeforce positioning:
 +
-+- What is the approved copy for introducing LifeForce inside ULC?
-+- How should the non-member/no-labs page merchandise LifeForce?
-+- Is Your Longevity Journey / Powered by LifeForce still the preferred header?
++- What is the approved copy for introducing Lifeforce inside ULC?
++- How should the non-member/no-labs page merchandise Lifeforce?
++- Is Your Longevity Journey / Powered by Lifeforce still the preferred header?
 +
 +Non-member primary action:
 +
@@ -1278,7 +1278,7 @@ index 0000000..8ad8c35
 +
 +Blood draw booking:
 +
-+- What exact status can LifeForce receive after the draw is booked?
++- What exact status can Lifeforce receive after the draw is booked?
 +- Can the prototype show dates and expected draw timing, or only "booked"?
 +- What is the deep-link destination for manage booking?
 +
@@ -1303,13 +1303,13 @@ index 0000000..8ad8c35
 +Membership management:
 +
 +- Where exactly in the ULC app is clinical membership displayed or managed?
-+- Should the LifeForce section link to it at all, or avoid it entirely?
++- Should the Lifeforce section link to it at all, or avoid it entirely?
 +
 +Future blood draws:
 +
 +- How will ULC lifecycle communications prompt next draw?
-+- Can LifeForce ever know eligibility/cadence?
-+- Should LifeForce show a future draw module, or only previous/in-progress draws?
++- Can Lifeforce ever know eligibility/cadence?
++- Should Lifeforce show a future draw module, or only previous/in-progress draws?
 +
 +## Supabase Collaborative Comments
 +
@@ -1454,7 +1454,7 @@ index 05304b4..76d0526 100644
 +            <li>Add labs/no-member or one-off labs state.</li>
 +            <li>Revise Health Questionnaire logic.</li>
 +            <li>Remove unsupported questionnaire states.</li>
-+            <li>Remove membership management from LifeForce embedded view.</li>
++            <li>Remove membership management from Lifeforce embedded view.</li>
 +            <li>Add LifeScore gating logic.</li>
 +            <li>Revisit recommendations and product purchase flow.</li>
 +          </ul>
@@ -1482,7 +1482,7 @@ index 9376cbf..439bdbd 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
 @@ -1,5 +1,29 @@
- # ULC x LifeForce Prototype Changelog
+ # ULC x Lifeforce Prototype Changelog
  
 +## v0.5 · Comment mode refinement
 +
@@ -2259,7 +2259,7 @@ index 734c5fa..520423f 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
 @@ -1,5 +1,28 @@
- # ULC x LifeForce Prototype Changelog
+ # ULC x Lifeforce Prototype Changelog
  
 +## v0.7 · Collaborative open questions
 +
@@ -3175,7 +3175,7 @@ index 520423f..d5d72bb 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
 @@ -1,28 +1,5 @@
- # ULC x LifeForce Prototype Changelog
+ # ULC x Lifeforce Prototype Changelog
  
 -## v0.7 · Collaborative open questions
 -
