@@ -3298,12 +3298,16 @@
         if (state === "blood_draw_booked") {
           return `
             ${bloodDrawBookedCard()}
+            ${longevityAssessmentCard()}
+            ${unlockCard()}
           `;
         }
 
         if (state === "labs_processing_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
+            ${longevityAssessmentCard()}
+            ${unlockCard()}
           `;
         }
 
@@ -3311,6 +3315,8 @@
           return `
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
+            ${longevityAssessmentCard()}
+            ${unlockCard()}
           `;
         }
 
