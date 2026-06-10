@@ -952,6 +952,21 @@
         font-weight: 800;
       }
 
+      .center-link {
+        display: block;
+        width: fit-content;
+        margin: 10px auto 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 850;
+        text-align: center;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
       .products {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -3075,7 +3090,7 @@
               <div class="metric attention"><strong>2</strong><span>Attention</span></div>
             </div>
             <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
-            <button class="mini-cta outline">View Lab History</button>
+            <button class="link center-link">View Lab History</button>
           </section>
         `;
       }
@@ -3144,7 +3159,7 @@
               <div class="metric attention"><strong>2</strong><span>Attention</span></div>
             </div>
             <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
-            <button class="mini-cta outline">View Lab History</button>
+            <button class="link center-link">View Lab History</button>
           </section>
           <div class="note">${icon("clock-3", 17)}<span>Your previous labs may need to be refreshed before new recommendations are finalized.</span></div>
         `;
