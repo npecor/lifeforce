@@ -24,7 +24,7 @@ Current design direction:
 - Allow View Results when results are back even if Health Questionnaire is incomplete.
 - Show LifeScore only when results are back and Health Questionnaire is complete.
 - Make Schedule Clinician Visit the primary post-results action.
-- Treat post-clinician recommendations as the active care plan.
+- Treat the post-clinician screen as clinician recommendations and next steps, not a confirmed care-plan object.
 - Split post-clinician recommendations into prescriptions, supplements, and recommended ULC services.
 - Make LifeScore cards more substantive with Quality of Life, Longevity Risk, and Biological Age.
 - Add dedicated LifeScore and Documents screens.
@@ -38,7 +38,7 @@ Current design direction:
 4. Labs Processing · Questionnaire Complete
 5. Results Back · Questionnaire Incomplete
 6. Results Back · Questionnaire Complete
-7. Post-Clinician Visit / Care Plan Active
+7. Post-Clinician Visit / Recommendations Active
 
 ## Supporting Screens
 
@@ -47,7 +47,7 @@ Current design direction:
 - Biomarker detail
 - LifeScore detail
 - Documents
-- Recommendations / Products · Needs review
+- Clinician Recommendations · Needs review
 - Prescription detail · Needs review
 - Review order · Needs review
 - Recommendations locked · Needs review
@@ -63,7 +63,7 @@ Current design direction:
 - LifeScore is gated behind results back plus Health Questionnaire complete.
 - The post-clinician state should prioritize recommendations at the top.
 - Prescription recommendations use Buy in the prototype while product/detail/cart/checkout deep links are reviewed.
-- Supplement recommendations should use in-center language unless in-app purchase or BOPUS is confirmed.
+- Supplement recommendations should use Available at ULC language unless in-app purchase or BOPUS is confirmed.
 - ULC services/modalities should use Book CTAs and deep link into service booking if supported.
 - Documents are lower-priority utility content and should not compete with recommendations, LifeScore, or lab reports.
 - Follow-up Health Questionnaire is captured as a reusable future/returning-user state for repeat blood draws.
@@ -94,6 +94,7 @@ Critical question groups:
 - Membership or one-off-lab status availability
 - One-off labs entitlements
 - Prescription commerce flow and CTA language
+- Whether ULC/Lifeforce has a formal Care Plan concept/object or should use clinician recommendations and next steps language
 - Supplement purchase path: in-app, BOPUS, or in-center only
 - ULC services/modalities recommendation rules and deep links
 - Documents/upload inclusion for V0

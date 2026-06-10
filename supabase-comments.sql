@@ -121,12 +121,12 @@ values
   ('00000000-0000-4000-8000-000000000009', 'ulc-lifeforce', 'Membership / state logic', 'ULC', 'Should no-labs member and no-labs non-member use the same V0 screen?'),
   ('00000000-0000-4000-8000-000000000010', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'What will the supplement buying process look like near-term?'),
   ('00000000-0000-4000-8000-000000000011', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'Are supplements purchasable in-app, BOPUS, or in-store only?'),
-  ('00000000-0000-4000-8000-000000000012', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'Should supplements display as Buy at ULC?'),
+  ('00000000-0000-4000-8000-000000000012', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'Should supplements display as Available at ULC?'),
   ('00000000-0000-4000-8000-000000000013', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'Should recommended supplements appear pre-clinician, post-clinician only, or both?'),
   ('00000000-0000-4000-8000-000000000014', 'ulc-lifeforce', 'Products / supplements', 'ULC', 'Which Lifeforce supplements should be recommended vs ULC-owned SKUs?'),
   ('00000000-0000-4000-8000-000000000015', 'ulc-lifeforce', 'Services / modalities', 'ULC', 'Which ULC services can be recommended?'),
   ('00000000-0000-4000-8000-000000000016', 'ulc-lifeforce', 'Services / modalities', 'ULC', 'Which biomarkers trigger service recommendations?'),
-  ('00000000-0000-4000-8000-000000000017', 'ulc-lifeforce', 'Services / modalities', 'ULC', 'Do we need images for services like red light therapy, hyperbaric, dry plunge, and IV/infusion?'),
+  ('00000000-0000-4000-8000-000000000017', 'ulc-lifeforce', 'Services / modalities', 'ULC', 'Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?'),
   ('00000000-0000-4000-8000-000000000018', 'ulc-lifeforce', 'Services / modalities', 'ULC', 'Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?'),
   ('00000000-0000-4000-8000-000000000019', 'ulc-lifeforce', 'Blood draw and questionnaire data', 'ULC', 'What scheduled, processing, or completed blood draw status data can Lifeforce receive from ULC/Kite?'),
   ('00000000-0000-4000-8000-000000000020', 'ulc-lifeforce', 'Blood draw and questionnaire data', 'ULC', 'Can the embedded view receive blood draw date/time, or only a booked/scheduled status?'),
@@ -134,7 +134,8 @@ values
   ('00000000-0000-4000-8000-000000000022', 'ulc-lifeforce', 'Documents', 'ULC', 'Does upload belong in V0?'),
   ('00000000-0000-4000-8000-000000000023', 'ulc-lifeforce', 'Documents', 'ULC', 'Which documents should be shown: lab PDFs, requisitions, clinician notes, or upload requests?'),
   ('00000000-0000-4000-8000-000000000024', 'ulc-lifeforce', 'LifeScore', 'ULC', 'What should be shown on the LifeScore detail page for V0?'),
-  ('00000000-0000-4000-8000-000000000025', 'ulc-lifeforce', 'LifeScore', 'ULC', 'Should we include biological age, quality of life, and longevity risk in the dashboard card?')
+  ('00000000-0000-4000-8000-000000000025', 'ulc-lifeforce', 'LifeScore', 'ULC', 'Should we include biological age, quality of life, and longevity risk in the dashboard card?'),
+  ('00000000-0000-4000-8000-000000000026', 'ulc-lifeforce', 'Recommendations and next steps', 'ULC', 'Do we have a formal Care Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?')
 on conflict (id) do update set
   category = excluded.category,
   author = excluded.author,

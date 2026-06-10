@@ -11,7 +11,7 @@ Summary:
 - Expands LifeScore cards with Quality of Life, Longevity Risk, and Biological Age.
 - Updates post-clinician recommendations to separate Prescription Recommendations, Supplement Recommendations, and Recommended Services.
 - Changes prescription recommendation CTAs to Buy.
-- Changes supplement recommendations to in-center / Buy at ULC language instead of in-app purchase buttons.
+- Changes supplement recommendations to Available at ULC language instead of in-app purchase buttons.
 - Adds Documents modules to results-back and post-clinician dashboard states.
 - Updates lab report dates and keeps report history in reverse chronological order.
 - Adds a reusable Follow-up Health Questionnaire state for repeat blood draws.
@@ -23,17 +23,18 @@ User states affected:
 - Labs Processing · Questionnaire Complete
 - Results Back · Questionnaire Incomplete
 - Results Back · Questionnaire Complete
-- Post-Clinician Visit · Care Plan Active
+- Post-Clinician Visit · Recommendations Active
 - Lab Reports
 - LifeScore
 - Documents
-- Recommendations / Products · Needs review
+- Clinician Recommendations · Needs review
 
 Known open questions:
 - Which CTAs and destinations are deep-linkable from the embedded Lifeforce view?
 - Can ULC/Kite deep link to specific services, prescription product detail, cart, and checkout?
 - Will Lifeforce have access to ULC membership or purchase status?
 - Are supplements in-app, BOPUS, or in-store only?
+- Does ULC/Lifeforce have a formal Care Plan object, or should the UI use clinician recommendations and next steps language?
 - Which ULC services/modalities and imagery are available for recommendations?
 - Should Documents upload and LifeScore detail be included in V0?
 
@@ -53,9 +54,9 @@ Summary:
 - Keeps Health Questionnaire gated until a blood draw is scheduled.
 - Allows results access when results are back while keeping LifeScore gated until Health Questionnaire is complete.
 - Adds Schedule Clinician Visit as a visible action when results are back.
-- Moves post-clinician recommendations to the top of the care plan state.
+- Moves post-clinician recommendations to the top of the post-visit state.
 - Splits recommendations into prescription recommendations, supplement recommendations, and ULC services/modalities.
-- Changes supplement recommendation language to available at your local ULC / Buy at ULC instead of in-app purchase language.
+- Changes supplement recommendation language to Available at ULC instead of in-app purchase language.
 - Adds Documents as a lower-priority utility section after recommendations, LifeScore, and lab reports.
 - De-emphasizes broad product browsing in favor of recommendation-driven actions.
 
@@ -66,7 +67,7 @@ User states affected:
 - Labs Processing · Questionnaire Complete
 - Results Back · Questionnaire Incomplete
 - Results Back · Questionnaire Complete
-- Post-Clinician Visit / Care Plan Active
+- Post-Clinician Visit / Recommendations Active
 
 Known open questions:
 - Which ULC/Kite destinations can be deep-linked from the embedded Labs experience?
@@ -102,21 +103,21 @@ Known open questions:
 Risky changes or assumptions:
 - Purchase bars are treated as prototype shell/mobile viewport overlays for these screens, not inline content cards.
 
-## v0.4 · Care plan refinement
+## v0.4 · Recommendation refinement
 
 Date: May 18, 2026
 
 Summary:
-- Simplifies the post-clinician visit / care plan active state.
-- Replaces repeated recommendation/product CTAs with one top-level care plan CTA and one prescription product CTA.
-- Adjusts the care plan hierarchy before the later v0.7 recommendation-led structure.
+- Simplifies the post-clinician visit / recommendations active state.
+- Replaces repeated recommendation/product CTAs with one top-level recommendation CTA and one prescription product CTA.
+- Adjusts the post-clinician hierarchy before the later v0.7 recommendation-led structure.
 - Replaces generic supplement examples with Estradiol Patch and Semaglutide in the post-clinician prescription recommendations module.
 - Moves prescription recommendations above LifeScore and Lab Reports.
 - Updates the labs/no-member card to use user-facing biomarker testing language and removes TBD chips from the mobile UI.
 
 User states affected:
 - Non-member · one-off labs
-- Post-clinician visit · Care plan active
+- Post-clinician visit · Recommendations active
 
 Known open questions:
 - Should post-clinician product CTA language use Subscribe, Order, Add to Cart, or View Details?
@@ -125,7 +126,7 @@ Known open questions:
 
 Risky changes or assumptions:
 - Estradiol Patch and Semaglutide are used as prototype examples and should be validated by the clinical/product team.
-- The care plan state now emphasizes prescription recommendations over supplement recommendations.
+- The post-clinician state now emphasizes prescription recommendations over supplement recommendations.
 
 ## v0.3 · MVP state model pass
 
@@ -138,7 +139,7 @@ Summary:
 - Hides Health Questionnaire before blood draw is scheduled.
 - Splits labs processing into questionnaire incomplete and questionnaire complete states.
 - Allows results access when questionnaire is incomplete while gating LifeScore.
-- Renames care plan active to post-clinician visit / care plan active.
+- Renames the post-clinician state to clarify when recommendations become active.
 - Removes next-draw-due logic from the production-facing state set.
 - Removes LifeForce membership management from dashboard states.
 
@@ -151,7 +152,7 @@ User states affected:
 - Labs processing · questionnaire complete
 - Results back · questionnaire incomplete
 - Results back · questionnaire complete
-- Post-clinician visit · Care plan active
+- Post-clinician visit · Recommendations active
 
 Known open questions:
 - What should the non-member/no-labs primary CTA be?

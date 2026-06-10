@@ -16,7 +16,7 @@ No blood draw performed -> blood draw scheduled or processing -> results back ->
 - Keep Health Questionnaire hidden until a blood draw is scheduled because it needs a DX order ID.
 - Allow users to view results when results are back, even if the Health Questionnaire is incomplete.
 - Show LifeScore only when results are back and the Health Questionnaire is complete.
-- Treat post-clinician recommendations as the care plan, not a separate store.
+- Treat the post-clinician screen as clinician recommendations and next steps, not a confirmed care-plan object.
 - Track deep-link dependencies as open questions until ULC/Kite destinations are confirmed.
 
 ## V0 State Model
@@ -27,7 +27,7 @@ No blood draw performed -> blood draw scheduled or processing -> results back ->
 4. Labs Processing · Questionnaire Complete
 5. Results Back · Questionnaire Incomplete
 6. Results Back · Questionnaire Complete
-7. Post-Clinician Visit / Care Plan Active
+7. Post-Clinician Visit / Recommendations Active
 
 Optional or unresolved:
 
@@ -183,7 +183,7 @@ Secondary CTAs:
 Do not show:
 
 - LifeScore
-- Final care plan
+- Final clinician recommendations
 - Final personalized recommendations
 
 ### 6. Results Back · Questionnaire Complete
@@ -209,12 +209,12 @@ Secondary CTAs:
 - View Results
 - View Lab History
 
-### 7. Post-Clinician Visit / Care Plan Active
+### 7. Post-Clinician Visit / Recommendations Active
 
 Purpose:
 
 - Drive action on clinician recommendations.
-- Treat the screen itself as the care plan.
+- Treat the screen as clinician recommendations and next steps.
 
 Recommended order:
 
@@ -223,7 +223,7 @@ Recommended order:
 3. Lab Reports / latest clinician write-up
 4. Documents
 
-Do not use a generic top-level care-plan CTA because the screen is the care plan.
+Do not use a generic top-level care-plan CTA because a formal care-plan destination is not confirmed.
 
 Recommendation sections:
 
@@ -251,17 +251,14 @@ Supplement examples:
 Supplement language:
 
 - Recommended by your clinician.
-- Available at your local ULC.
-- Buy at ULC.
+- Available at ULC.
 
 Avoid plan-based supplement CTAs or in-app purchase language unless supplement purchase/BOPUS is confirmed.
 
 Service/modality examples:
 
-- Red light therapy
 - Hyperbaric Oxygen Therapy
-- Dry plunge
-- IV / infusion / injectable
+- Red Light Therapy
 
 Service CTA:
 
@@ -371,7 +368,7 @@ State logic:
 - Blood draw processing status
 - Results back status
 - Health Questionnaire status
-- Clinician visit completed / care plan active status
+- Clinician visit completed / recommendations active status
 
 ## Deferred / Removed For V0
 
@@ -407,6 +404,7 @@ Membership / state logic:
 
 Recommendations:
 
+- Do we have a formal Care Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?
 - Which prescription recommendations should appear post-clinician visit?
 - Should CTAs be Buy, Add to Cart, Order, or View Details?
 - Can recommended prescription shipments be batched?
@@ -415,7 +413,7 @@ Supplements:
 
 - What will the supplement buying process look like near-term?
 - Are supplements purchasable in-app, BOPUS, or in-store only?
-- Should supplements display as Buy at ULC?
+- Should supplements display as Available at ULC?
 - Should we show recommended supplements pre-clinician, post-clinician only, or both?
 - Which Lifeforce supplements should be recommended vs ULC-owned SKUs?
 
@@ -425,7 +423,7 @@ Services / modalities:
 - Which biomarkers trigger service recommendations?
 - Which are bookable in-app?
 - Can deep links target a specific service booking flow?
-- Do we need images for services like red light therapy, hyperbaric, dry plunge, etc.?
+- Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?
 - Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?
 
 Documents:

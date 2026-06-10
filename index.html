@@ -2067,11 +2067,11 @@
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
         <section class="hero" style="margin-top: 44px">
-          <p class="eyebrow">Recommendations / Care Plan Flow</p>
-          <h1>Recommendations + Care Plan</h1>
+          <p class="eyebrow">Recommendations Flow</p>
+          <h1>Recommendations</h1>
         </section>
 
-        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations and care plan flow"></section>
+        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendations flow"></section>
 
         <section class="state-board" aria-label="Reusable Health Questionnaire states">
           <h2>Reusable Health Questionnaire States</h2>
@@ -2129,8 +2129,8 @@
           <ul>
             <li>Collapsed the dashboard states around blood draw and results status instead of member/non-member segmentation.</li>
             <li>Reduced the no-labs screen to orientation plus deep-link-dependent scheduling actions.</li>
-            <li>Moved post-clinician recommendations to the top of the care plan state and split them into prescriptions, supplements, and ULC services.</li>
-            <li>Changed supplement recommendation language to available at your local ULC instead of in-app purchase language.</li>
+            <li>Moved post-clinician recommendations to the top of the post-visit state and split them into prescriptions, supplements, and ULC services.</li>
+            <li>Changed supplement recommendation language to Available at ULC instead of in-app purchase language.</li>
             <li>Added Documents as a lower-priority utility section after recommendations, LifeScore, and lab reports.</li>
           </ul>
           <h3>v0.6 · Sticky CTA cleanup</h3>
@@ -2139,10 +2139,10 @@
             <li>Anchored purchase bars above the bottom navigation so they feel intentional and consistent.</li>
             <li>Added extra scroll padding on purchase screens so page content can clear the bottom action area.</li>
           </ul>
-          <h3>v0.4 · Care plan refinement</h3>
+          <h3>v0.4 · Recommendation refinement</h3>
           <ul>
-            <li>Simplified the post-clinician care plan state to avoid repeated recommendation CTAs.</li>
-            <li>Adjusted the care plan hierarchy before the later v0.7 recommendation-led structure.</li>
+            <li>Simplified the post-clinician recommendation state to avoid repeated recommendation CTAs.</li>
+            <li>Adjusted the post-clinician hierarchy before the later v0.7 recommendation-led structure.</li>
             <li>Replaced generic supplement examples with prescription recommendations: Estradiol Patch and Semaglutide.</li>
             <li>Moved Prescription Recommendations above LifeScore and Lab Reports in the post-clinician state.</li>
             <li>Updated the labs/no-member card copy to use user-facing biomarker testing language and removed TBD chips from the mobile UI.</li>
@@ -2315,13 +2315,13 @@
         },
         {
           key: "member_care_plan_active",
-          label: "07 · Post-clinician visit · Care plan active",
+          label: "07 · Post-clinician visit · Recommendations active",
           title: "Your Longevity Journey",
           subtitle: "Powered by Lifeforce",
           compactContext: true,
           profileState: "complete",
           hasLabs: true,
-          journeyState: "care_plan_active",
+          journeyState: "post_clinician_recommendations_active",
         },
       ];
 
@@ -2380,7 +2380,7 @@
             ["member_labs_processing_questionnaire_complete", "Labs processing · questionnaire complete"],
             ["member_results_questionnaire_incomplete", "Results back · Questionnaire incomplete"],
             ["member_results_questionnaire_complete", "Results back · Questionnaire complete"],
-            ["member_care_plan_active", "Post-clinician visit · Care plan active"],
+            ["member_care_plan_active", "Post-clinician visit · Recommendations active"],
           ],
         },
       ];
@@ -2397,6 +2397,7 @@
         "Membership / state logic",
         "Products / supplements",
         "Services / modalities",
+        "Recommendations and next steps",
         "Blood draw and questionnaire data",
         "Documents",
         "LifeScore",
@@ -2414,12 +2415,13 @@
         ["Membership / state logic", "Should no-labs member and no-labs non-member use the same V0 screen?"],
         ["Products / supplements", "What will the supplement buying process look like near-term?"],
         ["Products / supplements", "Are supplements purchasable in-app, BOPUS, or in-store only?"],
-        ["Products / supplements", "Should supplements display as Buy at ULC?"],
+        ["Products / supplements", "Should supplements display as Available at ULC?"],
         ["Products / supplements", "Should recommended supplements appear pre-clinician, post-clinician only, or both?"],
         ["Products / supplements", "Which Lifeforce supplements should be recommended vs ULC-owned SKUs?"],
+        ["Recommendations and next steps", "Do we have a formal Care Plan concept/object in the ULC/Lifeforce experience, or should we refer only to clinician recommendations and next steps?"],
         ["Services / modalities", "Which ULC services can be recommended?"],
         ["Services / modalities", "Which biomarkers trigger service recommendations?"],
-        ["Services / modalities", "Do we need images for services like red light therapy, hyperbaric, dry plunge, and IV/infusion?"],
+        ["Services / modalities", "Do we need images for services like Red Light Therapy and Hyperbaric Oxygen Therapy?"],
         ["Services / modalities", "Will ULC/Kite provide service imagery via API, or should Lifeforce store static assets?"],
         ["Blood draw and questionnaire data", "What scheduled, processing, or completed blood draw status data can Lifeforce receive from ULC/Kite?"],
         ["Blood draw and questionnaire data", "Can the embedded view receive blood draw date/time, or only a booked/scheduled status?"],
@@ -2902,7 +2904,7 @@
         return `
           <section class="card module">
             <h3 class="module-title">Get your biomarkers tested</h3>
-            <p class="module-copy">Begin with a Lifeforce blood draw. Upgrade to clinical membership for LifeScore, clinician review, and a personalized care plan.</p>
+            <p class="module-copy">Begin with a Lifeforce blood draw. Upgrade to clinical membership for LifeScore, clinician review, and personalized recommendations.</p>
             <div class="chip-row">
               <span class="chip">Blood draw</span>
               <span class="chip">Biomarker results</span>
@@ -3241,21 +3243,21 @@
               <button class="mini-cta">Buy</button>
             </div>
             <div class="section-title"><span>Supplement Recommendations</span></div>
-            <p class="module-copy">Recommended by your clinician. Available for purchase at your local ULC.</p>
+            <p class="module-copy">Recommended by your clinician. Available at your local ULC.</p>
             <div class="rec-row">
               <span class="icon-bubble">${icon("sun", 19)}</span>
               <div>
                 <h4 class="row-title">Vitamin D + K</h4>
-                <p class="row-copy">Bone + immune + muscle support. Helps optimize Vitamin D markers.</p>
-                <div class="chip-row"><span class="chip gold">Available in-center</span></div>
+                <p class="row-copy">Bone, immune, and muscle support. Helps optimize Vitamin D markers.</p>
+                <div class="chip-row"><span class="chip gold">Available at ULC</span></div>
               </div>
             </div>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("leaf", 19)}</span>
               <div>
                 <h4 class="row-title">Peak Healthspan</h4>
-                <p class="row-copy">Aging + metabolism support. Related to ApoB, total cholesterol, and LDL.</p>
-                <div class="chip-row"><span class="chip gold">Buy at ULC</span></div>
+                <p class="row-copy">Aging and metabolism support. Related to ApoB, total cholesterol, and LDL.</p>
+                <div class="chip-row"><span class="chip gold">Available at ULC</span></div>
               </div>
             </div>
             <div class="section-title"><span>Recommended Services</span></div>
@@ -3263,23 +3265,15 @@
               <span class="icon-bubble green">${icon("waves", 19)}</span>
               <div>
                 <h4 class="row-title">Hyperbaric Oxygen Therapy</h4>
-                <p class="row-copy">Recommended service to discuss and schedule at ULC.</p>
+                <p class="row-copy">Recommended service to support oxygenation and recovery.</p>
               </div>
               <button class="mini-cta">Book</button>
             </div>
             <div class="rec-row">
               <span class="icon-bubble">${icon("sun-medium", 19)}</span>
               <div>
-                <h4 class="row-title">Red light therapy</h4>
+                <h4 class="row-title">Red Light Therapy</h4>
                 <p class="row-copy">Recovery and inflammation support.</p>
-              </div>
-              <button class="mini-cta">Book</button>
-            </div>
-            <div class="rec-row">
-              <span class="icon-bubble">${icon("snowflake", 19)}</span>
-              <div>
-                <h4 class="row-title">Dry plunge</h4>
-                <p class="row-copy">Recovery modality matched to your goals.</p>
               </div>
               <button class="mini-cta">Book</button>
             </div>
@@ -3337,7 +3331,7 @@
           `;
         }
 
-        if (state === "care_plan_active") {
+        if (state === "post_clinician_recommendations_active") {
           return `
             ${clinicianRecommendations()}
             ${lifeScoreCard(false)}
@@ -3686,9 +3680,9 @@
 
       function recommendationsPage() {
         return phoneScreen(
-          "13 · Recommendations / Products · Needs review",
+          "13 · Clinician Recommendations · Needs review",
           `
-            ${titleBar("Recommendations / Products", "Needs review · post-clinician actions depend on ULC/Kite deep links.", "sparkles")}
+            ${titleBar("Clinician Recommendations", "Needs review · post-clinician actions depend on ULC/Kite deep links.", "sparkles")}
             ${clinicianRecommendations()}
           `,
           "recommendations",
