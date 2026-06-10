@@ -1528,10 +1528,13 @@
 
       .biomarker-filter-bar {
         display: flex;
-        gap: 6px;
+        gap: 4px;
         margin: 4px 0 14px;
         overflow-x: auto;
-        padding-bottom: 2px;
+        padding: 4px;
+        border: 1px solid #ece5dc;
+        border-radius: 16px;
+        background: #f8f6ef;
         scrollbar-width: none;
       }
 
@@ -1564,10 +1567,11 @@
 
       .biomarker-filter-chip {
         flex: 0 0 auto;
-        padding: 8px 11px;
+        min-height: 34px;
+        padding: 0 12px;
         border: 1px solid var(--border);
-        border-radius: 999px;
-        background: #fff;
+        border-radius: 12px;
+        background: transparent;
         color: var(--muted);
         font: inherit;
         font-size: 12px;
@@ -1582,20 +1586,20 @@
       }
 
       .biomarker-filter-chip[data-biomarker-range-filter="out-of-range"] {
-        border-color: rgba(184, 79, 54, 0.2);
-        background: rgba(184, 79, 54, 0.08);
+        border-color: transparent;
+        background: rgba(184, 79, 54, 0.07);
         color: #b84f36;
       }
 
       .biomarker-filter-chip[data-biomarker-range-filter="normal"] {
-        border-color: rgba(200, 148, 30, 0.22);
-        background: rgba(200, 148, 30, 0.1);
+        border-color: transparent;
+        background: rgba(200, 148, 30, 0.09);
         color: #9a6a12;
       }
 
       .biomarker-filter-chip[data-biomarker-range-filter="optimal"] {
-        border-color: rgba(77, 143, 69, 0.2);
-        background: rgba(77, 143, 69, 0.1);
+        border-color: transparent;
+        background: rgba(77, 143, 69, 0.09);
         color: #4d8f45;
       }
 
@@ -3061,7 +3065,7 @@
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
         ],
         "dashboard-member-labs-processing-questionnaire-complete": [
-          ["View Documents", "Documents screen", "Lifeforce-owned"],
+          ["Browse Products", "Product browsing / catalog destination TBD", "TBD"],
         ],
         "dashboard-member-results-questionnaire-incomplete": [
           ["Schedule Clinician Visit", "scheduling destination TBD", "Needs SprintFWD input"],
@@ -3094,6 +3098,7 @@
           ["Back", "Return to previous dashboard or lab reports list", "Lifeforce-owned"],
           ["Read full note", "Expanded clinician note/write-up", "Lifeforce-owned"],
           ["Result summary tiles", "Filter biomarker list by range", "Lifeforce-owned"],
+          ["Range filter", "Filter biomarker list by range", "Lifeforce-owned"],
           ["Category filter", "Filter biomarker list by category", "Lifeforce-owned"],
           ["Biomarker rows", "Biomarker detail screen", "Lifeforce-owned"],
           ["Download Lab Report", "Lab report PDF / document download", "Lifeforce-owned"],
@@ -3639,11 +3644,11 @@
             <div class="card-head">
               <div>
                 <h3 class="module-title">While your results are processing</h3>
-                <p class="module-copy">Your results will appear here once Lifeforce completes review. You can review your documents or check back later.</p>
+                <p class="module-copy">Your results will appear here once Lifeforce completes review. In the meantime, you can browse available products.</p>
               </div>
-              <span class="icon-bubble">${icon("folder-open", 20)}</span>
+              <span class="icon-bubble">${icon("shopping-bag", 20)}</span>
             </div>
-            <button class="mini-cta outline">View Documents</button>
+            <button class="mini-cta outline">Browse Products</button>
           </section>
         `;
       }
@@ -4063,7 +4068,7 @@
           <span class="biomarker-filter-label">Range</span>
           <div class="biomarker-filter-bar" aria-label="Filter biomarkers by range">
             ${biomarkerRangeButton("all", "All", true)}
-            ${biomarkerRangeButton("out-of-range", "Out of Range")}
+            ${biomarkerRangeButton("out-of-range", "Out")}
             ${biomarkerRangeButton("normal", "Normal")}
             ${biomarkerRangeButton("optimal", "Optimal")}
           </div>
@@ -4120,11 +4125,7 @@
               ${biomarkerListByRange()}
               <p class="biomarker-empty" data-biomarker-empty hidden>No biomarkers match these filters.</p>
             </section>
-            <section class="card module">
-              <h3 class="module-title">Official report</h3>
-              <p class="module-copy">Download the original lab report PDF for your records.</p>
-              <button class="mini-cta outline">Download Lab Report</button>
-            </section>
+            <button class="mini-cta outline">Download Lab Report</button>
           `,
           "lab-report-detail",
         );
