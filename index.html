@@ -449,6 +449,7 @@
 
       .variant-label {
         display: grid;
+        gap: 4px;
         align-items: start;
         min-height: 34px;
         color: var(--muted);
@@ -456,6 +457,15 @@
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+      }
+
+      .variant-label-note {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.35;
+        text-transform: none;
       }
 
       .phone {
@@ -2905,6 +2915,9 @@
         "dashboard-member-labs-processing-questionnaire-incomplete": [
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
         ],
+        "dashboard-member-labs-processing-questionnaire-complete": [
+          ["View Documents", "Documents screen", "Lifeforce-owned"],
+        ],
         "dashboard-member-results-questionnaire-incomplete": [
           ["Schedule Clinician Visit", "scheduling destination TBD", "Needs SprintFWD input"],
           ["Complete Health Questionnaire", "Health Questionnaire flow", "Lifeforce-owned"],
@@ -2986,10 +2999,11 @@
         `;
       }
 
-      function renderVariantLabel(label) {
+      function renderVariantLabel(label, note = "") {
         return `
           <div class="variant-label">
             <span>${escapeHtml(label)}</span>
+            ${note ? `<span class="variant-label-note">${escapeHtml(note)}</span>` : ""}
           </div>
         `;
       }
@@ -3472,6 +3486,21 @@
         `;
       }
 
+      function processingWaitingCard() {
+        return `
+          <section class="card module">
+            <div class="card-head">
+              <div>
+                <h3 class="module-title">While your results are processing</h3>
+                <p class="module-copy">Your results will appear here once Lifeforce completes review. You can review your documents or check back later.</p>
+              </div>
+              <span class="icon-bubble">${icon("folder-open", 20)}</span>
+            </div>
+            <button class="mini-cta outline">View Documents</button>
+          </section>
+        `;
+      }
+
       function utilityCards(v) {
         return `
           <div class="utility-grid">
@@ -3671,6 +3700,7 @@
           return `
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
+            ${processingWaitingCard()}
           `;
         }
 
@@ -3749,7 +3779,7 @@
         return `
           <article class="variant ${annotations ? "with-cta-destinations" : ""}">
             <div class="variant-phone-column">
-              ${options.hideLabel ? "" : renderVariantLabel(label)}
+              ${options.hideLabel ? "" : renderVariantLabel(label, options.labelNote)}
               <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
                 ${statusBar()}
                 <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
@@ -4020,7 +4050,7 @@
 
       function productDetailPage() {
         return phoneScreen(
-          "Recommendation support · Prescription detail",
+          "13A · Prescription Detail · Needs review",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Prescription Detail", "Estradiol Patch").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card shop-card">
@@ -4055,13 +4085,13 @@
               <button class="cta">Buy · $110/mo</button>
             </section>
           `,
-          { hideLabel: true },
+          { labelNote: "Arrives from: tapping Buy on a prescription recommendation." },
         );
       }
 
       function orderReviewPage() {
         return phoneScreen(
-          "Recommendation support · Review order",
+          "13B · Review Order · Needs review",
           `
             <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Order", "Prescription subscription").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
             <section class="card module">
@@ -4094,7 +4124,7 @@
               <button class="cta ghost">Back to Labs</button>
             </section>
           `,
-          { hideLabel: true },
+          { labelNote: "Arrives from: tapping Buy from Prescription Detail." },
         );
       }
 
