@@ -1260,6 +1260,18 @@
         line-height: 1.28;
       }
 
+      .biomarker-note {
+        gap: 12px;
+        padding: 16px 18px;
+        margin: 12px 0 18px;
+        border-radius: 16px;
+      }
+
+      .biomarker-note svg {
+        flex: 0 0 auto;
+        margin-top: 2px;
+      }
+
       .section-title {
         display: flex;
         align-items: center;
@@ -1506,7 +1518,7 @@
       .range {
         position: relative;
         display: grid;
-        grid-template-columns: 28% 42% 30%;
+        grid-template-columns: 18% 20% 24% 20% 18%;
         height: 8px;
         margin-top: 12px;
         overflow: visible;
@@ -1520,7 +1532,7 @@
       }
 
       .range .r-red {
-        background: #f4c2b7;
+        background: #d98a75;
       }
 
       .range .r-green {
@@ -1529,6 +1541,14 @@
 
       .range .r-gold {
         background: #e9b14b;
+      }
+
+      .range span:first-child {
+        border-radius: 999px 0 0 999px;
+      }
+
+      .range span:last-of-type {
+        border-radius: 0 999px 999px 0;
       }
 
       .marker {
@@ -3576,8 +3596,8 @@
           <section class="card insight">
             <span class="icon-bubble green">${icon("heart-pulse", 19)}</span>
             <div>
-              <h4 class="row-title">Vitamin D — Attention</h4>
-              <p class="row-copy">Consider supplementation after refreshed labs and review.</p>
+              <h4 class="row-title">Vitamin D — Optimal</h4>
+              <p class="row-copy">Current panel shows Vitamin D in the optimal range.</p>
             </div>
           </section>
           <section class="card insight">
@@ -3861,17 +3881,17 @@
       }
 
       const biomarkers = [
-        { group: "Hormone Balance", name: "DHEA-Sulfate", value: "142", unit: "µg/dL", status: "Monitor", tone: "gold", pos: "36%", marker: "#c8941e" },
-        { group: "Critical Nutrients", name: "Vitamin D, 25-Hydroxy", value: "45", unit: "ng/mL", status: "Optimal", tone: "green", pos: "54%", marker: "#4d8f45" },
-        { group: "Metabolic Health", name: "Fasting Glucose", value: "105", unit: "mg/dL", status: "Monitor", tone: "gold", pos: "66%", marker: "#c8941e" },
-        { group: "Key Risk Factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Attention · High", tone: "red", pos: "88%", marker: "#d94b35" },
+        { group: "Hormone Balance", name: "DHEA-Sulfate", value: "142", unit: "µg/dL", status: "Monitor", tone: "gold", pos: "32%", marker: "#c8941e" },
+        { group: "Critical Nutrients", name: "Vitamin D, 25-Hydroxy", value: "45", unit: "ng/mL", status: "Optimal", tone: "green", pos: "51%", marker: "#4d8f45" },
+        { group: "Metabolic Health", name: "Fasting Glucose", value: "105", unit: "mg/dL", status: "Monitor", tone: "gold", pos: "72%", marker: "#c8941e" },
+        { group: "Key Risk Factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Attention · High", tone: "red", pos: "90%", marker: "#b84f36" },
         { group: "Organ Health", name: "Creatinine", value: "0.82", unit: "mg/dL", status: "Optimal", tone: "green", pos: "48%", marker: "#4d8f45" },
       ];
 
       function rangeBar(b) {
         return `
           <div class="range" style="--pos:${b.pos};--marker:${b.marker}">
-            <span class="r-red"></span><span class="r-green"></span><span class="r-gold"></span><i class="marker"></i>
+            <span class="r-red"></span><span class="r-gold"></span><span class="r-green"></span><span class="r-gold"></span><span class="r-red"></span><i class="marker"></i>
           </div>
         `;
       }
@@ -3950,7 +3970,7 @@
               ${rangeBar(b)}
               <p class="module-copy">Optimal range: &lt; 100 mg/dL</p>
             </section>
-            <div class="note">${icon("stethoscope", 16)}<span>Your clinician may discuss this marker during your results review.</span></div>
+            <div class="note biomarker-note">${icon("stethoscope", 16)}<span>Your clinician may discuss this marker during your results review.</span></div>
             <section class="card module">
               <h3 class="module-title">History over time</h3>
               <div class="history-row"><span class="dot" style="background:#d94b35"></span><p class="row-copy">May 2, 2026</p><strong>168</strong></div>
