@@ -357,15 +357,24 @@
       }
 
       .variant-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        display: grid;
+        align-items: start;
+        gap: 4px;
         min-height: 34px;
         color: var(--muted);
         font-size: 13px;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+      }
+
+      .variant-label-note {
+        color: var(--soft);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0;
+        line-height: 1.25;
+        text-transform: none;
       }
 
       .phone {
@@ -2637,6 +2646,27 @@
         "recommendations-locked": "Recommendations Locked",
       };
 
+      const flowArrivalNotes = {
+        "lab-reports-list": "Arrives from: View Lab History under the dashboard Lab Reports module.",
+        "lab-report-detail": "Arrives from: View Results on dashboard results cards or selecting a report from Lab Reports.",
+        "biomarker-detail": "Arrives from: tapping a biomarker row inside Lab Report Detail.",
+        "lifescore-detail": "Arrives from: Dive Deeper on the LifeScore module.",
+        documents: "Arrives from: View Documents on results or post-clinician dashboard screens.",
+        recommendations: "Arrives from: Review Recommendations after the clinician visit.",
+        "product-detail": "Arrives from: selecting a prescription recommendation.",
+        "review-order": "Arrives from: Buy on a prescription detail or recommendation.",
+        "recommendations-locked": "Arrives from: opening Recommendations before clinical review is complete.",
+      };
+
+      function renderVariantLabel(label, note = "") {
+        return `
+          <div class="variant-label">
+            <span>${escapeHtml(label)}</span>
+            ${note ? `<span class="variant-label-note">${escapeHtml(note)}</span>` : ""}
+          </div>
+        `;
+      }
+
       function renderCommentPins(screenId) {
         const pending =
           pendingPin && pendingPin.screenId === screenId && typeof pendingPin.x === "number" && typeof pendingPin.y === "number"
@@ -3387,7 +3417,7 @@
         const screenTitle = screenTitleForVariant(v);
         return `
           <article class="variant">
-            <div class="variant-label"><span>${v.label}</span></div>
+            ${renderVariantLabel(v.label)}
             <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
               <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
@@ -3406,10 +3436,11 @@
       function phoneScreen(label, body, screenId = "", stickyAction = "") {
         const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
+        const arrivalNote = flowArrivalNotes[resolvedScreenId] || "";
         const hasStickyAction = Boolean(stickyAction);
         return `
           <article class="variant">
-            <div class="variant-label"><span>${label}</span></div>
+            ${renderVariantLabel(label, arrivalNote)}
             <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
               ${statusBar()}
               <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
