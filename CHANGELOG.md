@@ -1,5 +1,39 @@
 # ULC x Lifeforce Prototype Changelog
 
+## v0.9 · UX hierarchy cleanup
+
+Date: June 09, 2026
+
+Summary:
+- Clarifies the next best action for each dashboard state.
+- Removes broad product browsing from early dashboard states.
+- Keeps the no-blood-draw state focused on Schedule Blood Draw, Longevity Assessment, and lightweight journey context.
+- Adds a What happens next timeline to early, processing, and results-back states.
+- Reorders results-back states so Health Questionnaire, View Results, Schedule Clinician Visit, and LifeScore follow the requested priority.
+- Adds clinical rationale lines to prescription, supplement, and service recommendations.
+- Keeps Documents lower priority after recommendations, LifeScore, and lab reports.
+- Updates CTA destination annotations so assumptions remain visible and uncertain ULC/Kite deep links are marked Needs Ashley.
+
+User states affected:
+- No Blood Draw Performed
+- Blood Draw Scheduled · Questionnaire Not Started
+- Labs Processing · Questionnaire Incomplete
+- Labs Processing · Questionnaire Complete
+- Results Back · Questionnaire Incomplete
+- Results Back · Questionnaire Complete
+- Post-Clinician Visit · Recommendations Active
+
+Known open questions:
+- Which scheduling, booking, service, and prescription destinations can ULC/Kite deep-link to?
+- Should generic product browsing exist inside the Labs/Lifeforce tab, or remain outside this embedded flow?
+- Is Schedule Clinician Visit supported from results-back states before and after questionnaire completion?
+- Which recommendation examples, prices, and services are approved for stakeholder review?
+
+Risky changes or assumptions:
+- Browse Products is de-emphasized in the active dashboard states until its role and destination are confirmed.
+- Schedule Clinician Visit remains visible with Needs Ashley routing status.
+- Prescription Buy and service Book CTAs are prototype assumptions pending ULC/Kite confirmation.
+
 ## v0.8 · June 09 review refinements
 
 Date: June 09, 2026
@@ -98,7 +132,7 @@ User states affected:
 - Recommendations
 
 Known open questions:
-- Should order review keep the secondary Keep Browsing action in the bottom bar, or move it inline as a text link?
+- Should order review keep the secondary Back to Recommendations action in the bottom bar, or move it inline as a text link?
 
 Risky changes or assumptions:
 - Purchase bars are treated as prototype shell/mobile viewport overlays for these screens, not inline content cards.

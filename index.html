@@ -113,7 +113,7 @@
 
       .canvas {
         display: grid;
-        grid-template-columns: repeat(4, minmax(315px, 1fr));
+        grid-template-columns: repeat(2, minmax(640px, 1fr));
         gap: 22px;
         max-width: 1600px;
         margin: 0 auto;
@@ -121,7 +121,7 @@
       }
 
       .canvas.three-up {
-        grid-template-columns: repeat(3, minmax(315px, 1fr));
+        grid-template-columns: repeat(2, minmax(640px, 1fr));
         margin-top: 28px;
       }
 
@@ -354,6 +354,104 @@
         width: 100%;
         max-width: 390px;
         margin: 0 auto;
+      }
+
+      .variant.with-cta-destinations {
+        grid-template-columns: minmax(315px, 390px) minmax(220px, 270px);
+        gap: 16px;
+        max-width: 700px;
+        align-items: start;
+      }
+
+      .variant-phone-column {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .cta-destination-panel {
+        display: grid;
+        gap: 10px;
+        margin-top: 46px;
+        padding: 12px;
+        border: 1px solid rgba(214, 209, 202, 0.9);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.54);
+        color: var(--muted);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+      }
+
+      .cta-destination-panel h3 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .cta-destination-note {
+        margin: -4px 0 0;
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.3;
+      }
+
+      .cta-destination-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .cta-destination-item {
+        display: grid;
+        gap: 3px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(214, 209, 202, 0.7);
+      }
+
+      .cta-destination-item:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .cta-destination-label {
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 1.2;
+      }
+
+      .cta-destination-route {
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.25;
+      }
+
+      .cta-status {
+        justify-self: start;
+        margin-top: 2px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: rgba(77, 143, 69, 0.1);
+        color: #4d7d45;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+      }
+
+      .cta-status.needs-ashley {
+        background: rgba(200, 148, 30, 0.14);
+        color: #9a6a12;
+      }
+
+      .cta-status.tbd {
+        background: rgba(112, 106, 99, 0.12);
+        color: var(--muted);
+      }
+
+      .cta-status.informational-only {
+        background: rgba(47, 95, 88, 0.1);
+        color: #2f5f58;
       }
 
       .variant-label {
@@ -639,6 +737,58 @@
 
       .arrow {
         color: var(--soft);
+      }
+
+      .journey-timeline {
+        display: grid;
+        gap: 10px;
+        padding: 15px;
+        margin-bottom: 14px;
+      }
+
+      .journey-steps {
+        display: grid;
+        gap: 8px;
+      }
+
+      .journey-step {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        gap: 9px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .journey-step-marker {
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--soft);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .journey-step.current {
+        color: var(--ink);
+      }
+
+      .journey-step.current .journey-step-marker {
+        border-color: var(--brown);
+        background: var(--brown);
+        color: #fff;
+      }
+
+      .journey-step.complete .journey-step-marker {
+        border-color: rgba(77, 143, 69, 0.25);
+        background: var(--green-soft);
+        color: var(--green);
       }
 
       .action {
@@ -2029,11 +2179,13 @@
 
       @media (max-width: 1440px) {
         .canvas {
-          grid-template-columns: repeat(2, minmax(315px, 1fr));
+          grid-template-columns: 1fr;
+          max-width: 720px;
         }
 
         .canvas.three-up {
-          grid-template-columns: repeat(2, minmax(315px, 1fr));
+          grid-template-columns: 1fr;
+          max-width: 720px;
         }
 
         .state-grid {
@@ -2048,6 +2200,15 @@
 
         .canvas {
           grid-template-columns: 1fr;
+        }
+
+        .variant.with-cta-destinations {
+          grid-template-columns: 1fr;
+          max-width: 390px;
+        }
+
+        .cta-destination-panel {
+          margin-top: 0;
         }
 
         .interactive-preview {
@@ -2077,7 +2238,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.8 · June 09 review refinements</span>
+          <span class="version-pill">v0.9 · UX hierarchy cleanup</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -2167,8 +2328,17 @@
         </details>
 
         <details class="prototype-changelog">
-          <summary>Change log · v0.8</summary>
+          <summary>Change log · v0.9</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.9 · UX hierarchy cleanup</h3>
+          <ul>
+            <li>Clarified the next best action for each dashboard state.</li>
+            <li>Removed broad product browsing from early states and kept no-labs focused on scheduling plus assessment.</li>
+            <li>Added a lightweight What happens next timeline to early, processing, and results-back states.</li>
+            <li>Reordered results-back states so Health Questionnaire and clinician scheduling follow the requested priority.</li>
+            <li>Added clinical rationale lines to prescription, supplement, and service recommendations.</li>
+            <li>Kept Documents lower priority after results, LifeScore, and recommendations.</li>
+          </ul>
           <h3>v0.8 · June 09 review refinements</h3>
           <ul>
             <li>Renamed the first state to No blood draw performed and clarified the blood-draw scheduled questionnaire state.</li>
@@ -2393,7 +2563,7 @@
           tag: "Not Started",
           title: "Complete your Health Questionnaire",
           copy: "Your answers help prepare your lab review and recommendations.",
-          button: "Start Questionnaire",
+          button: "Complete Health Questionnaire",
           tagClass: "",
         },
         in_progress: {
@@ -2401,7 +2571,7 @@
           title: "Complete your Health Questionnaire",
           copy: "A few questions to prepare for your consult.",
           progressLabel: "3 of 8 sections complete",
-          button: "Continue",
+          button: "Continue Health Questionnaire",
           tagClass: "green",
           progress: true,
         },
@@ -2443,6 +2613,7 @@
         userType: "non_member_no_labs",
       };
 
+      let showReviewerCtaDestinations = false;
       const PROTOTYPE_ID = "ulc-lifeforce";
       const COMMENT_AUTHOR_KEY = "ulc_lifeforce_comment_author";
       const QUESTION_AUTHOR_KEY = "ulc_lifeforce_open_question_author";
@@ -2670,7 +2841,7 @@
         "biomarker-detail": "Biomarker Detail",
         "lifescore-detail": "LifeScore Detail",
         documents: "Documents",
-        recommendations: "Recommendations",
+        recommendations: "Recommendations / Products · Needs Further Review",
         "product-detail": "Product Detail",
         "review-order": "Review Order",
         "recommendations-locked": "Recommendations Locked",
@@ -2680,13 +2851,122 @@
         "lab-reports-list": "Arrives from: View Lab History under the dashboard Lab Reports module.",
         "lab-report-detail": "Arrives from: View Results on dashboard results cards or selecting a report from Lab Reports.",
         "biomarker-detail": "Arrives from: tapping a biomarker row inside Lab Report Detail.",
-        "lifescore-detail": "Arrives from: Dive Deeper on the LifeScore module.",
+        "lifescore-detail": "Arrives from: View LifeScore on the LifeScore module.",
         documents: "Arrives from: View Documents on results or post-clinician dashboard screens.",
-        recommendations: "Arrives from: Review Recommendations after the clinician visit.",
+        recommendations: "Needs further review: separate recommendations/products page may be unnecessary if dashboard recommendations are complete.",
         "product-detail": "Arrives from: selecting a prescription recommendation.",
         "review-order": "Arrives from: Buy on a prescription detail or recommendation.",
         "recommendations-locked": "Arrives from: opening Recommendations before clinical review is complete.",
       };
+
+      const ctaDestinationAnnotations = {
+        "dashboard-non-member-no-labs": [
+          ["Schedule Blood Draw", "Best guess: ULC/Kite blood draw booking flow", "Needs Ashley"],
+          ["Book Assessment", "Best guess: ULC Longevity Assessment booking flow", "Needs Ashley"],
+        ],
+        "dashboard-member-blood-draw-booked": [
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
+          ["Manage Booking", "Best guess: ULC/Kite booking detail", "Needs Ashley"],
+        ],
+        "dashboard-member-labs-processing-questionnaire-incomplete": [
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
+        ],
+        "dashboard-member-labs-processing-questionnaire-complete": [
+          ["No major CTA", "Quiet processing status; no user action required", "Informational only"],
+        ],
+        "dashboard-member-results-questionnaire-incomplete": [
+          ["Schedule Clinician Visit", "Best guess: scheduling destination TBD", "Needs Ashley"],
+          ["Complete Health Questionnaire", "Health Questionnaire flow", "LifeForce-owned"],
+          ["View Results", "Lab Report Detail", "LifeForce-owned"],
+          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
+          ["View Documents", "Documents screen", "LifeForce-owned"],
+        ],
+        "dashboard-member-results-questionnaire-complete": [
+          ["Schedule Clinician Visit", "Best guess: scheduling destination TBD", "Needs Ashley"],
+          ["View Results", "Lab Report Detail", "LifeForce-owned"],
+          ["View LifeScore", "LifeScore Detail", "LifeForce-owned"],
+          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
+          ["View Documents", "Documents screen", "LifeForce-owned"],
+        ],
+        "dashboard-member-care-plan-active": [
+          ["Buy", "Best guess: prescription product detail/cart/checkout", "Needs Ashley"],
+          ["Available at ULC", "No tap action; informational supplement availability callout", "Informational only"],
+          ["Book", "Best guess: ULC service booking flow", "Needs Ashley"],
+          ["View LifeScore", "LifeScore Detail", "LifeForce-owned"],
+          ["View Results", "Lab Report Detail", "LifeForce-owned"],
+          ["View Lab History", "Lab Reports List", "LifeForce-owned"],
+          ["View Documents", "Documents screen", "LifeForce-owned"],
+        ],
+        "lab-reports-list": [
+          ["Plus icon", "Potential add/upload or lab scheduling action", "TBD"],
+          ["Report cards", "Lab Report Detail", "LifeForce-owned"],
+          ["Filter chips", "Filter lab reports by status/category", "LifeForce-owned"],
+        ],
+        "lab-report-detail": [
+          ["Back", "Return to previous dashboard or lab reports list", "LifeForce-owned"],
+          ["Read full note", "Expanded clinician note/write-up", "LifeForce-owned"],
+          ["See all biomarkers", "Biomarker list on current lab report", "LifeForce-owned"],
+          ["Biomarker rows", "Biomarker detail screen", "LifeForce-owned"],
+        ],
+        "biomarker-detail": [
+          ["Back", "Return to lab report detail", "LifeForce-owned"],
+          ["Discuss", "Best guess: clinician visit discussion topic; destination unresolved", "TBD"],
+          ["Book", "Best guess: ULC service booking flow", "Needs Ashley"],
+        ],
+        "lifescore-detail": [
+          ["Back", "Return to dashboard LifeScore module", "LifeForce-owned"],
+          ["Learn how LifeScore is calculated", "LifeScore methodology or education detail", "LifeForce-owned"],
+        ],
+        documents: [
+          ["Download", "Download selected document or PDF", "LifeForce-owned"],
+          ["Upload", "Upload requested documents", "TBD"],
+        ],
+        recommendations: [
+          ["Buy", "Best guess: prescription product detail/cart/checkout if this page remains", "Needs Ashley"],
+          ["Available at ULC", "No tap action; informational supplement availability callout", "Informational only"],
+          ["Book", "Best guess: ULC service booking flow if this page remains", "Needs Ashley"],
+        ],
+        "product-detail": [
+          ["Back", "Return to recommendation source", "LifeForce-owned"],
+          ["Buy", "Best guess: prescription product detail/cart/checkout", "Needs Ashley"],
+        ],
+        "review-order": [
+          ["Back", "Return to prescription detail", "LifeForce-owned"],
+          ["Place Order", "Best guess: ULC/Kite prescription checkout/order placement", "Needs Ashley"],
+          ["Back to Recommendations", "Return to recommendation source; broader recommendations page remains under review", "TBD"],
+        ],
+        "recommendations-locked": [
+          ["Schedule Blood Draw", "Best guess: ULC/Kite blood draw booking flow", "Needs Ashley"],
+        ],
+      };
+
+      function ctaStatusClass(status) {
+        return status.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      }
+
+      function renderCtaDestinations(screenId) {
+        const annotations = ctaDestinationAnnotations[screenId] || [];
+        if (!annotations.length) return "";
+        return `
+          <aside class="cta-destination-panel" aria-label="CTA destinations for ${escapeHtml(screenId)}">
+            <h3>CTA Destinations</h3>
+            <p class="cta-destination-note">Best-guess routing assumptions for review. Unconfirmed ULC/Kite links are marked Needs Ashley.</p>
+            <div class="cta-destination-list">
+              ${annotations
+                .map(
+                  ([label, route, status]) => `
+                    <div class="cta-destination-item">
+                      <div class="cta-destination-label">${escapeHtml(label)}</div>
+                      <div class="cta-destination-route">→ ${escapeHtml(route)}</div>
+                      <span class="cta-status ${ctaStatusClass(status)}">${escapeHtml(status)}</span>
+                    </div>
+                  `,
+                )
+                .join("")}
+            </div>
+          </aside>
+        `;
+      }
 
       function renderVariantLabel(label, note = "") {
         return `
@@ -2838,6 +3118,34 @@
         `;
       }
 
+      function journeyTimeline(currentStep = 0) {
+        const steps = [
+          "Schedule your blood draw",
+          "Complete your Health Questionnaire",
+          "Review your results",
+          "Meet with a clinician",
+          "Get recommendations",
+        ];
+        return `
+          <section class="card journey-timeline">
+            <h3 class="module-title">What happens next</h3>
+            <div class="journey-steps">
+              ${steps
+                .map((step, index) => {
+                  const stateClass = index < currentStep ? "complete" : index === currentStep ? "current" : "";
+                  return `
+                    <div class="journey-step ${stateClass}">
+                      <span class="journey-step-marker">${index < currentStep ? icon("check", 13) : index + 1}</span>
+                      <span>${step}</span>
+                    </div>
+                  `;
+                })
+                .join("")}
+            </div>
+          </section>
+        `;
+      }
+
       function unlockCard() {
         const items = [
           ["activity", "Biomarker insights"],
@@ -2930,7 +3238,7 @@
             ${
               locked
                 ? `<div class="lifescore-locked-row"><span class="lifescore-heart">${lifeScoreHeart(58)}</span><p class="module-copy">Complete your Health Questionnaire to view your LifeScore.</p></div><button class="cta">Complete Health Questionnaire</button>`
-                : `<div class="lifescore-hero"><span class="lifescore-heart">${lifeScoreHeart(74)}</span><div><p class="title" style="font-size:44px;margin:0">80<span class="subtitle">/100</span></p><p class="module-copy">Based on your latest bloodwork and completed Health Questionnaire.</p></div></div>${lifeScoreSupportingMetrics()}<button class="mini-cta outline">Dive Deeper</button>`
+                : `<div class="lifescore-hero"><span class="lifescore-heart">${lifeScoreHeart(74)}</span><div><p class="title" style="font-size:44px;margin:0">80<span class="subtitle">/100</span></p><p class="module-copy">Based on your latest bloodwork and completed Health Questionnaire.</p></div></div>${lifeScoreSupportingMetrics()}<button class="mini-cta outline">View LifeScore</button>`
             }
           </section>
         `;
@@ -2946,7 +3254,7 @@
         `;
       }
 
-      function clinicianVisitPrompt({ questionnaireIncomplete = false } = {}) {
+      function clinicianVisitPrompt({ questionnaireIncomplete = false, subtleCta = false } = {}) {
         return `
           <section class="card module">
             <h3 class="module-title">Schedule your clinician visit</h3>
@@ -2955,7 +3263,7 @@
                 ? "Your clinician visit can be scheduled now. Completing your Health Questionnaire first helps your clinician prepare."
                 : "Review your LifeScore, latest results, and next steps with a clinician."
             }</p>
-            <button class="cta">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
+            <button class="cta ${subtleCta ? "ghost" : ""}">${icon("stethoscope", 18)} Schedule Clinician Visit</button>
           </section>
         `;
       }
@@ -3092,8 +3400,7 @@
                       .join("")}
                   </div>`
             }
-            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "Review Recommended Products" : "Browse Products"} ${icon("arrow-right", 17)}</button>
-            ${personalized ? `<button class="cta ghost">Review Recommendations ${icon("arrow-right", 17)}</button>` : ""}
+            <button class="cta ${personalized ? "" : "ghost"}">${personalized ? "View Product Details" : "Browse Products"} ${icon("arrow-right", 17)}</button>
           </section>
         `;
       }
@@ -3298,13 +3605,13 @@
               </div>
               <span class="status-pill">Post-visit</span>
             </div>
-            <button class="cta">Review Recommendations ${icon("arrow-right", 17)}</button>
             <div class="section-title"><span>Prescription Recommendations</span></div>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("badge-plus", 19)}</span>
               <div>
                 <h4 class="row-title">Estradiol Patch</h4>
                 <p class="row-copy">Hormone support · $110/mo</p>
+                <p class="row-copy">Recommended after your clinician reviewed your symptoms and lab results.</p>
                 <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Buy</button>
@@ -3314,6 +3621,7 @@
               <div>
                 <h4 class="row-title">Semaglutide</h4>
                 <p class="row-copy">Metabolic support · $270/mo</p>
+                <p class="row-copy">Recommended after your clinician reviewed your metabolic markers and goals.</p>
                 <div class="chip-row"><span class="chip green">Clinician-prescribed</span></div>
               </div>
               <button class="mini-cta">Buy</button>
@@ -3324,7 +3632,7 @@
               <span class="icon-bubble">${icon("sun", 19)}</span>
               <div>
                 <h4 class="row-title">Vitamin D + K</h4>
-                <p class="row-copy">Bone, immune, and muscle support. Helps optimize Vitamin D markers.</p>
+                <p class="row-copy">Bone, immune, and muscle support. Recommended based on your Vitamin D marker.</p>
                 <div class="chip-row"><span class="chip gold">Available at ULC</span></div>
               </div>
             </div>
@@ -3332,7 +3640,7 @@
               <span class="icon-bubble green">${icon("leaf", 19)}</span>
               <div>
                 <h4 class="row-title">Peak Healthspan</h4>
-                <p class="row-copy">Aging and metabolism support. Related to ApoB, total cholesterol, and LDL.</p>
+                <p class="row-copy">Aging and metabolism support. Recommended based on ApoB, total cholesterol, and LDL.</p>
                 <div class="chip-row"><span class="chip gold">Available at ULC</span></div>
               </div>
             </div>
@@ -3341,7 +3649,7 @@
               <span class="icon-bubble green">${icon("waves", 19)}</span>
               <div>
                 <h4 class="row-title">Hyperbaric Oxygen Therapy</h4>
-                <p class="row-copy">Recommended service to support oxygenation and recovery.</p>
+                <p class="row-copy">Oxygenation and recovery support. Recommended by your clinician.</p>
               </div>
               <button class="mini-cta">Book</button>
             </div>
@@ -3349,7 +3657,7 @@
               <span class="icon-bubble">${icon("sun-medium", 19)}</span>
               <div>
                 <h4 class="row-title">Red Light Therapy</h4>
-                <p class="row-copy">Recovery and inflammation support.</p>
+                <p class="row-copy">Recovery and inflammation support. Recommended by your clinician.</p>
               </div>
               <button class="mini-cta">Book</button>
             </div>
@@ -3367,26 +3675,21 @@
         if (state === "no_labs_performed" || state === "prospect" || state === "non_member_no_labs") {
           return `
             ${longevityAssessmentCard()}
-            ${unlockCard()}
-            ${lightweightProductBrowse(v)}
+            ${journeyTimeline(0)}
           `;
         }
 
         if (state === "blood_draw_booked") {
           return `
             ${bloodDrawBookedCard()}
-            ${longevityAssessmentCard()}
-            ${unlockCard()}
-            ${lightweightProductBrowse(v)}
+            ${journeyTimeline(1)}
           `;
         }
 
         if (state === "labs_processing_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
-            ${longevityAssessmentCard()}
-            ${unlockCard()}
-            ${lightweightProductBrowse(v)}
+            ${journeyTimeline(1)}
           `;
         }
 
@@ -3394,17 +3697,16 @@
           return `
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
-            ${longevityAssessmentCard()}
-            ${unlockCard()}
-            ${lightweightProductBrowse(v)}
+            ${journeyTimeline(2)}
           `;
         }
 
         if (state === "results_questionnaire_incomplete") {
           return `
-            ${clinicianVisitPrompt({ questionnaireIncomplete: true })}
-            ${actionModule(v, { subtleCta: true })}
+            ${actionModule(v)}
             ${labReportsHub(v)}
+            ${clinicianVisitPrompt({ questionnaireIncomplete: true, subtleCta: true })}
+            ${journeyTimeline(1)}
             ${documentCard()}
           `;
         }
@@ -3412,8 +3714,9 @@
         if (state === "results_questionnaire_complete") {
           return `
             ${clinicianVisitPrompt()}
-            ${lifeScoreCard(false)}
             ${labReportsHub(v)}
+            ${lifeScoreCard(false)}
+            ${journeyTimeline(3)}
             ${documentCard()}
           `;
         }
@@ -3438,48 +3741,56 @@
         return dashboardContent(v);
       }
 
-      function renderVariant(v) {
+      function renderVariant(v, options = {}) {
         const showIntroTop =
           v.key === "non_member_no_labs" ||
           (v.livePreview && v.userType === "non_member_no_labs");
         const skipTopAction = ["results_questionnaire_incomplete", "results_questionnaire_complete"].includes(v.journeyState);
         const screenId = screenIdForVariant(v);
         const screenTitle = screenTitleForVariant(v);
+        const annotations = (options.showDestinations ?? showReviewerCtaDestinations) ? renderCtaDestinations(screenId) : "";
         return `
-          <article class="variant">
-            ${renderVariantLabel(v.label)}
-            <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
-              ${statusBar()}
-              <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
-                ${renderCommentPins(screenId)}
-                ${header(v)}
-                ${skipTopAction ? "" : actionModule(v)}
-                ${showIntroTop ? contextModule(v) : ""}
-                ${lowerContent(v)}
+          <article class="variant ${annotations ? "with-cta-destinations" : ""}">
+            <div class="variant-phone-column">
+              ${renderVariantLabel(v.label)}
+              <div class="phone" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                ${statusBar()}
+                <div class="screen" data-screen-id="${screenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                  ${renderCommentPins(screenId)}
+                  ${header(v)}
+                  ${skipTopAction ? "" : actionModule(v)}
+                  ${showIntroTop ? contextModule(v) : ""}
+                  ${lowerContent(v)}
+                </div>
+                ${bottomNav()}
               </div>
-              ${bottomNav()}
             </div>
+            ${annotations}
           </article>
         `;
       }
 
-      function phoneScreen(label, body, screenId = "", stickyAction = "") {
+      function phoneScreen(label, body, screenId = "", stickyAction = "", options = {}) {
         const resolvedScreenId = screenId || label.toLowerCase().replace(/^\d+\s·\s/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         const screenTitle = flowScreenTitles[resolvedScreenId] || label.replace(/^\d+\s·\s/, "");
         const arrivalNote = flowArrivalNotes[resolvedScreenId] || "";
         const hasStickyAction = Boolean(stickyAction);
+        const annotations = (options.showDestinations ?? showReviewerCtaDestinations) ? renderCtaDestinations(resolvedScreenId) : "";
         return `
-          <article class="variant">
-            ${renderVariantLabel(label, arrivalNote)}
-            <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
-              ${statusBar()}
-              <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
-                ${renderCommentPins(resolvedScreenId)}
-                ${body}
+          <article class="variant ${annotations ? "with-cta-destinations" : ""}">
+            <div class="variant-phone-column">
+              ${renderVariantLabel(label, arrivalNote)}
+              <div class="phone ${hasStickyAction ? "has-sticky-action" : ""}" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                ${statusBar()}
+                <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
+                  ${renderCommentPins(resolvedScreenId)}
+                  ${body}
+                </div>
+                ${stickyAction}
+                ${bottomNav()}
               </div>
-              ${stickyAction}
-              ${bottomNav()}
             </div>
+            ${annotations}
           </article>
         `;
       }
@@ -3606,8 +3917,7 @@
                 <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
                 <div class="metric attention"><strong>2</strong><span>Attention</span></div>
               </div>
-              <button class="cta">View Recommendations</button>
-              <button class="cta ghost">See all biomarkers</button>
+              <button class="cta">See all biomarkers</button>
             </section>
             <div class="filter-bar">
               <span class="chip active">All</span><span class="chip">Needs Attention</span><span class="chip">Optimal</span><span class="chip">By Category</span>
@@ -3769,9 +4079,13 @@
 
       function recommendationsPage() {
         return phoneScreen(
-          "13 · Clinician Recommendations · Needs review",
+          "13 · Recommendations / Products · Needs Further Review",
           `
-            ${titleBar("Clinician Recommendations", "Needs review · post-clinician actions depend on ULC/Kite deep links.", "sparkles")}
+            ${titleBar("Recommendations / Products", "Needs further review · may be removed if dashboard recommendations stay complete.", "sparkles")}
+            <section class="card module membership">
+              <h3 class="module-title">Standalone page under review</h3>
+              <p class="module-copy">The post-clinician Labs home screen now shows the full recommendation set directly. Keep this page only if a future detail flow needs more space for rationale, related biomarkers, or product/service deep links.</p>
+            </section>
             ${clinicianRecommendations()}
           `,
           "recommendations",
@@ -3850,7 +4164,7 @@
                 <span class="status-pill">Ready</span>
               </div>
               <button class="cta">Place Order</button>
-              <button class="cta ghost">Keep Browsing</button>
+              <button class="cta ghost">Back to Recommendations</button>
             </section>
           `,
         );
@@ -4089,12 +4403,47 @@
         document.getElementById("commentList").innerHTML = commentsError ? `<section class="comment-item"><p class="comment-text">${escapeHtml(commentsError)}</p></section>` : renderCommentList();
       }
 
+      function captureScrollState() {
+        const screenScroll = {};
+        document.querySelectorAll(".screen[data-screen-id]").forEach((screen) => {
+          const id = screen.dataset.screenId;
+          if (id && screen.scrollTop > 0) screenScroll[id] = screen.scrollTop;
+        });
+        return {
+          x: window.scrollX,
+          y: window.scrollY,
+          screenScroll,
+        };
+      }
+
+      function restoreScrollState(snapshot) {
+        if (!snapshot) return;
+        document.querySelectorAll(".screen[data-screen-id]").forEach((screen) => {
+          const id = screen.dataset.screenId;
+          if (id && Number.isFinite(snapshot.screenScroll[id])) {
+            screen.scrollTop = snapshot.screenScroll[id];
+          }
+        });
+        window.scrollTo(snapshot.x, snapshot.y);
+      }
+
+      function focusWithoutJump(element, snapshot) {
+        if (!element) return;
+        try {
+          element.focus({ preventScroll: true });
+        } catch (error) {
+          element.focus();
+        }
+        restoreScrollState(snapshot);
+      }
+
       function stateKeyForScreen(screenId) {
         if (!screenId.startsWith("dashboard-")) return "";
         return screenId.replace("dashboard-", "").replaceAll("-", "_");
       }
 
       function openComposer(screen, x = null, y = null) {
+        const scrollSnapshot = captureScrollState();
         pendingPin = typeof x === "number" && typeof y === "number" ? { screenId: screen.dataset.screenId, x, y } : null;
         pendingComment = {
           screenId: screen.dataset.screenId,
@@ -4114,15 +4463,18 @@
         document.getElementById("composerError").textContent = "";
         setActiveScreen(pendingComment.screenId, pendingComment.screenTitle);
         renderPrototype();
-        setTimeout(() => document.getElementById("commentText").focus(), 0);
+        restoreScrollState(scrollSnapshot);
+        setTimeout(() => focusWithoutJump(document.getElementById("commentText"), scrollSnapshot), 0);
       }
 
       function closeComposer() {
+        const scrollSnapshot = captureScrollState();
         pendingComment = null;
         pendingPin = null;
         document.getElementById("commentComposer").hidden = true;
         document.getElementById("composerError").textContent = "";
         renderPrototype();
+        restoreScrollState(scrollSnapshot);
       }
 
       function setCommentMode(enabled) {
@@ -4356,18 +4708,22 @@
             }
             const comment = comments.find((item) => item.id === pin.dataset.commentPin);
             if (comment) {
+              const scrollSnapshot = captureScrollState();
               selectedCommentId = comment.id;
               commentsPanelOpen = true;
               setActiveScreen(comment.screenId, comment.screenTitle);
               renderPrototype();
+              restoreScrollState(scrollSnapshot);
             }
             return;
           }
           if (event.target.closest("[data-pending-comment-pin]")) {
             event.preventDefault();
             event.stopPropagation();
+            const scrollSnapshot = captureScrollState();
             commentsPanelOpen = true;
             renderPrototype();
+            restoreScrollState(scrollSnapshot);
             return;
           }
           const jump = event.target.closest("[data-comment-jump]");
@@ -4565,7 +4921,8 @@
 
       function renderPrototype() {
         renderInteractivePreview();
-        document.getElementById("canvas").innerHTML = variants.map(renderVariant).join("");
+        showReviewerCtaDestinations = true;
+        document.getElementById("canvas").innerHTML = variants.map((variant) => renderVariant(variant)).join("");
         document.getElementById("labsFlow").innerHTML = [
           labReportsListing(),
           labReportDetail(),
@@ -4579,6 +4936,7 @@
           orderReviewPage(),
           recommendationsLocked(),
         ].join("");
+        showReviewerCtaDestinations = false;
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
           .map((state) => profileBanner(state))
           .join("");
