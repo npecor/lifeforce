@@ -432,41 +432,6 @@
         letter-spacing: 0.02em;
       }
 
-      .cta-legend {
-        display: grid;
-        gap: 8px;
-        max-width: 1600px;
-        margin: 0 auto 22px;
-        padding: 12px 14px;
-        border: 1px solid rgba(214, 209, 202, 0.9);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.5);
-        color: var(--muted);
-      }
-
-      .cta-legend-title {
-        margin: 0;
-        color: var(--ink);
-        font-size: 12px;
-        font-weight: 900;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .cta-legend-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 14px;
-        margin: 0;
-        font-size: 11px;
-        font-weight: 750;
-        line-height: 1.3;
-      }
-
-      .cta-legend-list span {
-        white-space: nowrap;
-      }
-
       .cta-status.needs-ashley {
         background: rgba(200, 148, 30, 0.14);
         color: #9a6a12;
@@ -765,58 +730,6 @@
 
       .arrow {
         color: var(--soft);
-      }
-
-      .journey-timeline {
-        display: grid;
-        gap: 10px;
-        padding: 15px;
-        margin-bottom: 14px;
-      }
-
-      .journey-steps {
-        display: grid;
-        gap: 8px;
-      }
-
-      .journey-step {
-        display: grid;
-        grid-template-columns: 24px 1fr;
-        gap: 9px;
-        align-items: center;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 800;
-        line-height: 1.25;
-      }
-
-      .journey-step-marker {
-        display: grid;
-        place-items: center;
-        width: 24px;
-        height: 24px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: #fff;
-        color: var(--soft);
-        font-size: 11px;
-        font-weight: 900;
-      }
-
-      .journey-step.current {
-        color: var(--ink);
-      }
-
-      .journey-step.current .journey-step-marker {
-        border-color: var(--brown);
-        background: var(--brown);
-        color: #fff;
-      }
-
-      .journey-step.complete .journey-step-marker {
-        border-color: rgba(77, 143, 69, 0.25);
-        background: var(--green-soft);
-        color: var(--green);
       }
 
       .action {
@@ -2334,15 +2247,6 @@
 
       <section class="view-panel" id="allScreensView">
         <div class="at-glance-label">All states at a glance</div>
-        <section class="cta-legend" aria-label="CTA destination legend">
-          <h2 class="cta-legend-title">CTA Destination Legend</h2>
-          <p class="cta-legend-list">
-            <span><strong>Lifeforce-owned</strong> = destination exists in Lifeforce / this prototype</span>
-            <span><strong>Needs Ashley</strong> = requires ULC/Kite deep-link or API confirmation</span>
-            <span><strong>TBD</strong> = product/flow decision unresolved</span>
-            <span><strong>Informational</strong> = no tap action</span>
-          </p>
-        </section>
         <section class="canvas" id="canvas" aria-label="Lifeforce dashboard states"></section>
 
         <section class="hero" style="margin-top: 44px">
@@ -2405,7 +2309,7 @@
           <ul>
             <li>Clarified the next best action for each dashboard state.</li>
             <li>Removed broad product browsing from early states and kept no-labs focused on scheduling plus assessment.</li>
-            <li>Added a lightweight What happens next timeline to early, processing, and results-back states.</li>
+            <li>Clarified the conceptual Labs journey without forcing a rigid step-by-step sequence.</li>
             <li>Reordered results-back states so Health Questionnaire and clinician scheduling follow the requested priority.</li>
             <li>Added clinical rationale lines to prescription, supplement, and service recommendations.</li>
             <li>Kept Documents lower priority after results, LifeScore, and recommendations.</li>
@@ -3168,67 +3072,11 @@
       }
 
       function contextModule(v) {
-        const early = v.journeyState === "no_labs_performed" || (v.livePreview && v.userType === "non_member_no_labs");
         return `
-          <section class="card module context ${v.compactContext ? "compact" : ""} ${early ? "early-context" : ""}">
+          <section class="card module context ${v.compactContext ? "compact" : ""} early-context">
             <h3 class="module-title">${v.introTitle || "How Lifeforce works inside ULC"}</h3>
             <p class="module-copy">${v.context}</p>
-            ${early ? "" : processRow()}
-          </section>
-        `;
-      }
-
-      function journeyTimeline(currentStep = 0) {
-        const steps = [
-          "Schedule your blood draw",
-          "Complete your Health Questionnaire",
-          "Review your results",
-          "Meet with a clinician",
-          "Get recommendations",
-        ];
-        return `
-          <section class="card journey-timeline">
-            <h3 class="module-title">What happens next</h3>
-            <div class="journey-steps">
-              ${steps
-                .map((step, index) => {
-                  const stateClass = index < currentStep ? "complete" : index === currentStep ? "current" : "";
-                  return `
-                    <div class="journey-step ${stateClass}">
-                      <span class="journey-step-marker">${index < currentStep ? icon("check", 13) : index + 1}</span>
-                      <span>${step}</span>
-                    </div>
-                  `;
-                })
-                .join("")}
-            </div>
-          </section>
-        `;
-      }
-
-      function resultsVisitPrepTimeline() {
-        const steps = [
-          ["complete", "Results are back"],
-          ["current", "Schedule your clinician visit"],
-          ["", "Complete your Health Questionnaire before the visit"],
-          ["", "Meet with a clinician"],
-          ["", "Get recommendations"],
-        ];
-        return `
-          <section class="card journey-timeline">
-            <h3 class="module-title">What happens next</h3>
-            <div class="journey-steps">
-              ${steps
-                .map(
-                  ([stateClass, step], index) => `
-                    <div class="journey-step ${stateClass}">
-                      <span class="journey-step-marker">${stateClass === "complete" ? icon("check", 13) : index + 1}</span>
-                      <span>${step}</span>
-                    </div>
-                  `,
-                )
-                .join("")}
-            </div>
+            ${processRow()}
           </section>
         `;
       }
@@ -3745,21 +3593,18 @@
         if (state === "no_labs_performed" || state === "prospect" || state === "non_member_no_labs") {
           return `
             ${longevityAssessmentCard()}
-            ${journeyTimeline(0)}
           `;
         }
 
         if (state === "blood_draw_booked") {
           return `
             ${bloodDrawBookedCard()}
-            ${journeyTimeline(1)}
           `;
         }
 
         if (state === "labs_processing_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
-            ${journeyTimeline(1)}
           `;
         }
 
@@ -3767,7 +3612,6 @@
           return `
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
-            ${journeyTimeline(2)}
           `;
         }
 
@@ -3776,7 +3620,6 @@
             ${clinicianVisitPrompt({ questionnaireIncomplete: true })}
             ${actionModule({ ...v, actionCopy: "Complete your questionnaire before your visit so your clinician has the context they need." }, { subtleCta: true })}
             ${labReportsHub(v)}
-            ${resultsVisitPrepTimeline()}
             ${documentCard()}
           `;
         }
@@ -3786,7 +3629,6 @@
             ${clinicianVisitPrompt()}
             ${labReportsHub(v)}
             ${lifeScoreCard(false)}
-            ${journeyTimeline(3)}
             ${documentCard()}
           `;
         }
