@@ -1141,7 +1141,7 @@
       }
 
       .metric {
-        padding: 12px 6px;
+        padding: 12px 4px;
         border: 1px solid transparent;
         border-radius: 12px;
         background: #f2f0eb;
@@ -1178,7 +1178,9 @@
         display: block;
         margin-top: 6px;
         color: var(--muted);
-        font-size: 11px;
+        font-size: 10px;
+        font-weight: 850;
+        line-height: 1.15;
       }
 
       .result-summary-line {
@@ -1263,7 +1265,7 @@
         color: var(--gold);
       }
 
-      .attention strong {
+      .out-of-range strong {
         color: #b84f36;
       }
 
@@ -1531,6 +1533,29 @@
         margin: 4px 0 14px;
       }
 
+      .biomarker-filter-label {
+        display: block;
+        margin: 14px 0 7px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .biomarker-category-select {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #fff;
+        color: var(--brown);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
       .biomarker-filter-chip {
         padding: 8px 12px;
         border: 1px solid var(--border);
@@ -1547,6 +1572,13 @@
         border-color: var(--brown);
         background: var(--brown);
         color: #fff;
+      }
+
+      .biomarker-empty {
+        padding: 12px 0 2px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
       }
 
       .bio-row {
@@ -2366,7 +2398,7 @@
             <li>Removed the rigid What happens next timeline and kept the conceptual Measure → Review → Personalize journey module.</li>
             <li>Removed unsupported locked/pending Recommendations screen from the core flow.</li>
             <li>Removed biomarker-specific Recommended next steps from Biomarker Detail.</li>
-            <li>Removed top-level filter chips from Lab Reports while keeping Optimal / Monitor / Attention summary chips on report cards.</li>
+            <li>Removed top-level filter chips from Lab Reports while keeping Optimal / Normal / Out of Range summary chips on report cards.</li>
             <li>Updated in-progress Health Questionnaire progress from section-based language to percentage-based progress.</li>
             <li>Updated Results Back / Questionnaire Incomplete hierarchy so Schedule Clinician Visit is the highest-priority CTA when available.</li>
             <li>Removed the Post-visit capsule from the post-clinician recommendations card.</li>
@@ -3029,8 +3061,10 @@
         "lab-report-detail": [
           ["Back", "Return to previous dashboard or lab reports list", "Lifeforce-owned"],
           ["Read full note", "Expanded clinician note/write-up", "Lifeforce-owned"],
-          ["Result summary tiles", "Filter biomarker list by status", "Lifeforce-owned"],
+          ["Result summary tiles", "Filter biomarker list by range", "Lifeforce-owned"],
+          ["Category filter", "Filter biomarker list by category", "Lifeforce-owned"],
           ["Biomarker rows", "Biomarker detail screen", "Lifeforce-owned"],
+          ["Download Lab Report", "Lab report PDF / document download", "TBD"],
         ],
         "biomarker-detail": [
           ["Back", "Return to lab report detail", "Lifeforce-owned"],
@@ -3543,8 +3577,8 @@
             <p class="row-copy"><strong>Latest:</strong> Jun 9, 2026 · Lifeforce Blood Panel</p>
             <div class="metrics">
               <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
-              <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
-              <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+              <div class="metric monitor"><strong>5</strong><span>Normal</span></div>
+              <div class="metric out-of-range"><strong>2</strong><span>Out of Range</span></div>
             </div>
             <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
             <button class="link center-link">View Lab History</button>
@@ -3611,8 +3645,8 @@
             </div>
             <div class="metrics">
               <div class="metric optimal"><strong>12</strong><span>Optimal</span></div>
-              <div class="metric monitor"><strong>5</strong><span>Monitor</span></div>
-              <div class="metric attention"><strong>2</strong><span>Attention</span></div>
+              <div class="metric monitor"><strong>5</strong><span>Normal</span></div>
+              <div class="metric out-of-range"><strong>2</strong><span>Out of Range</span></div>
             </div>
             <button class="cta ghost">View Results ${icon("arrow-right", 17)}</button>
             <button class="link center-link">View Lab History</button>
@@ -3642,7 +3676,7 @@
           <section class="card insight">
             <span class="icon-bubble green">${icon("heart-pulse", 19)}</span>
             <div>
-              <h4 class="row-title">Vitamin D — Optimal</h4>
+              <h4 class="row-title">Vitamin D — Optimal Range</h4>
               <p class="row-copy">Current panel shows Vitamin D in the optimal range.</p>
             </div>
           </section>
@@ -3905,8 +3939,8 @@
             </div>
             <div class="chip-row">
               <span class="chip green">${counts[0]} Optimal</span>
-              <span class="chip gold">${counts[1]} Monitor</span>
-              <span class="chip red">${counts[2]} Attention</span>
+              <span class="chip gold">${counts[1]} Normal</span>
+              <span class="chip red">${counts[2]} Out of Range</span>
             </div>
             <div class="review-status">${muted ? icon("loader", 15) : icon("check-circle-2", 15)} ${status}</div>
           </section>
@@ -3927,28 +3961,34 @@
       }
 
       const biomarkers = [
-        { group: "Hormone Balance", name: "DHEA-Sulfate", value: "142", unit: "µg/dL", status: "Monitor", tone: "gold", pos: "32%", marker: "#c8941e" },
-        { group: "Critical Nutrients", name: "Vitamin D, 25-Hydroxy", value: "45", unit: "ng/mL", status: "Optimal", tone: "green", pos: "51%", marker: "#4d8f45" },
-        { group: "Metabolic Health", name: "Fasting Glucose", value: "105", unit: "mg/dL", status: "Monitor", tone: "gold", pos: "72%", marker: "#c8941e" },
-        { group: "Key Risk Factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Attention · High", tone: "red", pos: "90%", marker: "#b84f36" },
-        { group: "Organ Health", name: "Creatinine", value: "0.82", unit: "mg/dL", status: "Optimal", tone: "green", pos: "48%", marker: "#4d8f45" },
+        { group: "Hormone Balance", category: "hormone-balance", name: "DHEA-Sulfate", value: "142", unit: "µg/dL", status: "Normal", range: "normal", tone: "gold", pos: "32%", marker: "#c8941e" },
+        { group: "Critical Nutrients", category: "critical-nutrients", name: "Vitamin D, 25-Hydroxy", value: "45", unit: "ng/mL", status: "Optimal", range: "optimal", tone: "green", pos: "51%", marker: "#4d8f45" },
+        { group: "Metabolic Condition", category: "metabolic-condition", name: "Fasting Glucose", value: "105", unit: "mg/dL", status: "Normal", range: "normal", tone: "gold", pos: "72%", marker: "#c8941e" },
+        { group: "Key Risk Factors", category: "key-risk-factors", name: "LDL Cholesterol", value: "168", unit: "mg/dL", status: "Out of Range · High", range: "out-of-range", tone: "red", pos: "90%", marker: "#b84f36" },
+        { group: "Organ Health", category: "organ-health", name: "Creatinine", value: "0.82", unit: "mg/dL", status: "Optimal", range: "optimal", tone: "green", pos: "48%", marker: "#4d8f45" },
       ];
-      const biomarkerStatusGroups = [
-        ["attention", "Attention"],
-        ["monitor", "Monitor"],
-        ["optimal", "Optimal"],
+      const biomarkerRangeGroups = [
+        ["out-of-range", "Out of Range"],
+        ["normal", "Normal Range"],
+        ["optimal", "Optimal Range"],
       ];
-      const biomarkerStatusRank = { attention: 0, monitor: 1, optimal: 2 };
+      const biomarkerRangeRank = { "out-of-range": 0, normal: 1, optimal: 2 };
+      const biomarkerCategories = [
+        ["all", "Show All Biomarkers"],
+        ["hormone-balance", "Hormone Balance"],
+        ["critical-nutrients", "Critical Nutrients"],
+        ["metabolic-condition", "Metabolic Condition"],
+        ["organ-health", "Organ Health"],
+        ["key-risk-factors", "Key Risk Factors"],
+      ];
 
-      function biomarkerStatusKey(b) {
-        if (b.tone === "red" || b.status.startsWith("Attention")) return "attention";
-        if (b.tone === "gold" || b.status === "Monitor") return "monitor";
-        return "optimal";
+      function biomarkerRangeKey(b) {
+        return b.range || "optimal";
       }
 
       function orderedBiomarkers() {
         return [...biomarkers].sort((a, b) => {
-          const rankDelta = biomarkerStatusRank[biomarkerStatusKey(a)] - biomarkerStatusRank[biomarkerStatusKey(b)];
+          const rankDelta = biomarkerRangeRank[biomarkerRangeKey(a)] - biomarkerRangeRank[biomarkerRangeKey(b)];
           if (rankDelta) return rankDelta;
           return a.name.localeCompare(b.name);
         });
@@ -3963,9 +4003,9 @@
       }
 
       function biomarkerRow(b) {
-        const statusKey = biomarkerStatusKey(b);
+        const rangeKey = biomarkerRangeKey(b);
         return `
-          <section class="card bio-row" data-biomarker-status="${statusKey}">
+          <section class="card bio-row" data-biomarker-range="${rangeKey}" data-biomarker-category="${b.category}">
             <div class="bio-row-head">
               <div>
                 <h4 class="row-title">${b.name}</h4>
@@ -3978,29 +4018,34 @@
         `;
       }
 
-      function biomarkerFilterButton(key, label, active = false, className = "biomarker-filter-chip", source = "") {
-        return `<button class="${className}" type="button" data-biomarker-filter="${key}"${source ? ` data-biomarker-filter-source="${source}"` : ""} aria-pressed="${active}">${label}</button>`;
+      function biomarkerRangeButton(key, label, active = false, className = "biomarker-filter-chip", source = "") {
+        return `<button class="${className}" type="button" data-biomarker-range-filter="${key}"${source ? ` data-biomarker-range-source="${source}"` : ""} aria-pressed="${active}">${label}</button>`;
       }
 
       function biomarkerFilterBar() {
         return `
-          <div class="biomarker-filter-bar" aria-label="Filter biomarkers by status">
-            ${biomarkerFilterButton("all", "All", true)}
-            ${biomarkerFilterButton("attention", "Attention")}
-            ${biomarkerFilterButton("monitor", "Monitor")}
-            ${biomarkerFilterButton("optimal", "Optimal")}
+          <label class="biomarker-filter-label" for="biomarkerCategoryFilter">Category</label>
+          <select class="biomarker-category-select" id="biomarkerCategoryFilter" data-biomarker-category-filter>
+            ${biomarkerCategories.map(([key, label]) => `<option value="${key}">${label}</option>`).join("")}
+          </select>
+          <span class="biomarker-filter-label">Range</span>
+          <div class="biomarker-filter-bar" aria-label="Filter biomarkers by range">
+            ${biomarkerRangeButton("all", "All", true)}
+            ${biomarkerRangeButton("out-of-range", "Out of Range")}
+            ${biomarkerRangeButton("normal", "Normal Range")}
+            ${biomarkerRangeButton("optimal", "Optimal Range")}
           </div>
         `;
       }
 
-      function biomarkerListByStatus() {
+      function biomarkerListByRange() {
         const ordered = orderedBiomarkers();
-        return biomarkerStatusGroups
+        return biomarkerRangeGroups
           .map(([key, label]) => {
-            const rows = ordered.filter((b) => biomarkerStatusKey(b) === key);
+            const rows = ordered.filter((b) => biomarkerRangeKey(b) === key);
             if (!rows.length) return "";
             return `
-              <div class="bio-section" data-biomarker-section="${key}">
+              <div class="bio-section" data-biomarker-range-section="${key}">
                 <div class="section-title"><span>${label}</span></div>
                 ${rows.map(biomarkerRow).join("")}
               </div>
@@ -4032,15 +4077,21 @@
               <h3 class="module-title">Result Summary</h3>
               <p class="result-summary-line">For this test, <strong>63%</strong> of your biomarkers were optimized.</p>
               <div class="metrics">
-                ${biomarkerFilterButton("optimal", "<strong>12</strong><span>Optimal</span>", false, "metric optimal", "summary")}
-                ${biomarkerFilterButton("monitor", "<strong>5</strong><span>Monitor</span>", false, "metric monitor", "summary")}
-                ${biomarkerFilterButton("attention", "<strong>2</strong><span>Attention</span>", false, "metric attention", "summary")}
+                ${biomarkerRangeButton("optimal", "<strong>12</strong><span>Optimal Range</span>", false, "metric optimal", "summary")}
+                ${biomarkerRangeButton("normal", "<strong>5</strong><span>Normal Range</span>", false, "metric monitor", "summary")}
+                ${biomarkerRangeButton("out-of-range", "<strong>2</strong><span>Out of Range</span>", false, "metric out-of-range", "summary")}
               </div>
             </section>
             <section class="card module" data-biomarker-list>
               <h3 class="module-title">Biomarkers</h3>
               ${biomarkerFilterBar()}
-              ${biomarkerListByStatus()}
+              ${biomarkerListByRange()}
+              <p class="biomarker-empty" data-biomarker-empty hidden>No biomarkers match these filters.</p>
+            </section>
+            <section class="card module">
+              <h3 class="module-title">Official report</h3>
+              <p class="module-copy">Download the original lab report PDF for your records.</p>
+              <button class="mini-cta outline">Download Lab Report</button>
             </section>
           `,
           "lab-report-detail",
@@ -4056,7 +4107,7 @@
             <section class="card hero-value">
               <strong style="color:#d94b35">168</strong>
               <span>mg/dL</span>
-              <div class="chip-row" style="justify-content:center"><span class="chip red">Attention · High</span></div>
+              <div class="chip-row" style="justify-content:center"><span class="chip red">Out of Range · High</span></div>
               ${rangeBar(b)}
               <p class="module-copy">Optimal range: &lt; 100 mg/dL</p>
             </section>
@@ -4259,18 +4310,41 @@
         renderCommentUI();
       }
 
-      function applyBiomarkerFilter(button) {
-        const screen = button.closest(".screen") || document;
-        const filter = button.dataset.biomarkerFilter || "all";
-        screen.querySelectorAll("[data-biomarker-filter]").forEach((filterButton) => {
-          filterButton.setAttribute("aria-pressed", String(filterButton.dataset.biomarkerFilter === filter));
+      function applyBiomarkerFilters(screen, scrollToList = false) {
+        const scope = screen || document;
+        const range = scope.querySelector('[data-biomarker-range-filter][aria-pressed="true"]')?.dataset.biomarkerRangeFilter || "all";
+        const category = scope.querySelector("[data-biomarker-category-filter]")?.value || "all";
+        let visibleRows = 0;
+
+        scope.querySelectorAll("[data-biomarker-range-section]").forEach((section) => {
+          let sectionHasVisibleRows = false;
+          section.querySelectorAll("[data-biomarker-range]").forEach((row) => {
+            const rangeMatches = range === "all" || row.dataset.biomarkerRange === range;
+            const categoryMatches = category === "all" || row.dataset.biomarkerCategory === category;
+            const visible = rangeMatches && categoryMatches;
+            row.hidden = !visible;
+            if (visible) {
+              sectionHasVisibleRows = true;
+              visibleRows += 1;
+            }
+          });
+          section.hidden = !sectionHasVisibleRows;
         });
-        screen.querySelectorAll("[data-biomarker-section]").forEach((section) => {
-          section.hidden = filter !== "all" && section.dataset.biomarkerSection !== filter;
-        });
-        if (button.dataset.biomarkerFilterSource === "summary") {
-          screen.querySelector("[data-biomarker-list]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        const empty = scope.querySelector("[data-biomarker-empty]");
+        if (empty) empty.hidden = visibleRows > 0;
+        if (scrollToList) {
+          scope.querySelector("[data-biomarker-list]")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+      }
+
+      function applyBiomarkerRangeFilter(button) {
+        const screen = button.closest(".screen") || document;
+        const range = button.dataset.biomarkerRangeFilter || "all";
+        screen.querySelectorAll("[data-biomarker-range-filter]").forEach((filterButton) => {
+          filterButton.setAttribute("aria-pressed", String(filterButton.dataset.biomarkerRangeFilter === range));
+        });
+        applyBiomarkerFilters(screen, button.dataset.biomarkerRangeSource === "summary");
       }
 
       function filteredComments() {
@@ -4776,11 +4850,11 @@
             renderCommentUI();
             return;
           }
-          const biomarkerFilter = event.target.closest("[data-biomarker-filter]");
-          if (biomarkerFilter && !commentMode) {
+          const biomarkerRangeFilter = event.target.closest("[data-biomarker-range-filter]");
+          if (biomarkerRangeFilter && !commentMode) {
             event.preventDefault();
             event.stopPropagation();
-            applyBiomarkerFilter(biomarkerFilter);
+            applyBiomarkerRangeFilter(biomarkerRangeFilter);
             return;
           }
           const pin = event.target.closest("[data-comment-pin]");
@@ -4848,6 +4922,12 @@
               openComposer(screen, x, y);
               return;
             }
+          }
+        });
+        document.addEventListener("change", (event) => {
+          const categoryFilter = event.target.closest("[data-biomarker-category-filter]");
+          if (categoryFilter && !commentMode) {
+            applyBiomarkerFilters(categoryFilter.closest(".screen") || document);
           }
         });
       }

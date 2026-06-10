@@ -12,7 +12,7 @@ Summary:
 - Removed the rigid "What happens next" timeline and kept the conceptual Measure -> Review -> Personalize journey module.
 - Removed unsupported locked/pending Recommendations screen from the core flow.
 - Removed biomarker-specific "Recommended next steps" from Biomarker Detail.
-- Removed top-level filter chips from Lab Reports Listing while keeping Optimal / Monitor / Attention summary chips on report cards.
+- Removed top-level filter chips from Lab Reports Listing while keeping Optimal / Normal / Out of Range summary chips on report cards.
 - Updated in-progress Health Questionnaire progress from section-based language to percentage-based progress.
 - Updated Results Back / Questionnaire Incomplete hierarchy so Schedule Clinician Visit is the highest-priority CTA when available.
 - Removed "Post-visit" capsule from the post-clinician recommendations card.

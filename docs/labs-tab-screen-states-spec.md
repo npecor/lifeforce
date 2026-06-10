@@ -271,7 +271,7 @@ Service CTA:
 Dashboard lab card should show:
 
 - Latest report date
-- Counts: Optimal / Monitor / Attention
+- Counts: Optimal / Normal / Out of Range
 - CTA: View Results
 - Secondary CTA: View Lab History
 
