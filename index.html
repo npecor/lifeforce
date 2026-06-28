@@ -1047,9 +1047,13 @@
 
       .link {
         flex: none;
+        padding: 0;
+        border: 0;
+        background: transparent;
         color: #aa7b11;
         font-size: 12px;
         font-weight: 800;
+        cursor: pointer;
       }
 
       .center-link {
@@ -1131,6 +1135,37 @@
         display: flex;
         gap: 12px;
         align-items: center;
+      }
+
+      .draw-card .lab-head {
+        align-items: flex-start;
+        padding-bottom: 12px;
+      }
+
+      .draw-card .rec-row {
+        align-items: flex-start;
+      }
+
+      .draw-card .row-copy {
+        line-height: 1.4;
+      }
+
+      .lab-row-link {
+        margin-top: 8px;
+      }
+
+      .note.draw-next {
+        gap: 9px;
+        margin-top: 4px;
+        border-color: var(--line);
+        background: var(--wash-2);
+        color: var(--muted);
+      }
+
+      .note.draw-next svg {
+        flex: none;
+        margin-top: 1px;
+        color: var(--soft);
       }
 
       .metrics {
@@ -3437,16 +3472,16 @@
 
       function bloodDrawBookedCard() {
         return `
-          <section class="card lab-card">
+          <section class="card lab-card draw-card">
             <div class="lab-head">
-              <span class="icon-bubble">${icon("calendar-check", 22)}</span>
+              <span class="icon-bubble green">${icon("calendar-check", 22)}</span>
               <div>
                 <h3 class="module-title">Blood draw scheduled</h3>
-                <p class="row-copy">Your blood draw takes place in person at your ULC center.</p>
+                <p class="row-copy">In person at your ULC center.</p>
               </div>
             </div>
             <div class="rec-row">
-              <span class="icon-bubble">${icon("calendar-clock", 18)}</span>
+              <span class="icon-bubble">${icon("clock", 18)}</span>
               <div>
                 <h4 class="row-title">Thu, Jul 2 · 9:30 AM</h4>
                 <p class="row-copy">Fast for 8–12 hours beforehand — water is fine.</p>
@@ -3457,11 +3492,11 @@
               <div>
                 <h4 class="row-title">ULC Newport Beach</h4>
                 <p class="row-copy">1200 Newport Center Dr, Newport Beach, CA 92660</p>
-                <button class="link">Get directions ${icon("arrow-up-right", 13)}</button>
+                <button class="link lab-row-link">Get directions ${icon("arrow-up-right", 13)}</button>
               </div>
             </div>
             <button class="cta ghost">Manage Booking ${icon("arrow-right", 17)}</button>
-            <div class="note">${icon("clock-3", 17)}<span>You’ll be able to book your clinician visit once your results are back.</span></div>
+            <div class="note draw-next">${icon("clock-3", 17)}<span>You’ll be able to book your clinician visit once your results are back.</span></div>
           </section>
         `;
       }
