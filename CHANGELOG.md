@@ -1,5 +1,27 @@
 # ULC x Lifeforce Prototype Changelog
 
+## v0.11 · Labs tab meeting updates
+
+Date: June 26, 2026
+
+Shipped:
+- Prescription recommendation CTAs changed from "Buy" to "Subscribe" (prescriptions are ongoing subscriptions, fulfilled by Lifeforce pharmacies; deep-link into the Kite cart).
+- Added a "View clinician note" entry point on the post-clinician recommendations screen.
+- Redesigned the blood-draw-scheduled card: in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.
+- Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.
+- Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.
+
+Planned (this round):
+- Redraw/retest path when a follow-up draw is needed.
+- Order of Prescriptions / Supplements / Recommended Services (and where IV fits).
+- Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).
+- Home score module logic (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.
+- "Products to ask your doctor about" pre-visit discovery.
+
+Known open questions:
+- Does appointment date/time flow through the booking webhook/API? (center address + ID already do)
+- Prescription bundling/checkout flow with SprintFWD.
+
 ## v0.10 · Final review cleanup
 
 Date: June 09, 2026

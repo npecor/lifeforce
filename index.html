@@ -1154,6 +1154,14 @@
         margin-top: 8px;
       }
 
+      .support-link {
+        margin-top: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+      }
+
       .note.draw-next {
         gap: 9px;
         margin-top: 4px;
@@ -2369,7 +2377,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.10 · Final review cleanup</span>
+          <span class="version-pill">v0.11 · Labs tab meeting updates</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -2412,11 +2420,6 @@
 
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
-        <section class="hero" style="margin-top: 44px">
-          <h1>13 · Recommendation Support Screens · Needs review</h1>
-        </section>
-
-        <section class="canvas three-up" id="productFlow" aria-label="Lifeforce recommendation support screens"></section>
 
         <section class="state-board" aria-label="Reusable Health Questionnaire states">
           <h2>Reusable Health Questionnaire States</h2>
@@ -2460,6 +2463,19 @@
         <details class="prototype-changelog">
           <summary>Changelog</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.11 · Labs tab meeting updates</h3>
+          <ul>
+            <li><strong>Shipped:</strong> Prescription recommendation CTAs changed from Buy to Subscribe (prescriptions are ongoing subscriptions; deep-link into the Kite cart).</li>
+            <li><strong>Shipped:</strong> Added a "View clinician note" entry point on the post-clinician recommendations screen.</li>
+            <li><strong>Shipped:</strong> Redesigned the blood-draw-scheduled card — in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.</li>
+            <li><strong>Shipped:</strong> Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.</li>
+            <li><strong>Shipped:</strong> Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.</li>
+            <li><strong>Planned:</strong> Surface a redraw/retest path when a follow-up draw is needed.</li>
+            <li><strong>Planned:</strong> Resolve the order of Prescriptions / Supplements / Recommended Services (and where IV fits).</li>
+            <li><strong>Planned:</strong> Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).</li>
+            <li><strong>Planned:</strong> Define the home score module (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.</li>
+            <li><strong>Planned:</strong> "Products to ask your doctor about" pre-visit discovery.</li>
+          </ul>
           <h3>v0.10 · Final review cleanup</h3>
           <ul>
             <li>Replaced Needs Ashley / Needs SprintFWD labels with Needs SprintFWD input in CTA destination annotations.</li>
@@ -3084,8 +3100,6 @@
         "biomarker-detail": "Biomarker Detail",
         "lifescore-detail": "LifeScore",
         documents: "Documents",
-        "product-detail": "Product Detail",
-        "review-order": "Review Order",
       };
 
       const ctaDestinationAnnotations = {
@@ -3148,15 +3162,7 @@
         documents: [
           ["Download", "Download selected document or PDF", "Lifeforce-owned"],
           ["Upload", "Upload requested documents", "TBD"],
-        ],
-        "product-detail": [
-          ["Back", "Return to recommendation source", "Lifeforce-owned"],
-          ["Buy", "prescription product detail/cart/checkout", "Needs SprintFWD input"],
-        ],
-        "review-order": [
-          ["Back", "Return to prescription detail", "Lifeforce-owned"],
-          ["Place Order", "ULC/Kite prescription checkout/order placement", "Needs SprintFWD input"],
-          ["Back to Labs", "Return to recommendation source on Labs home", "Lifeforce-owned"],
+          ["Delete uploaded doc", "Glib to build — a list of uploaded documents with a delete control. No design made for this yet.", "TBD"],
         ],
       };
 
@@ -3165,7 +3171,8 @@
       }
 
       function renderCtaDestinations(screenId) {
-        const annotations = ctaDestinationAnnotations[screenId] || [];
+        const annotations = [...(ctaDestinationAnnotations[screenId] || [])];
+        annotations.push(["Need help?", "ULC app support / contact page (deep link)", "Needs SprintFWD input"]);
         if (!annotations.length) return "";
         return `
           <aside class="cta-destination-panel" aria-label="CTA destinations for ${escapeHtml(screenId)}">
@@ -3973,6 +3980,7 @@
                   ${skipTopAction ? "" : actionModule(v)}
                   ${showIntroTop ? contextModule(v) : ""}
                   ${lowerContent(v)}
+                  ${supportLink()}
                 </div>
                 ${bottomNav()}
               </div>
@@ -3980,6 +3988,10 @@
             ${annotations}
           </article>
         `;
+      }
+
+      function supportLink() {
+        return `<button class="link center-link support-link">${icon("life-buoy", 13)} Need help? Contact ULC.</button>`;
       }
 
       function phoneScreen(label, body, screenId = "", stickyAction = "", options = {}) {
@@ -3996,6 +4008,7 @@
                 <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
                   ${renderCommentPins(resolvedScreenId)}
                   ${body}
+                  ${supportLink()}
                 </div>
                 ${stickyAction}
                 ${bottomNav()}
@@ -4313,86 +4326,6 @@
             </section>
           `,
           "documents",
-        );
-      }
-
-      function productDetailPage() {
-        return phoneScreen(
-          "13A · Prescription Detail · Needs review",
-          `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Prescription Detail", "Estradiol Patch").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
-            <section class="card shop-card">
-              <div class="shop-art" style="height:190px">${icon("badge-plus", 52)}</div>
-              <div class="shop-body" style="padding:18px">
-                <p class="eyebrow-small" style="color:#aa7b11;font-weight:850;letter-spacing:.1em;text-transform:uppercase">Clinician-prescribed</p>
-                <h3 class="title" style="font-size:25px">Estradiol Patch</h3>
-                <p class="module-copy">Hormone support recommended after your clinician visit.</p>
-                <p class="title" style="font-size:26px;margin-top:14px">$110<span class="subtitle">/month</span></p>
-              </div>
-            </section>
-            <section class="card module">
-              <h3 class="module-title">Recommendation rationale</h3>
-              <p class="module-copy">Helps support hormone balance and symptoms related to low estradiol.</p>
-              <div class="chip-row"><span class="chip gold">Hormone balance</span><span class="chip green">Clinician-prescribed</span></div>
-            </section>
-            <section class="card module">
-              <h3 class="module-title">Related results</h3>
-              <p class="module-copy">Review your lab report and clinician write-up for the full care context.</p>
-            </section>
-          `,
-          "product-detail",
-          `
-            <section class="sticky-action">
-              <div class="card-head">
-                <div>
-                  <h3 class="row-title">Estradiol Patch</h3>
-                  <p class="row-copy">$110/mo</p>
-                </div>
-                <span class="status-pill">Prescribed</span>
-              </div>
-              <button class="cta">Subscribe · $110/mo</button>
-            </section>
-          `,
-          { labelNote: "Arrives from: tapping Subscribe on a prescription recommendation." },
-        );
-      }
-
-      function orderReviewPage() {
-        return phoneScreen(
-          "13B · Review Order · Needs review",
-          `
-            <div class="screen-titlebar">${icon("chevron-left", 23)}<div>${titleBar("Review Order", "Prescription subscription").replace('<header class="header">', '<div>').replace("</header>", "</div>")}</div></div>
-            <section class="card module">
-              <h3 class="module-title">Prescription selected</h3>
-              <div class="order-line">
-                <div><h4 class="row-title">Estradiol Patch</h4><p class="row-copy">Monthly subscription · Clinician-prescribed</p></div>
-                <strong>$110/mo</strong>
-              </div>
-              <div class="order-line">
-                <div><h4 class="row-title">Shipping cadence</h4><p class="row-copy">Confirmed during checkout.</p></div>
-                <strong>-</strong>
-              </div>
-            </section>
-            <section class="card module">
-              <h3 class="module-title">Shipping + payment</h3>
-              <p class="module-copy">Use saved shipping address and payment method. Details can be confirmed before placing the order.</p>
-            </section>
-          `,
-          "review-order",
-          `
-            <section class="sticky-action">
-              <div class="card-head">
-                <div>
-                  <h3 class="row-title">Estimated total</h3>
-                  <p class="row-copy">$110/mo · details confirmed at checkout</p>
-                </div>
-                <span class="status-pill">Ready</span>
-              </div>
-              <button class="cta">Place Order</button>
-              <button class="cta ghost">Back to Labs</button>
-            </section>
-          `,
-          { labelNote: "Arrives from: tapping Subscribe from Prescription Detail." },
         );
       }
 
@@ -5186,10 +5119,6 @@
           biomarkerDetail(),
           lifeScoreDetailPage(),
           documentsPage(),
-        ].join("");
-        document.getElementById("productFlow").innerHTML = [
-          productDetailPage(),
-          orderReviewPage(),
         ].join("");
         showReviewerCtaDestinations = false;
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)
