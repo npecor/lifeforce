@@ -37,5 +37,5 @@ Lifeforce (a longevity-medicine company) owns the **"Labs" experience that rende
 - Open items / action tracker (external): https://docs.google.com/document/d/19_rflGTS_8aIpGg0L7MaabVaZsb0C2pW2UhVqvzTccc/edit
 - ULC Figma (SprintFWD-owned, view-only): https://www.figma.com/design/ZSGbwiCzxuxJ7TeYP2PeuX/ULC-Marketing---App-Designs?node-id=1-6606
 
-## Current branch
-`labs-tab-meeting-updates` contains recent edits: prescription CTA Buy→Subscribe; a "View clinician note" button on the post-clinician recommendations screen; and the blood-draw-scheduled card now shows in-center status + appointment date/time + center name/address + a fasting note.
+## Recent work (merged to `main`)
+The `labs-tab-meeting-updates` branch has been merged to `main` and deleted. It landed: prescription CTA Buy→Subscribe; a "View clinician note" button on the post-clinician recommendations screen; and a redesigned blood-draw-scheduled card (`bloodDrawBookedCard`, scoped with the `.draw-card` class) showing in-center status, appointment date/time + fasting note, and center name/address with Get directions. Work continues from `main` on new feature branches.
