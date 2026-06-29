@@ -1162,6 +1162,31 @@
         font-size: 12px;
       }
 
+      .draw-recommend {
+        border: 1px solid var(--gold);
+      }
+
+      .edge-module {
+        max-width: 360px;
+      }
+
+      .edge-module-frame {
+        background: var(--wash);
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .edge-module-dev {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--gold);
+        border-radius: 10px;
+        background: var(--gold-soft);
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--ink);
+      }
+
       .note.draw-next {
         gap: 9px;
         margin-top: 4px;
@@ -2420,11 +2445,18 @@
 
         <section class="canvas three-up" id="labsFlow" aria-label="Lifeforce lab report flow"></section>
 
-
         <section class="state-board" aria-label="Reusable Health Questionnaire states">
           <h2>Reusable Health Questionnaire States</h2>
           <div class="state-grid" id="profileStates"></div>
         </section>
+
+        <section class="hero" style="margin-top: 44px">
+          <p class="eyebrow">Edge State Modules</p>
+          <h1>Rare / conditional modules</h1>
+          <p class="module-copy" style="max-width:640px">These aren't part of the default flow — they're pulled into specific screens only when a member's state calls for them.</p>
+        </section>
+
+        <section id="edgeModules" aria-label="Lifeforce edge-state modules" style="padding:0 28px"></section>
 
         <details class="prototype-changelog" id="openQuestionsDetails">
           <summary id="openQuestionsSummary">Open Questions · 0 open</summary>
@@ -2470,7 +2502,8 @@
             <li><strong>Shipped:</strong> Redesigned the blood-draw-scheduled card — in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.</li>
             <li><strong>Shipped:</strong> Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.</li>
             <li><strong>Shipped:</strong> Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.</li>
-            <li><strong>Planned:</strong> Surface a redraw/retest path when a follow-up draw is needed.</li>
+            <li><strong>Shipped:</strong> Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.</li>
+            <li><strong>Shipped (stub):</strong> "Follow-up blood draw recommended" redraw/retest module (lives in Edge State Modules); the trigger/notification/credit-redemption flow is flagged for devs to define.</li>
             <li><strong>Planned:</strong> Resolve the order of Prescriptions / Supplements / Recommended Services (and where IV fits).</li>
             <li><strong>Planned:</strong> Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).</li>
             <li><strong>Planned:</strong> Define the home score module (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.</li>
@@ -3893,6 +3926,32 @@
         return dashboardContent(v);
       }
 
+      function edgeModuleWrap(title, note, devNote, moduleHtml) {
+        return `
+          <div class="edge-module">
+            <div class="variant-label"><span>${escapeHtml(title)}</span><span class="variant-label-note">${escapeHtml(note)}</span></div>
+            <div class="edge-module-frame">${moduleHtml}</div>
+            <div class="edge-module-dev">${escapeHtml(devNote)}</div>
+          </div>
+        `;
+      }
+
+      function redrawCard() {
+        return `
+          <section class="card module draw-recommend">
+            <div class="card-head">
+              <div>
+                <div class="chip-row"><span class="chip gold">Recommended</span></div>
+                <h3 class="module-title">Follow-up blood draw recommended</h3>
+                <p class="module-copy">Your care team has recommended a follow-up blood draw to continue tracking your biomarkers.</p>
+              </div>
+              <span class="icon-bubble gold">${icon("syringe", 20)}</span>
+            </div>
+            <button class="cta ghost">Schedule Follow-up Draw</button>
+          </section>
+        `;
+      }
+
       function dashboardContent(v) {
         const state = v.journeyState || v.userType || v.key;
 
@@ -5119,6 +5178,14 @@
           biomarkerDetail(),
           lifeScoreDetailPage(),
           documentsPage(),
+        ].join("");
+        document.getElementById("edgeModules").innerHTML = [
+          edgeModuleWrap(
+            "Follow-up blood draw (redraw / retest)",
+            "Pulled into the Results-back states when a redraw is recommended.",
+            "Devs: the trigger (ULC team vs our clinician/diagnostic team), the member notification, and the new-credit → booking redemption are all undefined — needs to be figured out with ULC/SprintFWD.",
+            redrawCard(),
+          ),
         ].join("");
         showReviewerCtaDestinations = false;
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)

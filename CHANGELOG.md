@@ -10,9 +10,10 @@ Shipped:
 - Redesigned the blood-draw-scheduled card: in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.
 - Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.
 - Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.
+- Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.
+- Stubbed a "Follow-up blood draw recommended" redraw/retest module (in Edge State Modules); trigger/notification/credit flow flagged for devs to define.
 
 Planned (this round):
-- Redraw/retest path when a follow-up draw is needed.
 - Order of Prescriptions / Supplements / Recommended Services (and where IV fits).
 - Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).
 - Home score module logic (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.

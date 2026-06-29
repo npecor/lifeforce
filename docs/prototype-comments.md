@@ -16,7 +16,7 @@ Status key: **OPEN** = not started · **IN PROGRESS** = partially addressed · *
 - **#4 (Jun 10)** — "Products you may want to ask your doctor about…" (pre-visit discovery). · **OPEN** (content decision — which products, where)
 
 ## Dashboard · Results back · Questionnaire incomplete
-- **#10 (Jun 24)** — Need to handle redraw / retest. · **OPEN** (surfacing + notification path; ULC triggers redraw → new credit)
+- **#10 (Jun 24)** — Need to handle redraw / retest. · **STUBBED** — a "Follow-up blood draw recommended" module now lives in the new **Edge State Modules** library section (pulled into the Results-back states when a redraw is recommended; redraw CTA is a ghost since it's the exception). A dev note on the module flags that the trigger (ULC vs our clinician/dx team), member notification, and new-credit → booking redemption need to be defined with ULC/SprintFWD.
 
 ## Dashboard · Post-clinician visit · Recommendations active
 - **#2 (Jun 10)** — Question to Joel: what's the right order — Prescriptions, Supplements, Recommended Services? Where does IV go? · **OPEN**

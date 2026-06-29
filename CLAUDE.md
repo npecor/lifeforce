@@ -36,6 +36,7 @@ Lifeforce (a longevity-medicine company) owns the **"Labs" experience that rende
 - **Good-faith exam / questionnaire** requirements come from Lifeforce's member-status API (`good_faith_exam_required`, `questionnaire_required`), not from Kite product flags.
 - Open items / action tracker (external): https://docs.google.com/document/d/19_rflGTS_8aIpGg0L7MaabVaZsb0C2pW2UhVqvzTccc/edit
 - ULC Figma (SprintFWD-owned, view-only): https://www.figma.com/design/ZSGbwiCzxuxJ7TeYP2PeuX/ULC-Marketing---App-Designs?node-id=1-6606
+- ULC Figma — editable copy for Claude (use this; the Figma MCP can read it): https://www.figma.com/design/tgy0w6VZWnjikH6I4t4PO1/CLAUDE-CP---ULC-Marketing---App-Designs . The app screens live on the "Mobile App" page. The file is large, so the page list / full-doc metadata can overflow — to view a specific screen, select that frame in Figma and pull it by its node-id (e.g., Contact Us = `1:6970`).
 
 ## Recent work (merged to `main`)
 The `labs-tab-meeting-updates` branch has been merged to `main` and deleted. It landed: prescription CTA Buy→Subscribe; a "View clinician note" button on the post-clinician recommendations screen; and a redesigned blood-draw-scheduled card (`bloodDrawBookedCard`, scoped with the `.draw-card` class) showing in-center status, appointment date/time + fasting note, and center name/address with Get directions. Work continues from `main` on new feature branches.
