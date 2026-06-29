@@ -1047,9 +1047,13 @@
 
       .link {
         flex: none;
+        padding: 0;
+        border: 0;
+        background: transparent;
         color: #aa7b11;
         font-size: 12px;
         font-weight: 800;
+        cursor: pointer;
       }
 
       .center-link {
@@ -1131,6 +1135,37 @@
         display: flex;
         gap: 12px;
         align-items: center;
+      }
+
+      .draw-card .lab-head {
+        align-items: center;
+        padding-bottom: 12px;
+      }
+
+      .draw-card .rec-row {
+        align-items: flex-start;
+      }
+
+      .draw-card .row-copy {
+        line-height: 1.4;
+      }
+
+      .lab-row-link {
+        margin-top: 8px;
+      }
+
+      .note.draw-next {
+        gap: 9px;
+        margin-top: 4px;
+        border-color: var(--line);
+        background: var(--wash-2);
+        color: var(--muted);
+      }
+
+      .note.draw-next svg {
+        flex: none;
+        margin-top: 1px;
+        color: var(--soft);
       }
 
       .metrics {
@@ -3437,15 +3472,30 @@
 
       function bloodDrawBookedCard() {
         return `
-          <section class="card lab-card">
+          <section class="card lab-card draw-card">
             <div class="lab-head">
-              <span class="icon-bubble">${icon("calendar-check", 22)}</span>
+              <span class="icon-bubble green">${icon("calendar-check", 22)}</span>
               <div>
                 <h3 class="module-title">Blood draw scheduled</h3>
-                <p class="row-copy">Manage or update your booking details anytime.</p>
+              </div>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("clock", 18)}</span>
+              <div>
+                <h4 class="row-title">Thu, Jul 2 · 9:30 AM</h4>
+                <p class="row-copy">Fast for 8–12 hours beforehand — water is fine.</p>
+              </div>
+            </div>
+            <div class="rec-row">
+              <span class="icon-bubble">${icon("map-pin", 18)}</span>
+              <div>
+                <h4 class="row-title">ULC Newport Beach</h4>
+                <p class="row-copy">1200 Newport Center Dr, Newport Beach, CA 92660</p>
+                <button class="link lab-row-link">Get directions ${icon("arrow-up-right", 13)}</button>
               </div>
             </div>
             <button class="cta ghost">Manage Booking ${icon("arrow-right", 17)}</button>
+            <div class="note draw-next">${icon("clock-3", 17)}<span>You’ll be able to book your clinician visit once your results are back.</span></div>
           </section>
         `;
       }
@@ -3769,7 +3819,9 @@
                 <h3 class="module-title">Your clinician’s note and recommendations are ready</h3>
                 <p class="module-copy">Review your prescriptions, supplements, and recommended ULC services based on your lab results and clinician visit.</p>
               </div>
+              <span class="icon-bubble green">${icon("file-text", 19)}</span>
             </div>
+            <button class="mini-cta outline">View clinician note ${icon("arrow-right", 16)}</button>
             <div class="section-title"><span>Prescription Recommendations</span></div>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("badge-plus", 19)}</span>
@@ -3779,7 +3831,7 @@
                 <p class="row-copy">Recommended after your clinician reviewed your symptoms and lab results.</p>
                 <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
               </div>
-              <button class="mini-cta">Buy</button>
+              <button class="mini-cta">Subscribe</button>
             </div>
             <div class="rec-row">
               <span class="icon-bubble">${icon("syringe", 19)}</span>
@@ -3789,7 +3841,7 @@
                 <p class="row-copy">Recommended after your clinician reviewed your metabolic markers and goals.</p>
                 <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
               </div>
-              <button class="mini-cta">Buy</button>
+              <button class="mini-cta">Subscribe</button>
             </div>
             <div class="section-title"><span>Supplement Recommendations</span></div>
             <p class="module-copy">Recommended by your clinician. Available at ULC.</p>
@@ -4298,10 +4350,10 @@
                 </div>
                 <span class="status-pill">Prescribed</span>
               </div>
-              <button class="cta">Buy · $110/mo</button>
+              <button class="cta">Subscribe · $110/mo</button>
             </section>
           `,
-          { labelNote: "Arrives from: tapping Buy on a prescription recommendation." },
+          { labelNote: "Arrives from: tapping Subscribe on a prescription recommendation." },
         );
       }
 
@@ -4340,7 +4392,7 @@
               <button class="cta ghost">Back to Labs</button>
             </section>
           `,
-          { labelNote: "Arrives from: tapping Buy from Prescription Detail." },
+          { labelNote: "Arrives from: tapping Subscribe from Prescription Detail." },
         );
       }
 
