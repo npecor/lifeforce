@@ -511,6 +511,8 @@
         overflow: auto;
         padding: 0 22px 104px;
         scrollbar-width: none;
+        display: flex;
+        flex-direction: column;
       }
 
       .phone.has-sticky-action .screen {
@@ -1155,11 +1157,78 @@
       }
 
       .support-link {
-        margin-top: 16px;
-        display: inline-flex;
+        margin-top: auto;
+        padding-top: 22px;
+        display: flex;
+        justify-content: center;
         align-items: center;
         gap: 5px;
-        font-size: 12px;
+        font-size: 11px;
+        font-weight: 400;
+      }
+
+      .rx-check {
+        position: relative;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        border: 1.5px solid #c7c2b9;
+        background: #fff;
+        color: #fff;
+        cursor: pointer;
+        transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Expand the touch target to ~44px without changing the visual size */
+      .rx-check::before {
+        content: "";
+        position: absolute;
+        inset: -9px;
+      }
+
+      .rx-check:hover {
+        border-color: var(--soft);
+      }
+
+      .rx-check:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.16);
+      }
+
+      .rx-check.checked {
+        border-color: var(--brown);
+        background: var(--brown);
+      }
+
+      .rx-check.checked:hover {
+        background: #000;
+        border-color: #000;
+      }
+
+      .rx-check-mark {
+        display: block;
+      }
+
+      .rx-check-mark polyline {
+        stroke-dasharray: 24;
+        stroke-dashoffset: 24;
+        transition: stroke-dashoffset 0.26s cubic-bezier(0.22, 1, 0.36, 1) 0.02s;
+      }
+
+      .rx-check.checked .rx-check-mark polyline {
+        stroke-dashoffset: 0;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rx-check,
+        .rx-check-mark polyline {
+          transition: none;
+        }
       }
 
       .draw-recommend {
@@ -2497,16 +2566,15 @@
           <h2>Prototype changelog</h2>
           <h3>v0.11 · Labs tab meeting updates</h3>
           <ul>
-            <li><strong>Shipped:</strong> Prescription recommendation CTAs changed from Buy to Subscribe (prescriptions are ongoing subscriptions; deep-link into the Kite cart).</li>
-            <li><strong>Shipped:</strong> Added a "View clinician note" entry point on the post-clinician recommendations screen.</li>
-            <li><strong>Shipped:</strong> Redesigned the blood-draw-scheduled card — in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.</li>
-            <li><strong>Shipped:</strong> Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.</li>
-            <li><strong>Shipped:</strong> Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.</li>
-            <li><strong>Shipped:</strong> Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.</li>
-            <li><strong>Shipped (stub):</strong> "Follow-up blood draw recommended" redraw/retest module (lives in Edge State Modules); the trigger/notification/credit-redemption flow is flagged for devs to define.</li>
+            <li><strong>Added:</strong> Prescription recommendation CTAs changed from Buy to Subscribe (prescriptions are ongoing subscriptions; deep-link into the Kite cart).</li>
+            <li><strong>Added:</strong> Added a "View clinician note" entry point on the post-clinician recommendations screen.</li>
+            <li><strong>Added:</strong> Redesigned the blood-draw-scheduled card — in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.</li>
+            <li><strong>Added:</strong> Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.</li>
+            <li><strong>Added:</strong> Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.</li>
+            <li><strong>Added:</strong> Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.</li>
+            <li><strong>Added (stub):</strong> "Follow-up blood draw recommended" redraw/retest module (lives in Edge State Modules); the trigger/notification/credit-redemption flow is flagged for devs to define.</li>
             <li><strong>Planned:</strong> Resolve the order of Prescriptions / Supplements / Recommended Services (and where IV fits).</li>
             <li><strong>Planned:</strong> Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).</li>
-            <li><strong>Planned:</strong> Define the home score module (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.</li>
             <li><strong>Planned:</strong> "Products to ask your doctor about" pre-visit discovery.</li>
           </ul>
           <h3>v0.10 · Final review cleanup</h3>
@@ -3863,26 +3931,26 @@
             </div>
             <div style="text-align:right"><button class="mini-cta outline">View clinician note ${icon("arrow-right", 16)}</button></div>
             <div class="section-title"><span>Prescription Recommendations</span></div>
+            <p class="module-copy">Recommended by your clinician based on your results.</p>
             <div class="rec-row">
               <span class="icon-bubble green">${icon("badge-plus", 19)}</span>
               <div>
                 <h4 class="row-title">Estradiol Patch</h4>
-                <p class="row-copy">Hormone support · $110/mo</p>
-                <p class="row-copy">Recommended after your clinician reviewed your symptoms and lab results.</p>
-                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
+                <p class="row-copy">Helps optimize Estradiol, FSH, and hormone balance.</p>
+                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span><span class="meta-pill">$110/mo</span></div>
               </div>
-              <button class="mini-cta">Subscribe</button>
+              <span class="rx-check checked" role="checkbox" aria-checked="true" tabindex="0"><svg class="rx-check-mark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
             </div>
             <div class="rec-row">
               <span class="icon-bubble">${icon("syringe", 19)}</span>
               <div>
                 <h4 class="row-title">Semaglutide</h4>
-                <p class="row-copy">Metabolic support · $270/mo</p>
-                <p class="row-copy">Recommended after your clinician reviewed your metabolic markers and goals.</p>
-                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span></div>
+                <p class="row-copy">Helps optimize Hemoglobin A1c, fasting glucose, and weight.</p>
+                <div class="rec-meta"><span class="meta-pill">Clinician-prescribed</span><span class="meta-pill">$270/mo</span></div>
               </div>
-              <button class="mini-cta">Subscribe</button>
+              <span class="rx-check checked" role="checkbox" aria-checked="true" tabindex="0"><svg class="rx-check-mark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
             </div>
+            <button class="cta rx-add-btn">Add 2 items to cart</button>
             <div class="section-title"><span>Supplement Recommendations</span></div>
             <p class="module-copy">Recommended by your clinician. Available at ULC.</p>
             <div class="rec-row">
@@ -5168,6 +5236,22 @@
         }
       }
 
+      function setupBundleEvents() {
+        if (window.__bundleWired) return;
+        window.__bundleWired = true;
+        document.addEventListener("click", (e) => {
+          const box = e.target.closest(".rx-check");
+          if (!box) return;
+          const checked = box.classList.toggle("checked");
+          box.setAttribute("aria-checked", String(checked));
+          const card = box.closest(".recommendation");
+          if (!card) return;
+          const n = card.querySelectorAll(".rx-check.checked").length;
+          const btn = card.querySelector(".rx-add-btn");
+          if (btn) btn.textContent = n ? `Add ${n} item${n === 1 ? "" : "s"} to cart` : "Select items to add to cart";
+        });
+      }
+
       function renderPrototype() {
         renderInteractivePreview();
         showReviewerCtaDestinations = true;
@@ -5193,6 +5277,7 @@
           .join("");
         setupCommentEvents();
         setupOpenQuestionEvents();
+        setupBundleEvents();
         setViewMode(currentViewMode);
         renderCommentUI();
         renderOpenQuestions();

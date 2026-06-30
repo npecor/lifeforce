@@ -4,7 +4,7 @@
 
 Date: June 26, 2026
 
-Shipped:
+Added:
 - Prescription recommendation CTAs changed from "Buy" to "Subscribe" (prescriptions are ongoing subscriptions, fulfilled by Lifeforce pharmacies; deep-link into the Kite cart).
 - Added a "View clinician note" entry point on the post-clinician recommendations screen.
 - Redesigned the blood-draw-scheduled card: in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.
@@ -16,7 +16,6 @@ Shipped:
 Planned (this round):
 - Order of Prescriptions / Supplements / Recommended Services (and where IV fits).
 - Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).
-- Home score module logic (LifeScore vs Longevity Assessment) and the two Lifeforce home slots.
 - "Products to ask your doctor about" pre-visit discovery.
 
 Known open questions:
