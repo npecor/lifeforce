@@ -25,7 +25,7 @@ Added:
 - Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.
 - Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.
 - Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.
-- Stubbed a "Follow-up blood draw recommended" redraw/retest module (in Edge State Modules); trigger/notification/credit flow flagged for devs to define.
+- Added a "Follow-up blood draw recommended" redraw/retest module (in Edge State Modules); trigger/notification/credit flow flagged for devs to define.
 
 Planned (this round):
 - Order of Prescriptions / Supplements / Recommended Services (and where IV fits).

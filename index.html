@@ -2670,9 +2670,9 @@
         <section id="edgeModules" class="canvas" aria-label="Lifeforce edge-state modules"></section>
 
         <section class="hero" style="margin-top: 44px">
-          <p class="eyebrow">System / Fallback States</p>
-          <h1>When the embedded Labs experience can’t display</h1>
-          <p class="module-copy" style="max-width:680px">Required by the ULC integration spec: calm fallbacks for loading, a connection failure, and a service outage. Note: a total load failure (our code never runs) can’t be handled here. The ULC app or a no-JS fallback has to.</p>
+          <p class="eyebrow">System</p>
+          <h1>Fallback States</h1>
+          <p class="module-copy" style="max-width:680px">When the embedded Labs experience can’t display. Required by the ULC integration spec: calm fallbacks for loading, a connection failure, and a service outage. Note: a total load failure (our code never runs) can’t be handled here. The ULC app or a no-JS fallback has to.</p>
         </section>
 
         <section class="canvas three-up" id="systemStates" aria-label="Lifeforce system and fallback states"></section>
@@ -2714,6 +2714,11 @@
         <details class="prototype-changelog">
           <summary>Changelog</summary>
           <h2>Prototype changelog</h2>
+          <h3>v0.12 · System fallback states + UI polish</h3>
+          <ul>
+            <li><strong>Added:</strong> Fallback States — calm, plain-language screens for when the embedded Labs experience can't display: a loading skeleton, a connection-failure state ("We can't load your labs right now"), and a service-unavailable state ("Labs is temporarily unavailable"). Each reassures the member their lab data is safe and offers Try again plus a path to contact ULC.</li>
+            <li><strong>Changed:</strong> Polished the scheduled-blood-draw card (green status bubble, distinct row icons, fixed "Get directions" link, title-only header) and redesigned the prescription selection checkbox (filled checked state with an animated check, clearer states, larger tap target).</li>
+          </ul>
           <h3>v0.11 · Labs tab meeting updates</h3>
           <ul>
             <li><strong>Added:</strong> Prescription recommendations now use checkbox multi-select, so a member can add several clinician-prescribed items to the Kite cart in one action. Items are checked by default, and the button shows how many will be added. This replaces the earlier per-item Buy/Subscribe button.</li>
@@ -2722,7 +2727,7 @@
             <li><strong>Added:</strong> Removed the old Recommendation Support Screens (Product Detail and Review Order). Product detail and checkout are owned by Kite, not the Labs tab.</li>
             <li><strong>Added:</strong> A quiet "Need help? Contact ULC." link at the bottom of every screen that deep-links to the ULC app's Contact Us page.</li>
             <li><strong>Added:</strong> An "Edge State Modules" library — a holding area for rare or conditional modules that are pulled into screens only when needed.</li>
-            <li><strong>Added (stub):</strong> A "Follow-up blood draw recommended" redraw module, housed in the Edge State Modules library. The trigger, member notification, and credit-redemption flow still need to be defined by the team.</li>
+            <li><strong>Added:</strong> A "Follow-up blood draw recommended" redraw module, housed in the Edge State Modules library. The trigger, member notification, and credit-redemption flow still need to be defined by the team.</li>
           </ul>
           <h3>v0.10 · Final review cleanup</h3>
           <ul>
