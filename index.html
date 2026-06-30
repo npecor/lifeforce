@@ -1159,12 +1159,16 @@
       .support-link {
         margin-top: auto;
         padding-top: 22px;
+        margin-bottom: -38px;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 5px;
         font-size: 11px;
         font-weight: 400;
+        color: var(--soft);
+        text-decoration: underline;
+        text-underline-offset: 2px;
       }
 
       .rx-check {
@@ -1229,6 +1233,134 @@
         .rx-check-mark polyline {
           transition: none;
         }
+      }
+
+      /* ---- System / fallback states (embedded Labs can't display) ---- */
+      .labs-fallback {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px 6px 12px;
+      }
+
+      .fallback-icon {
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 18px;
+        border-radius: 20px;
+        background: var(--wash);
+        color: var(--soft);
+      }
+
+      .fallback-title {
+        margin: 0;
+        font-size: 19px;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+
+      .fallback-copy {
+        margin: 10px 0 0;
+        max-width: 30ch;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+        text-wrap: pretty;
+      }
+
+      .fallback-reassure {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin: 16px 0 0;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--green-soft);
+        color: #3f7338;
+        font-size: 12.5px;
+        font-weight: 750;
+      }
+
+      .fallback-reassure svg {
+        flex: none;
+      }
+
+      .fallback-actions {
+        width: 100%;
+        max-width: 320px;
+        margin-top: 24px;
+      }
+
+      .fallback-actions .cta {
+        margin-top: 0;
+      }
+
+      .fallback-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 14px auto 0;
+        padding: 8px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .fallback-secondary:hover {
+        color: var(--ink);
+      }
+
+      /* Loading skeleton */
+      .sk {
+        background: linear-gradient(90deg, #eceae4 25%, #f5f3ee 37%, #eceae4 63%);
+        background-size: 400% 100%;
+        border-radius: 9px;
+        animation: sk-shimmer 1.4s ease infinite;
+      }
+
+      @keyframes sk-shimmer {
+        0% { background-position: 100% 0; }
+        100% { background-position: 0 0; }
+      }
+
+      .sk-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 22px 0 18px;
+      }
+
+      .sk-line { height: 13px; }
+      .sk-bubble { width: 43px; height: 43px; border-radius: 14px; flex: none; }
+      .sk-card {
+        padding: 17px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--surface);
+        margin-bottom: 12px;
+      }
+      .sk-row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 13px;
+        align-items: center;
+        padding: 13px 0;
+      }
+      .sk-row + .sk-row { border-top: 1px solid #ece8e2; }
+      .sk-cta { height: 52px; border-radius: 16px; margin-top: 6px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .sk { animation: none; background: #eceae4; }
       }
 
       .draw-recommend {
@@ -1440,6 +1572,10 @@
         font-size: 17px;
         font-weight: 850;
         letter-spacing: -0.02em;
+      }
+
+      .recommendation .section-title {
+        margin-top: 28px;
       }
 
       .insight {
@@ -2471,7 +2607,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.11 · Labs tab meeting updates</span>
+          <span class="version-pill">v0.12 · System fallback states + UI polish</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -2527,6 +2663,14 @@
 
         <section id="edgeModules" aria-label="Lifeforce edge-state modules" style="padding:0 28px"></section>
 
+        <section class="hero" style="margin-top: 44px">
+          <p class="eyebrow">System / Fallback States</p>
+          <h1>When the embedded Labs experience can’t display</h1>
+          <p class="module-copy" style="max-width:680px">Required by the ULC integration spec: calm fallbacks for loading, a connection failure, and a service outage. Note: a total load failure (our code never runs) can’t be handled here. The ULC app or a no-JS fallback has to.</p>
+        </section>
+
+        <section class="canvas three-up" id="systemStates" aria-label="Lifeforce system and fallback states"></section>
+
         <details class="prototype-changelog" id="openQuestionsDetails">
           <summary id="openQuestionsSummary">Open Questions · 0 open</summary>
           <h2>Open Questions</h2>
@@ -2566,96 +2710,93 @@
           <h2>Prototype changelog</h2>
           <h3>v0.11 · Labs tab meeting updates</h3>
           <ul>
-            <li><strong>Added:</strong> Prescription recommendation CTAs changed from Buy to Subscribe (prescriptions are ongoing subscriptions; deep-link into the Kite cart).</li>
-            <li><strong>Added:</strong> Added a "View clinician note" entry point on the post-clinician recommendations screen.</li>
-            <li><strong>Added:</strong> Redesigned the blood-draw-scheduled card — in-center status, appointment date/time + fasting note, center name/address with Get directions, and a note that the clinician visit unlocks once results are back.</li>
-            <li><strong>Added:</strong> Removed the Recommendation Support Screens reference section (Product Detail + Review Order); product detail and checkout are owned by Kite.</li>
-            <li><strong>Added:</strong> Added a "Need help? Contact ULC." link at the bottom of every screen, deep-linking to the ULC app's Contact Us page.</li>
-            <li><strong>Added:</strong> Added an "Edge State Modules" library section for rare/conditional modules pulled into screens as needed.</li>
-            <li><strong>Added (stub):</strong> "Follow-up blood draw recommended" redraw/retest module (lives in Edge State Modules); the trigger/notification/credit-redemption flow is flagged for devs to define.</li>
-            <li><strong>Planned:</strong> Resolve the order of Prescriptions / Supplements / Recommended Services (and where IV fits).</li>
-            <li><strong>Planned:</strong> Add-all-to-cart / bundling for multiple recommendations (with SprintFWD).</li>
-            <li><strong>Planned:</strong> "Products to ask your doctor about" pre-visit discovery.</li>
+            <li><strong>Added:</strong> Prescription recommendations now use checkbox multi-select, so a member can add several clinician-prescribed items to the Kite cart in one action. Items are checked by default, and the button shows how many will be added. This replaces the earlier per-item Buy/Subscribe button.</li>
+            <li><strong>Added:</strong> A "View clinician note" button on the post-clinician recommendations screen, so members can read their clinician's note next to the recommendations.</li>
+            <li><strong>Added:</strong> Redesigned the scheduled-blood-draw card. It now shows the in-center status, the appointment date and time, the fasting note, and the center's name and address with a "Get directions" link.</li>
+            <li><strong>Added:</strong> Removed the old Recommendation Support Screens (Product Detail and Review Order). Product detail and checkout are owned by Kite, not the Labs tab.</li>
+            <li><strong>Added:</strong> A quiet "Need help? Contact ULC." link at the bottom of every screen that deep-links to the ULC app's Contact Us page.</li>
+            <li><strong>Added:</strong> An "Edge State Modules" library — a holding area for rare or conditional modules that are pulled into screens only when needed.</li>
+            <li><strong>Added (stub):</strong> A "Follow-up blood draw recommended" redraw module, housed in the Edge State Modules library. The trigger, member notification, and credit-redemption flow still need to be defined by the team.</li>
           </ul>
           <h3>v0.10 · Final review cleanup</h3>
           <ul>
-            <li>Replaced Needs Ashley / Needs SprintFWD labels with Needs SprintFWD input in CTA destination annotations.</li>
-            <li>Simplified Open Questions into Questions for SprintFWD and Internal LifeForce Questions.</li>
-            <li>Removed or archived older granular open questions covered by the SprintFWD agenda.</li>
-            <li>Removed the global CTA destination legend while keeping per-screen CTA destination panels.</li>
-            <li>Removed the rigid What happens next timeline and kept the conceptual Measure → Review → Personalize journey module.</li>
-            <li>Removed unsupported locked/pending Recommendations screen from the core flow.</li>
-            <li>Removed biomarker-specific Recommended next steps from Biomarker Detail.</li>
-            <li>Removed top-level filter chips from Lab Reports while keeping Optimal / Normal / Out of Range summary chips on report cards.</li>
-            <li>Updated in-progress Health Questionnaire progress from section-based language to percentage-based progress.</li>
-            <li>Updated Results Back / Questionnaire Incomplete hierarchy so Schedule Clinician Visit is the highest-priority CTA when available.</li>
-            <li>Removed the Post-visit capsule from the post-clinician recommendations card.</li>
-            <li>Restored individual titles for Recommendation Support Screens.</li>
+            <li>Replaced the "Needs Ashley" and "Needs SprintFWD" labels with a single "Needs SprintFWD input" label on CTA destination notes.</li>
+            <li>Reorganized Open Questions into two clear groups: questions for SprintFWD and internal Lifeforce questions.</li>
+            <li>Removed older, granular open questions that the SprintFWD agenda already covers.</li>
+            <li>Removed the global CTA destination legend, but kept the per-screen CTA destination panels.</li>
+            <li>Removed the rigid "What happens next" timeline and kept the simpler Measure → Review → Personalize journey module.</li>
+            <li>Removed the locked/pending Recommendations screen from the core flow, since it isn't supported.</li>
+            <li>Removed the biomarker-specific "Recommended next steps" from the Biomarker Detail screen.</li>
+            <li>Removed the filter chips at the top of Lab Reports, but kept the Optimal / Normal / Out of Range summary chips on each report card.</li>
+            <li>Changed the in-progress Health Questionnaire to show percentage complete instead of which section you're on.</li>
+            <li>Reordered the Results Back / Questionnaire Incomplete screen so "Schedule Clinician Visit" is the top-priority button when it's available.</li>
+            <li>Removed the post-visit capsule from the post-clinician recommendations card.</li>
+            <li>Restored individual titles for the Recommendation Support Screens.</li>
           </ul>
           <h3>v0.9 · UX hierarchy cleanup</h3>
           <ul>
-            <li>Clarified the next best action for each dashboard state.</li>
-            <li>Removed broad product browsing from early states and kept no-labs focused on scheduling plus assessment.</li>
-            <li>Clarified the conceptual Labs journey without forcing a rigid step-by-step sequence.</li>
-            <li>Reordered results-back states so Health Questionnaire and clinician scheduling follow the requested priority.</li>
-            <li>Added clinical rationale lines to prescription, supplement, and service recommendations.</li>
-            <li>Kept Documents lower priority after results, LifeScore, and recommendations.</li>
+            <li>Made the single best next action clearer on each dashboard state.</li>
+            <li>Removed broad product browsing from the early states, keeping the no-labs screen focused on scheduling and the assessment.</li>
+            <li>Clarified the Labs journey conceptually, without forcing a rigid step-by-step sequence.</li>
+            <li>Reordered the results-back states so the Health Questionnaire and clinician scheduling appear in the requested priority.</li>
+            <li>Added a short clinical-rationale line to each prescription, supplement, and service recommendation.</li>
+            <li>Kept Documents lower in priority — after results, LifeScore, and recommendations.</li>
           </ul>
           <h3>v0.8 · June 09 review refinements</h3>
           <ul>
-            <li>Renamed the first state to No blood draw performed and clarified the blood-draw scheduled questionnaire state.</li>
-            <li>Removed standalone processing and broad catalog screens from the core all-screens flow.</li>
-            <li>Added LifeScore and Documents detail screens based on the supplied reference screenshots.</li>
-            <li>Expanded LifeScore cards with Quality of Life, Longevity Risk, and Biological Age metrics.</li>
-            <li>Updated post-clinician recommendations with prescription, supplement, and service sections.</li>
-            <li>Changed prescription CTAs to Buy and shifted supplements to available-at-ULC language.</li>
-            <li>Added Documents modules to results-back and post-clinician states.</li>
+            <li>Renamed the first state to "No blood draw performed" and clarified the questionnaire state for a scheduled blood draw.</li>
+            <li>Removed the standalone processing screen and the broad catalog screens from the core all-screens flow.</li>
+            <li>Added LifeScore and Documents detail screens, based on the reference screenshots provided.</li>
+            <li>Expanded the LifeScore cards to include Quality of Life, Longevity Risk, and Biological Age.</li>
+            <li>Updated the post-clinician recommendations with separate prescription, supplement, and service sections.</li>
+            <li>Changed prescription CTAs to "Buy" and shifted supplements to "available at ULC" language.</li>
+            <li>Added Documents modules to the results-back and post-clinician states.</li>
           </ul>
           <h3>v0.7 · V0 state simplification</h3>
           <ul>
-            <li>Collapsed the dashboard states around blood draw and results status instead of member/non-member segmentation.</li>
-            <li>Reduced the no-labs screen to orientation plus deep-link-dependent scheduling actions.</li>
+            <li>Reorganized the dashboard states around blood-draw and results status, rather than member vs. non-member.</li>
+            <li>Pared the no-labs screen down to orientation plus the scheduling actions that depend on deep links.</li>
             <li>Moved post-clinician recommendations to the top of the post-visit state and split them into prescriptions, supplements, and ULC services.</li>
-            <li>Changed supplement recommendation language to Available at ULC instead of in-app purchase language.</li>
-            <li>Added Documents as a lower-priority utility section after recommendations, LifeScore, and lab reports.</li>
+            <li>Changed supplement recommendations to "Available at ULC" instead of in-app purchase language.</li>
+            <li>Added Documents as a lower-priority section, after recommendations, LifeScore, and lab reports.</li>
           </ul>
           <h3>v0.6 · Sticky CTA cleanup</h3>
           <ul>
-            <li>Moved recommendations, product, and order purchase CTAs out of the scroll content and into phone-level bottom bars.</li>
-            <li>Anchored purchase bars above the bottom navigation so they feel intentional and consistent.</li>
-            <li>Added extra scroll padding on purchase screens so page content can clear the bottom action area.</li>
+            <li>Moved the recommendation, product, and order purchase buttons out of the scrolling content and into fixed bars at the bottom of the phone.</li>
+            <li>Anchored those purchase bars just above the bottom navigation so they feel intentional and consistent.</li>
+            <li>Added extra scroll padding on purchase screens so content can clear the bottom action bar.</li>
           </ul>
           <h3>v0.4 · Recommendation refinement</h3>
           <ul>
-            <li>Simplified the post-clinician recommendation state to avoid repeated recommendation CTAs.</li>
-            <li>Adjusted the post-clinician hierarchy before the later v0.7 recommendation-led structure.</li>
-            <li>Replaced generic supplement examples with prescription recommendations: Estradiol Patch and Semaglutide.</li>
+            <li>Simplified the post-clinician recommendation state to avoid repeating the same recommendation buttons.</li>
+            <li>Adjusted the post-clinician hierarchy (later superseded by the v0.7 recommendation-led structure).</li>
+            <li>Replaced the generic supplement examples with real prescription recommendations: Estradiol Patch and Semaglutide.</li>
             <li>Moved Prescription Recommendations above LifeScore and Lab Reports in the post-clinician state.</li>
-            <li>Updated the labs/no-member card copy to use user-facing biomarker testing language and removed TBD chips from the mobile UI.</li>
+            <li>Updated the labs/no-member card to use member-facing biomarker-testing language and removed the TBD chips from the mobile UI.</li>
           </ul>
           <h3>v0.3 · MVP state model pass</h3>
           <ul>
-            <li>Updated dashboard states to reflect the May 15 operational journey.</li>
-            <li>Added labs/no-member and blood-draw-booked states.</li>
-            <li>Changed blood draw terminology to Schedule Blood Draw.</li>
-            <li>Hid Health Questionnaire from the unscheduled member no-labs state.</li>
-            <li>Split labs processing by questionnaire incomplete vs complete.</li>
-            <li>Removed next-draw-due logic and Lifeforce membership management from dashboard states.</li>
+            <li>Updated the dashboard states to reflect the May 15 operational journey.</li>
+            <li>Added the labs/no-member and blood-draw-booked states.</li>
+            <li>Changed the blood-draw wording to "Schedule Blood Draw."</li>
+            <li>Hid the Health Questionnaire from the unscheduled member no-labs state.</li>
+            <li>Split the labs-processing state into questionnaire-incomplete and questionnaire-complete versions.</li>
+            <li>Removed the next-draw-due logic and Lifeforce membership management from the dashboard states.</li>
           </ul>
           <h3>v0.2 · Pre-MVP state update snapshot</h3>
           <ul>
-            <li>Snapshot created before May 15 meeting-driven state model changes.</li>
-            <li>Current prototype includes dashboard states, reports/results, and recommendations/products.</li>
-            <li>This is the baseline to revert to if the next round of changes goes in the wrong direction.</li>
+            <li>Snapshot taken before the May 15 meeting-driven state model changes.</li>
+            <li>At this point the prototype includes the dashboard states, reports/results, and recommendations/products.</li>
+            <li>Kept as the baseline to revert to if the next round of changes goes in the wrong direction.</li>
           </ul>
           <h3>Upcoming / in progress</h3>
           <ul>
-            <li>Confirm which ULC/Kite destinations can be deep-linked from the embedded Labs experience.</li>
-            <li>Confirm whether membership or one-off-lab purchase status is available to Lifeforce.</li>
-            <li>Confirm supplement purchase path, BOPUS support, or in-center-only fallback.</li>
-            <li>Define ULC service recommendation rules, imagery, and booking deep links.</li>
+            <li>Confirm which ULC/Kite destinations can be deep-linked from inside the embedded Labs experience.</li>
+            <li>Confirm whether membership or one-off lab-purchase status is available to Lifeforce.</li>
+            <li>Confirm the supplement purchase path — buy-online-pick-up-in-store, or in-center only.</li>
+            <li>Define the rules, imagery, and booking deep links for ULC service recommendations.</li>
           </ul>
-          <p class="changelog-updated">Last updated June 09, 2026.</p>
+          <p class="changelog-updated">Last updated June 30, 2026.</p>
         </details>
       </section>
 
@@ -3265,6 +3406,12 @@
           ["Upload", "Upload requested documents", "TBD"],
           ["Delete uploaded doc", "Glib to build — a list of uploaded documents with a delete control. No design made for this yet.", "TBD"],
         ],
+        "system-connection-error": [
+          ["Try again", "Re-attempt loading the embedded Labs experience (reload)", "Lifeforce-owned"],
+        ],
+        "system-service-unavailable": [
+          ["Try again", "Re-attempt fetching Lifeforce content", "Lifeforce-owned"],
+        ],
       };
 
       function ctaStatusClass(status) {
@@ -3603,7 +3750,6 @@
               </div>
             </div>
             <button class="cta ghost">Manage Booking ${icon("arrow-right", 17)}</button>
-            <div class="note draw-next">${icon("clock-3", 17)}<span>You’ll be able to book your clinician visit once your results are back.</span></div>
           </section>
         `;
       }
@@ -4135,7 +4281,7 @@
                 <div class="screen" data-screen-id="${resolvedScreenId}" data-screen-title="${escapeHtml(screenTitle)}">
                   ${renderCommentPins(resolvedScreenId)}
                   ${body}
-                  ${supportLink()}
+                  ${options.hideSupport ? "" : supportLink()}
                 </div>
                 ${stickyAction}
                 ${bottomNav()}
@@ -4144,6 +4290,84 @@
             ${annotations}
           </article>
         `;
+      }
+
+      function labsFallbackBody({ glyph, title, copy, retry = "Try again" }) {
+        return `
+          <div class="labs-fallback">
+            <span class="fallback-icon">${icon(glyph, 28)}</span>
+            <h2 class="fallback-title">${title}</h2>
+            <p class="fallback-copy">${copy}</p>
+            <p class="fallback-reassure">${icon("shield-check", 15)} Your lab data is safe. Nothing was lost.</p>
+            <div class="fallback-actions">
+              <button class="cta">${icon("refresh-cw", 17)} ${retry}</button>
+              <button class="fallback-secondary">${icon("life-buoy", 14)} Need help? Contact ULC</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function labsConnectionErrorScreen(options = {}) {
+        return phoneScreen(
+          "08 · Can't load Labs (connection)",
+          labsFallbackBody({
+            glyph: "cloud-off",
+            title: "We can’t load your labs right now",
+            copy: "Something interrupted the connection. Try again in a moment.",
+          }),
+          "system-connection-error",
+          "",
+          { hideSupport: true, ...options },
+        );
+      }
+
+      function labsServiceUnavailableScreen(options = {}) {
+        return phoneScreen(
+          "09 · Temporarily unavailable (service)",
+          labsFallbackBody({
+            glyph: "clock",
+            title: "Labs is temporarily unavailable",
+            copy: "We’re having trouble showing your results right now. Please check back shortly.",
+          }),
+          "system-service-unavailable",
+          "",
+          { hideSupport: true, ...options },
+        );
+      }
+
+      function labsLoadingSkeletonScreen(options = {}) {
+        const body = `
+          <div class="sk-header">
+            <div style="flex:1">
+              <div class="sk sk-line" style="width:62%;height:18px"></div>
+              <div class="sk sk-line" style="width:40%;margin-top:9px"></div>
+            </div>
+            <div class="sk sk-bubble"></div>
+          </div>
+          <div class="sk-card">
+            <div class="sk sk-line" style="width:70%;height:15px"></div>
+            <div class="sk sk-line" style="width:100%;margin-top:11px"></div>
+            <div class="sk sk-line" style="width:88%;margin-top:8px"></div>
+            <div class="sk sk-cta"></div>
+          </div>
+          <div class="sk-card">
+            <div class="sk-row">
+              <div class="sk sk-bubble"></div>
+              <div style="min-width:0">
+                <div class="sk sk-line" style="width:55%;height:14px"></div>
+                <div class="sk sk-line" style="width:85%;margin-top:8px"></div>
+              </div>
+            </div>
+            <div class="sk-row">
+              <div class="sk sk-bubble"></div>
+              <div style="min-width:0">
+                <div class="sk sk-line" style="width:48%;height:14px"></div>
+                <div class="sk sk-line" style="width:80%;margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        return phoneScreen("07 · Loading", body, "system-loading", "", { hideSupport: true, showDestinations: false, ...options });
       }
 
       function titleBar(title, subtitle, rightIcon = "") {
@@ -5270,6 +5494,11 @@
             "Devs: the trigger (ULC team vs our clinician/diagnostic team), the member notification, and the new-credit → booking redemption are all undefined — needs to be figured out with ULC/SprintFWD.",
             redrawCard(),
           ),
+        ].join("");
+        document.getElementById("systemStates").innerHTML = [
+          labsLoadingSkeletonScreen({ labelNote: "Before content appears" }),
+          labsConnectionErrorScreen({ labelNote: "Frame can’t load — connection/technical" }),
+          labsServiceUnavailableScreen({ labelNote: "Loads, but Lifeforce content is down" }),
         ].join("");
         showReviewerCtaDestinations = false;
         document.getElementById("profileStates").innerHTML = Object.keys(profileStates)

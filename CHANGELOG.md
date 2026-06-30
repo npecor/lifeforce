@@ -1,5 +1,19 @@
 # ULC x Lifeforce Prototype Changelog
 
+## v0.12 · System fallback states + UI polish
+
+Date: June 30, 2026
+
+Added:
+- System / Fallback States section (required by the ULC integration spec): a loading skeleton, a connection-failure state ("We can't load your labs right now"), and a service-unavailable state ("Labs is temporarily unavailable"). Each uses calm, plain-language copy, reassures the member their lab data is safe, and offers Try again plus a path to contact ULC.
+
+Changed:
+- Refined the blood-draw-scheduled card: status carried by a green check bubble, distinct row icons (calendar / clock / pin), fixed "Get directions" rendering as a stray boxed button, top-aligned row icons, neutral note styling so it reads as guidance (not a second button), and a title-only header.
+- Redesigned the prescription selection checkbox: filled dark checked state with an animated checkmark, clearer unchecked state, hover and focus-visible states, and a larger (44px) touch target.
+
+Known open questions:
+- A total iframe load failure (our code never runs) can't be handled by us; the ULC app or a no-JS static fallback must render it. Ownership TBD with SprintFWD.
+
 ## v0.11 · Labs tab meeting updates
 
 Date: June 26, 2026
