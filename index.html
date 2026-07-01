@@ -2613,7 +2613,7 @@
       <section class="hero">
         <div class="board-header">
           <h1 class="board-title">ULC x Lifeforce Experience</h1>
-          <span class="version-pill">v0.12 · System fallback states + UI polish</span>
+          <span class="version-pill">v0.12 · Labs tab updates + fallback states</span>
           <div class="view-toggle" id="viewToggle" aria-label="Prototype view">
             <button type="button" data-view="dynamic" aria-pressed="false">Dynamic</button>
             <button type="button" data-view="all" aria-pressed="true">All screens</button>
@@ -2714,16 +2714,12 @@
         <details class="prototype-changelog">
           <summary>Changelog</summary>
           <h2>Prototype changelog</h2>
-          <h3>v0.12 · System fallback states + UI polish</h3>
+          <h3>v0.12 · Labs tab updates + fallback states</h3>
           <ul>
-            <li><strong>Added:</strong> Fallback States — calm, plain-language screens for when the embedded Labs experience can't display: a loading skeleton, a connection-failure state ("We can't load your labs right now"), and a service-unavailable state ("Labs is temporarily unavailable"). Each reassures the member their lab data is safe and offers Try again plus a path to contact ULC.</li>
-            <li><strong>Changed:</strong> Polished the scheduled-blood-draw card (green status bubble, distinct row icons, fixed "Get directions" link, title-only header) and redesigned the prescription selection checkbox (filled checked state with an animated check, clearer states, larger tap target).</li>
-          </ul>
-          <h3>v0.11 · Labs tab meeting updates</h3>
-          <ul>
-            <li><strong>Added:</strong> Prescription recommendations now use checkbox multi-select, so a member can add several clinician-prescribed items to the Kite cart in one action. Items are checked by default, and the button shows how many will be added. This replaces the earlier per-item Buy/Subscribe button.</li>
+            <li><strong>Added:</strong> Prescription recommendations now use a checkbox multi-select, so a member can add several clinician-prescribed items to the Kite cart in one action — items are checked by default and the button shows how many will be added, replacing the earlier per-item Buy/Subscribe button. The checkbox uses a filled checked state with an animated check and a larger tap target.</li>
+            <li><strong>Added:</strong> Fallback states — calm, plain-language screens for when the embedded Labs experience can't display: a loading skeleton, a connection-failure state ("We can't load your labs right now"), and a service-unavailable state ("Labs is temporarily unavailable"). Each reassures the member their lab data is safe and offers Try again plus a path to contact ULC.</li>
+            <li><strong>Added:</strong> Redesigned the scheduled-blood-draw card — in-center status with a status bubble, the appointment date and time, the fasting note, distinct row icons, and the center's name and address with a working "Get directions" link.</li>
             <li><strong>Added:</strong> A "View clinician note" button on the post-clinician recommendations screen, so members can read their clinician's note next to the recommendations.</li>
-            <li><strong>Added:</strong> Redesigned the scheduled-blood-draw card. It now shows the in-center status, the appointment date and time, the fasting note, and the center's name and address with a "Get directions" link.</li>
             <li><strong>Added:</strong> Removed the old Recommendation Support Screens (Product Detail and Review Order). Product detail and checkout are owned by Kite, not the Labs tab.</li>
             <li><strong>Added:</strong> A quiet "Need help? Contact ULC." link at the bottom of every screen that deep-links to the ULC app's Contact Us page.</li>
             <li><strong>Added:</strong> An "Edge State Modules" library — a holding area for rare or conditional modules that are pulled into screens only when needed.</li>
