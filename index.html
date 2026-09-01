@@ -4393,7 +4393,6 @@
         if (state === "post_clinician_recommendations_active") {
           return `
             ${methylationGeneticsCard({ tested: true })}
-            ${prescriptionSubscriptions()}
             ${clinicianRecommendations()}
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
