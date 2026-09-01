@@ -1684,6 +1684,130 @@
         margin-top: 12px;
       }
 
+      /* ---- Methylation genetics module ---- */
+      .meth-tested {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .meth-steps {
+        display: grid;
+        gap: 4px;
+        margin-top: 11px;
+      }
+
+      .meth-step {
+        display: grid;
+        grid-template-columns: auto auto 1fr auto;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 9px;
+        border-radius: 9px;
+        background: var(--wash);
+      }
+
+      .meth-num {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        color: var(--soft);
+        font-size: 9.5px;
+        font-weight: 600;
+        display: grid;
+        place-items: center;
+      }
+
+      .meth-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1d3b2a;
+        letter-spacing: -0.01em;
+      }
+
+      .meth-gene {
+        justify-self: start;
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: #e7e4dc;
+        color: var(--muted);
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .meth-status {
+        justify-self: end;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+
+      .meth-status.optimal {
+        background: var(--green-soft);
+        color: #3d7a37;
+      }
+
+      .meth-status.sub {
+        background: var(--gold-soft);
+        color: #9a6a12;
+      }
+
+      .meth-status.support {
+        background: var(--red-soft);
+        color: #a5432c;
+      }
+
+      .meth-status.neutral {
+        background: transparent;
+        color: var(--soft);
+        font-weight: 600;
+      }
+
+      .meth-skeleton {
+        justify-self: end;
+        width: 40px;
+        height: 8px;
+        border-radius: 999px;
+        background: #e2ded5;
+      }
+
+      .meth-note {
+        margin: 9px 0 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 10.5px;
+      }
+
+      .methylation-card .module-copy {
+        font-size: 12.5px;
+        line-height: 1.4;
+        margin-top: 7px;
+      }
+
+      .methylation-card .cta {
+        min-height: 44px;
+        margin-top: 13px;
+        font-size: 14px;
+      }
+
+      .methylation-card .mini-cta.outline {
+        width: 100%;
+        min-height: 42px;
+        margin-top: 12px;
+        border-radius: 14px;
+        border-color: #d9cc94;
+        background: #fffdf0;
+        color: #7a5f0e;
+        font-size: 13px;
+        gap: 6px;
+      }
+
       .sticky-action {
         position: absolute;
         right: 24px;
@@ -3682,6 +3806,46 @@
         `;
       }
 
+      const METHYLATION_STEPS = [
+        { n: 1, name: "Absorb", gene: "", status: "Diet driven", tone: "neutral" },
+        { n: 2, name: "Convert", gene: "MTHFR", status: "Sub-Optimal", tone: "sub" },
+        { n: 3, name: "Recycle", gene: "MTR", status: "Optimal", tone: "optimal" },
+        { n: 4, name: "Recharge", gene: "MTRR", status: "May Need Support", tone: "support" },
+        { n: 5, name: "Remove", gene: "AHCY", status: "Optimal", tone: "optimal" },
+        { n: 6, name: "Consume", gene: "COMT", status: "Sub-Optimal", tone: "sub" },
+      ];
+
+      function methylationGeneticsCard({ tested = false, testedOn = "August 19, 2026" } = {}) {
+        const rows = METHYLATION_STEPS.map(
+          (s) => `
+            <div class="meth-step">
+              <span class="meth-num">${s.n}</span>
+              <span class="meth-name">${s.name}</span>
+              ${s.gene ? `<span class="meth-gene">${s.gene}</span>` : "<span></span>"}
+              ${tested ? `<span class="meth-status ${s.tone}">${s.status}</span>` : `<span class="meth-skeleton"></span>`}
+            </div>`
+        ).join("");
+
+        const header = tested
+          ? `<h3 class="module-title">Your Methylation Genetics</h3>
+             <p class="meth-tested">Tested ${testedOn}</p>`
+          : `<h3 class="module-title">Your Methylation Genetics</h3>
+             <p class="module-copy">Reveal how your genetics influence your methylation cycle, how this affects your health, and what you can do about it. One cheek swab to assess five genes that matter.</p>`;
+
+        const footer = tested
+          ? `<button class="mini-cta outline">View Full Results ${icon("arrow-right", 15)}</button>`
+          : `<button class="cta">Order Methylation Test</button>
+             <p class="meth-note">Cheek swab at home. Results in 2 to 3 weeks.</p>`;
+
+        return `
+          <section class="card module methylation-card">
+            ${header}
+            <div class="meth-steps">${rows}</div>
+            ${footer}
+          </section>
+        `;
+      }
+
       function longevityAssessmentCard() {
         return `
           <section class="card module">
@@ -4179,18 +4343,21 @@
         if (state === "no_labs_performed" || state === "prospect" || state === "non_member_no_labs") {
           return `
             ${longevityAssessmentCard()}
+            ${methylationGeneticsCard()}
           `;
         }
 
         if (state === "blood_draw_booked") {
           return `
             ${bloodDrawBookedCard()}
+            ${methylationGeneticsCard()}
           `;
         }
 
         if (state === "labs_processing_questionnaire_incomplete") {
           return `
             ${labReportsHub(v)}
+            ${methylationGeneticsCard()}
           `;
         }
 
@@ -4199,6 +4366,7 @@
             ${labReportsHub(v)}
             ${profileBanner(v.profileState)}
             ${processingWaitingCard()}
+            ${methylationGeneticsCard()}
           `;
         }
 
@@ -4208,6 +4376,7 @@
             ${actionModule({ ...v, actionCopy: "Complete your questionnaire before your visit so your clinician has the context they need." }, { subtleCta: true })}
             ${labReportsHub(v)}
             ${documentCard()}
+            ${methylationGeneticsCard()}
           `;
         }
 
@@ -4217,11 +4386,14 @@
             ${labReportsHub(v)}
             ${lifeScoreCard(false)}
             ${documentCard()}
+            ${methylationGeneticsCard()}
           `;
         }
 
         if (state === "post_clinician_recommendations_active") {
           return `
+            ${methylationGeneticsCard({ tested: true })}
+            ${prescriptionSubscriptions()}
             ${clinicianRecommendations()}
             ${lifeScoreCard(false)}
             ${labReportsHub(v)}
@@ -4233,6 +4405,7 @@
           ${profileBanner(v.profileState)}
           ${labReportsHub(v)}
           ${productCard({ ...v, compactProducts: true }, false)}
+          ${methylationGeneticsCard()}
         `;
       }
 
